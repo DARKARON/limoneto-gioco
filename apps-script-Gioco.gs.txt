@@ -1,0 +1,76 @@
+// Il limoneto — collegamento del gioco al foglio "Adotta un limone"
+// Incolla questo codice in un NUOVO progetto Apps Script (script.google.com → Nuovo progetto).
+// Poi: Esegui il deploy → Nuovo deployment → ingranaggio → App web
+//      Esegui come: Me · Chi ha accesso: Chiunque → Esegui il deploy → copia l'URL che finisce con /exec.
+// Lo script legge le schede Adozioni e Alberi; la classifica la scrive nel foglio "Classifica Limoneto - Il gioco" (Drive › SuperEtnaFood).
+// Dopo aver incollato la nuova versione: Esegui il deploy → Gestisci deployment → matita → Versione: Nuova versione → Esegui il deploy (l'URL resta lo stesso).
+
+const ID_FOGLIO = '1xee5XFQl0FKTE9LpI_0EflihMvPwbujq_05hBisILiI';
+const SCHEDA_ADOZIONI = 'Adozioni';          // email, password, adottante, formula, albero…
+const SCHEDA_ALBERI = 'Alberi';              // numero, email, nomePianta, nomeProposto, varieta…
+const ID_CLASSIFICA = '17UOMmpXewMmTkz7sxsm8vpTWiIVhKP2_TjTbVBAJDYM'; // Drive › SuperEtnaFood › Classifica Limoneto - Il gioco
+const MANSIONI = { concime: 'Concimare', potatura: 'Potare', raccolta: 'Raccogliere', erba: 'Tagliare l\'erba', irrigazione: 'Irrigare' };
+const SEGRETO = 'CAMBIA-QUESTA-FRASE-SEGRETA'; // scrivi una frase lunga qualsiasi e non dirla a nessuno
+
+function doPost(e) {
+  let d = {};
+  try { d = JSON.parse(e.postData.contents); } catch (x) {}
+  let out;
+  try {
+    if (d.azione === 'login') out = login(d);
+    else if (d.azione === 'classifica-invia') out = invia(d);
+    else if (d.azione === 'classifica-leggi') out = leggi();
+    else out = { ok: false, errore: 'azione sconosciuta' };
+  } catch (err) { out = { ok: false, errore: String(err) }; }
+  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function norm(s) { return String(s == null ? '' : s).trim().toLowerCase(); }
+function firma(u) { return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(u, SEGRETO)); }
+function tabella(nome) {
+  const sh = SpreadsheetApp.openById(ID_FOGLIO).getSheetByName(nome);
+  if (!sh) return { righe: [], col: () => -1 };
+  const v = sh.getDataRange().getValues(), h = v[0].map(norm);
+  return { righe: v.slice(1), col: k => h.indexOf(norm(k)) };
+}
+
+function login(d) {
+  const u = norm(d.utente), p = String(d.password || '').trim();
+  if (!u || !p) return { ok: false };
+  const A = tabella(SCHEDA_ADOZIONI), ie = A.col('email'), ip = A.col('password');
+  const riga = A.righe.find(r => norm(r[ie]) === u && String(r[ip]).trim() === p);
+  if (!riga) return { ok: false };
+  const val = (T, r, k) => { const i = T.col(k); return i >= 0 ? r[i] : ''; };
+  let albero = Number(val(A, riga, 'albero')) || null, nome = String(val(A, riga, 'adottante') || ''), varieta = '';
+  const B = tabella(SCHEDA_ALBERI);
+  const ra = B.righe.find(r => (albero && Number(val(B, r, 'numero')) === albero) || (!albero && norm(val(B, r, 'email')) === u));
+  if (ra) {
+    albero = albero || Number(val(B, ra, 'numero')) || null;
+    nome = String(val(B, ra, 'nomePianta') || val(B, ra, 'nomeProposto') || nome || '');
+    varieta = String(val(B, ra, 'varieta') || '');
+  }
+  return { ok: true, nome: nome || u.split('@')[0], albero, formula: String(val(A, riga, 'formula') || ''), varieta, token: firma(u) };
+}
+
+function foglioClassifica() {
+  const sh = SpreadsheetApp.openById(ID_CLASSIFICA).getSheets()[0];
+  sh.getRange(1, 1, 1, 6).setValues([['Data', 'Nome albero', 'Albero n.', 'Mansione svolta', 'Tempo impiegato', 'Punteggio']]).setFontWeight('bold');
+  return sh;
+}
+function mmss(sec) { sec = Math.max(0, Math.round(Number(sec) || 0)); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+
+function invia(d) {
+  const u = norm(d.utente);
+  if (!u || d.token !== firma(u)) return { ok: false };
+  const sh = foglioClassifica();
+  sh.appendRow([new Date(), String(d.nome || '').slice(0, 40), d.albero || '', MANSIONI[d.missione] || String(d.missione || ''), mmss(d.tempo), Math.round(Number(d.punti) || 0)]);
+  sh.getRange(sh.getLastRow(), 5).setNumberFormat('@').setValue(mmss(d.tempo));
+  return { ok: true };
+}
+
+function leggi() {
+  const sh = foglioClassifica(), inv = {};
+  Object.keys(MANSIONI).forEach(k => inv[norm(MANSIONI[k])] = k);
+  const v = sh.getDataRange().getValues().slice(1).filter(r => r[1] !== '').sort((a, b) => Number(b[5]) - Number(a[5]));
+  return { ok: true, righe: v.slice(0, 200).map(r => ({ nome: r[1], albero: r[2], missione: inv[norm(r[3])] || r[3], tempo: String(r[4]), punti: Number(r[5]) || 0 })) };
+}
