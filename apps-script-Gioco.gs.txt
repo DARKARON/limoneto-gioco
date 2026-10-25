@@ -9,7 +9,7 @@ const ID_FOGLIO = '1xee5XFQl0FKTE9LpI_0EflihMvPwbujq_05hBisILiI';
 const SCHEDA_ADOZIONI = 'Adozioni';          // email, password, adottante, formula, albero…
 const SCHEDA_ALBERI = 'Alberi';              // numero, email, nomePianta, nomeProposto, varieta…
 const ID_CLASSIFICA = '17UOMmpXewMmTkz7sxsm8vpTWiIVhKP2_TjTbVBAJDYM'; // Drive › SuperEtnaFood › Classifica Limoneto - Il gioco
-const MANSIONI = { concime: 'Concimare', potatura: 'Potare', raccolta: 'Raccogliere', erba: 'Tagliare l\'erba', irrigazione: 'Irrigare' };
+const MANSIONI = { irrigazione: 'Concimare e irrigare', potatura: 'Potare/trattamenti', raccolta: 'Raccogliere', erba: 'Tagliare l\'erba', concime: 'Concimare' };
 const SEGRETO = 'CAMBIA-QUESTA-FRASE-SEGRETA'; // scrivi una frase lunga qualsiasi e non dirla a nessuno
 
 function doPost(e) {
@@ -70,7 +70,7 @@ function invia(d) {
 
 function leggi() {
   const sh = foglioClassifica(), inv = {};
-  Object.keys(MANSIONI).forEach(k => inv[norm(MANSIONI[k])] = k);
+  Object.keys(MANSIONI).forEach(k => inv[norm(MANSIONI[k])] = k); inv[norm('Irrigare')] = 'irrigazione'; inv[norm('Potare')] = 'potatura';
   const v = sh.getDataRange().getValues().slice(1).filter(r => r[1] !== '').sort((a, b) => Number(b[5]) - Number(a[5]));
   return { ok: true, righe: v.slice(0, 200).map(r => ({ nome: r[1], albero: r[2], missione: inv[norm(r[3])] || r[3], tempo: String(r[4]), punti: Number(r[5]) || 0 })) };
 }
