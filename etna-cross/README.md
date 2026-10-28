@@ -5,7 +5,7 @@ Gioco 3D di cross nel browser: guidi il camion futuristico VCU su un circuito di
 
 ## Come si gioca
 
-- **Guida**: frecce o WASD. **R** ti rimette in pista, **C** cambia camera, **V** avvia o ferma la ripresa cinematica. Su telefono e tablet ci sono i pulsanti a schermo.
+- **Guida**: frecce o WASD. **R** ti rimette in pista, **C** cambia camera, **V** avvia o ferma la ripresa cinematica, **M** attiva o toglie l'audio. Su telefono e tablet ci sono i pulsanti a schermo.
 - **Gara di 2 giri**: il cronometro parte quando passi il traguardo guidando tu. Dopo il secondo giro la gara finisce e compare il riepilogo con i tempi.
 - **Moltiplicatori**: i limoni con la scritta ×1,1, ×1,25 e ×1,5 alzano il prezzo dei limoni fino a ×3. Quelli dorati sono in alto dopo i salti e si prendono solo in volo. Ricompaiono dopo 30 secondi.
 - **Salti**: in volo il gas alza il muso e il freno lo abbassa. Se atterri parallelo alla discesa non perdi velocità; se atterri storto rallenti e la sospensione picchia.
@@ -22,6 +22,7 @@ Il gioco parte in ripresa cinematica: guida il pilota automatico, che non raccog
 | `index.html` | La pagina del gioco: interfaccia, istruzioni, riepilogo di fine gara, codice |
 | `js/circuito-etna.js` | Motore del circuito: terreno, tracciato, fisica, particelle, regia, post-produzione |
 | `js/camion-futuristico.js` | Modello 3D procedurale del camion VCU |
+| `js/suoni-etna.js` | Suoni sintetizzati: motore V8 biturbo (con altre 12 voci), cingoli, ghiaia, slittamento, vento, fango, salti, urti, limoni, giri |
 | `js/three.min.js` | three.js r128 (licenza MIT) |
 
 ## Pubblicarlo con GitHub Pages

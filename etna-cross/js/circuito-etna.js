@@ -241,12 +241,18 @@ function CircuitoEtna(opts){
       Fh+=F;Mp-=F*c.z;Mr+=F*c.x;}
     B.hv+=(Fh-aVert*0.25)*dt;B.pv+=(Mp/IP-aLong*0.6)*dt;B.rv+=(Mr/IR+aLat*0.76)*dt;
     B.h+=B.hv*dt;B.p+=B.pv*dt;B.r+=B.rv*dt;
-    if(B.h<-0.26){B.h=-0.26;if(B.hv<0)B.hv=0;}if(B.h>0.22){B.h=0.22;if(B.hv>0)B.hv=0;}
-    if(Math.abs(B.p)>0.22){B.p=clamp(B.p,-0.22,0.22);B.pv*=-0.2;}
+    if(B.h<-0.2){B.h=-0.2;if(B.hv<0)B.hv=0;}if(B.h>0.22){B.h=0.22;if(B.hv>0)B.hv=0;}
+    if(Math.abs(B.p)>0.15){B.p=clamp(B.p,-0.15,0.15);B.pv*=-0.2;}
     if(Math.abs(B.r)>0.2){B.r=clamp(B.r,-0.2,0.2);B.rv*=-0.2;}
   }
+  // punti che toccano terra (x laterale, z longitudinale, altezza sopra il fondo ruote)
+  const CONT=[[0.8,1.05,0],[-0.8,1.05,0],[0.74,-0.95,0],[-0.74,-0.95,0],[0.74,-2.15,0.05],[-0.74,-2.15,0.05],[0,1.5,0.22],[0,-0.3,0.3],[0,-1.6,0.35]];
+  // quota del baricentro che serve perché nessun punto entri nel terreno, con l'assetto dato
+  function supportY(px,pz,yaw,pitch,roll){const sy=Math.sin(yaw),cy=Math.cos(yaw),sp=Math.sin(pitch),sr=Math.sin(roll);let m=-1e9;
+    for(let i=0;i<CONT.length;i++){const c=CONT[i],wx=px+sy*c[1]+cy*c[0],wz=pz+cy*c[1]-sy*c[0],need=Hs(wx,wz)-c[2]+sp*c[1]-sr*c[0];if(need>m)m=need;}return m;}
   function poseTruck(dt){
-    T.position.set(car.x,car.y+B.h,car.z);T.rotation.set(car.pitch+B.p,car.yaw,car.roll+B.r,'YXZ');
+    const lift=Math.max(0,supportY(car.x,car.z,car.yaw,car.pitch+B.p,car.roll+B.r)-(car.y+B.h)-0.06);
+    T.position.set(car.x,car.y+B.h+lift,car.z);T.rotation.set(car.pitch+B.p,car.yaw,car.roll+B.r,'YXZ');
     const k=Math.min(1,dt*35);
     CORN.forEach(c=>{c.dy+=((c.f?clamp(c.dyT,-0.14,0.1):clamp(c.dyT,-0.08,0.1))-c.dy)*k;
       if(c.f){c.f.g.position.y=c.f.g.userData.y0+c.dy;c.f.mol.scale.y=clamp((0.58-c.dy)/0.58,0.55,1.3);}
@@ -274,7 +280,7 @@ function CircuitoEtna(opts){
   function updPick(dt){PICK.forEach(p=>{p.t+=dt;if(!p.attivo){if(p.t>30){p.attivo=true;p.g.visible=true;}return;}
       p.g.position.y=p.y+Math.sin(p.t*2.2)*0.15;p.lm.rotation.y+=dt*2.4;p.ring.rotation.y=p.t*1.3;p.ring.rotation.x=0.4+Math.sin(p.t)*0.2;
       if(auto||finita)return;const dx=car.x-p.x,dz=car.z-p.z;if(dx*dx+dz*dz<2.4*2.4&&Math.abs(p.g.position.y-(car.y+B.h+1.2))<p.tol){
-        p.attivo=false;p.g.visible=false;p.t=0;const prima=molt;molt=Math.min(MOLT_MAX,+(molt+p.v).toFixed(2));
+        p.attivo=false;p.g.visible=false;p.t=0;const prima=molt;suono('limone',p.v>=0.5?2:p.v>=0.25?1:0);molt=Math.min(MOLT_MAX,+(molt+p.v).toFixed(2));
         for(let k=0;k<24;k++){const a=rnd()*6.283,u=rnd()*2-1;emitB(p.x,p.g.position.y,p.z,Math.cos(a)*4*(1-u*u)+car.vx*0.3,u*4+2,Math.sin(a)*4*(1-u*u)+car.vz*0.3,0.06+rnd()*0.07,[0.95,0.8,0.15]);}
         say(molt>prima?'Prezzo limoni ×'+fmtX(molt):'Moltiplicatore al massimo ×'+fmtX(molt),1.4);}});}
 
@@ -342,7 +348,9 @@ function CircuitoEtna(opts){
   const K={up:false,down:false,left:false,right:false},Kt={},ap={st:0,up:false,dn:false};
   const car={x:0,z:0,y:0,yaw:0,vx:0,vz:0,vy:0,ground:true,pitch:0,roll:0,steer:0,vF:0,vS:0,aLong:0,aLat:0,aVert:0,yawRate:0,yawV:0,pitchV:0,rollV:0,pitchGV:0,rollGV:0,wheelV:0,slip:0,airT:0,mu:0.95};
   let idx=0,camMode=0,shake=0,dustAcc=0,frontAcc=0,debAcc=0,time=0,lapStart=null,lap=0,best=null,lastLap=null,cps=[false,false,false],msg='',msgT=0,wrongT=0,hudT=0,stuckT=0;
+  let SU=opts.suoni||null;const suono=(n,a,b)=>{if(SU&&SU[n]){try{SU[n](a,b);}catch(e){}}};
   const GIRI=Math.max(1,opts.giri||2);let finita=false,totale=null,tempi=[];
+  let wasMud=false;
   let cine=opts.avvio!=='guida',auto=cine,shot=null,shotN=0,noBlur=2,lb=0;
   const CAMS=['Inseguimento','Drone','Cofano'];
   const SHOTNAME={lato:'Tracking laterale basso',fronte:'Frontale basso',retro:'Inseguimento rasoterra',bordo:'Bordo pista',salto:'Salto'};
@@ -374,7 +382,7 @@ function CircuitoEtna(opts){
     const d=Ds(car.x,car.z),on=d<HW+0.8,mud=mudAt(car.x,car.z),vmax=on?27:16;
     car.mu=lerp(on?0.95:0.72,0.42,smst((mud-0.15)/0.6));
     const st=auto?ap.st:(K.left||Kt.left?1:0)-(K.right||Kt.right?1:0),up=finita&&!auto?false:auto?ap.up:(K.up||Kt.up),dn=finita&&!auto?car.vF>0.5:auto?ap.dn:(K.down||Kt.down);
-    car.steer+=(st-car.steer)*Math.min(1,dt*7);
+    car.steer+=(st-car.steer)*Math.min(1,dt*7);car.gas=up?1:0;
     if(car.ground){
       let aE,drive=true;
       if(up)aE=vF<-0.5?14:12.5*(1-Math.max(0,vF)/vmax);
@@ -415,7 +423,7 @@ function CircuitoEtna(opts){
     let nx=car.x+car.vx*dt,nz=car.z+car.vz*dt;const LIM=176;
     if(Math.abs(nx)>LIM){nx=clamp(nx,-LIM,LIM);car.vx*=-0.3;}if(Math.abs(nz)>LIM){nz=clamp(nz,-LIM,LIM);car.vz*=-0.3;}
     car.x=nx;car.z=nz;collide();
-    const g=Hs(car.x,car.z),GR=9.8*1.45,yb=car.y+car.vy*dt-0.5*GR*dt*dt;
+    const g=supportY(car.x,car.z,car.yaw,car.pitch,car.roll),GR=9.8*1.45,yb=car.y+car.vy*dt-0.5*GR*dt*dt;
     if(car.ground){
       if(g>=yb-0.02){car.vy=clamp((g-car.y)/dt,-30,14);car.y=g;}
       else{// stacco: la sospensione compressa restituisce spinta, il muso cade se si stacca piano
@@ -445,7 +453,7 @@ function CircuitoEtna(opts){
           const d=Math.sqrt(d2)||0.001,nx=dx/d,nz=dz/d,pen=md-d;car.x+=nx*pen;car.z+=nz*pen;
           const vn=car.vx*nx+car.vz*nz;if(vn<0){car.vx-=1.3*vn*nx;car.vz-=1.3*vn*nz;car.vx*=0.88;car.vz*=0.88;
             car.yawV+=(nx*cy-nz*sy)*vn*0.07*(lz>0?1:-1);if(-vn>hit){hit=-vn;hx=o[0]+nx*o[2];hz=o[1]+nz*o[2];}}}}}
-    if(hit>2.5){shake=Math.min(1,hit/10);B.hv+=hit*0.04;B.rv+=(rnd()-0.5)*hit*0.12;B.pv+=(rnd()-0.5)*hit*0.08;
+    if(hit>2.5){suono('urto',hit);shake=Math.min(1,hit/10);B.hv+=hit*0.04;B.rv+=(rnd()-0.5)*hit*0.12;B.pv+=(rnd()-0.5)*hit*0.08;
       for(let k=0;k<Math.min(30,hit*3);k++){const a=rnd()*6.283;emitB(hx,Hs(hx,hz)+0.4,hz,Math.cos(a)*3,1+rnd()*3,Math.sin(a)*3,0.04+rnd()*0.08,B_LAVA);}
       for(let k=0;k<6;k++)emit(hx,Hs(hx,hz)+0.4,hz,(rnd()-0.5)*2,0.5+rnd(),(rnd()-0.5)*2,1.2+rnd(),1.6+rnd(),C_ASH);
       if(!auto&&msgT<=0)say('Contro la pietra lavica!',0.8);}}
@@ -458,12 +466,14 @@ function CircuitoEtna(opts){
     const imp=Math.max(0,-vn),mis=car.pitch+th_,misR=car.roll-rT;
     const bad=Math.max(0,Math.abs(mis)-0.12)+Math.max(0,Math.abs(misR)-0.1)*0.8;
     const loss=clamp(imp*0.011+bad*0.7+Math.abs(vS)*0.004,0,0.5),vHn=vt*Math.cos(th_)*(1-loss);
-    car.vx=sy*vHn+cy*vS*0.8;car.vz=cy*vHn-sy*vS*0.8;car.vF=vHn;car.y=g;
+    car.vx=sy*vHn+cy*vS*0.8;car.vz=cy*vHn-sy*vS*0.8;car.vF=vHn;
+    car.pitch+=(-th_-car.pitch)*0.55;car.roll+=(rT-car.roll)*0.55;car.y=Math.max(g,supportY(car.x,car.z,car.yaw,car.pitch,car.roll));
     B.hv-=imp*0.32;B.pv+=clamp(mis,-0.6,0.6)*imp*0.45;B.rv+=clamp(misR,-0.5,0.5)*imp*0.35;
     const air=car.airT;
     if(imp>8.5&&bad>0.15){car.vy=imp*0.17;car.ground=false;car.pitchV=-mis*1.5;car.rollV=-misR*1.2;car.airT=0;}
     else{car.vy=0;car.ground=true;car.pitchV=car.rollV=0;}
     if(imp>5){shake=Math.min(1.2,imp/12);landBurst(imp);}
+    if(imp>2.5)suono('atterraggio',imp);
     if(!auto&&air>0.45){if(loss>0.25)say('Atterraggio duro',0.9);else if(loss<0.07)say('Atterraggio perfetto',0.9);}
   }
 
@@ -511,10 +521,10 @@ function CircuitoEtna(opts){
     const prev=idx;idx=bi;
     if(prev>N*0.85&&idx<N*0.15){
       if(finita){}
-      else if(lapStart===null){if(!auto){lapStart=time;lap=1;tempi=[];say('Via! Giro 1 di '+GIRI,1.4);}}
+      else if(lapStart===null){if(!auto){lapStart=time;lap=1;tempi=[];say('Via! Giro 1 di '+GIRI,1.4);suono('via');}}
       else if(cps.every(Boolean)){const lt=time-lapStart;lastLap=lt;tempi.push(lt);const rec=best===null||lt<best;if(rec)best=lt;
-        if(lap>=GIRI){finita=true;totale=tempi.reduce((a,b)=>a+b,0);lapStart=null;say('Gara finita · '+fmt(totale),3);}
-        else{lap++;lapStart=time;say((rec?'Giro record ':'Giro ')+fmt(lt)+' · ultimo giro!',2.2);}}
+        if(lap>=GIRI){finita=true;totale=tempi.reduce((a,b)=>a+b,0);lapStart=null;say('Gara finita · '+fmt(totale),3);suono('fine');}
+        else{lap++;lapStart=time;suono('giro',rec);say((rec?'Giro record ':'Giro ')+fmt(lt)+' · ultimo giro!',2.2);}}
       cps=[false,false,false];}
     for(let c=0;c<3;c++){const ci=Math.floor(N*(c+1)/4);if(lapStart!==null&&prev<ci&&idx>=ci&&idx-prev<60)cps[c]=true;}
     const dot=car.vx*DX[idx]+car.vz*DZ[idx];
@@ -635,6 +645,8 @@ function CircuitoEtna(opts){
     const n=Math.max(1,Math.ceil(dt/(1/120))),h=dt/n;for(let i=0;i<n;i++)step(h);
     updLap(dt);
     poseTruck(dt);T.userData.muovi(car.wheelV*dt);skidUpd();
+    if(SU&&SU.aggiorna){const fm=mudAt(car.x,car.z);if(fm>0.35&&!wasMud&&car.ground&&Math.abs(car.vF)>5)suono('schizzo');wasMud=fm>0.35;
+      try{SU.aggiorna({vel:car.vF,ruote:car.wheelV,gas:car.gas||0,slittamento:car.slip,aTerra:car.ground,fango:fm,fuoriPista:Ds(car.x,car.z)>HW+0.8});}catch(e){}}
     updFx(dt);updPick(dt);updPlume(dt);updCam(dt);
     sun.position.set(car.x+SUNOFF.x,car.y+SUNOFF.y,car.z+SUNOFF.z);sun.target.position.set(car.x,car.y,car.z);sun.target.updateMatrixWorld();
     if(msgT>0){msgT-=dt;if(msgT<=0)msg='';}
@@ -663,8 +675,10 @@ function CircuitoEtna(opts){
     toggleCine(){cine=!cine;auto=cine;shot=null;camSnap=true;noBlur=2;if(!cine){camMode=0;say('Guida',1);}},
     setOra,
     getMolt(){return molt;},
+    setSuoni(s){SU=s||null;},
     nuovaGara(){molt=1;finita=false;totale=null;tempi=[];lap=0;lapStart=null;best=null;lastLap=null;cps=[false,false,false];PICK.forEach(p=>{p.attivo=true;p.g.visible=true;p.t=rnd()*6;});placeAt(N-14);camSnap=true;noBlur=2;say('Nuova gara: '+GIRI+' giri',1.6);},
     setCassette(v){T.userData.carico.visible=!!v;},
+    _pen(){const P=T.rotation.x,Rr=T.rotation.z,sy=Math.sin(car.yaw),cy=Math.cos(car.yaw),sp=Math.sin(P),sr=Math.sin(Rr);let m=-9;CONT.forEach(c=>{const wx=car.x+sy*c[1]+cy*c[0],wz=car.z+cy*c[1]-sy*c[0],py=T.position.y+c[2]-sp*c[1]+sr*c[0];m=Math.max(m,Hs(wx,wz)-py);});return m;},
     _place(i){placeAt(i);camSnap=true;},
     _sim(sec){for(let i=0;i<Math.round(sec*60);i++)frame(1/60,false);},
     _state(){return {x:car.x,z:car.z,y:car.y,vF:car.vF,vS:car.vS,slip:car.slip,wheelV:car.wheelV,pitch:car.pitch,airT:car.airT,ground:car.ground,idx,B:Object.assign({},B),shot:shot&&shot.type,auto,lap};},
