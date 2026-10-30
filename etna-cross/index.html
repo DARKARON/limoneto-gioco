@@ -2,203 +2,321 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Etna Cross</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#141110;--panel:rgba(20,17,16,0.8);--ink:#f4efe9;--muted:#c9bfb6;--soft:#d6ccc3;--lava:#f0a35e;--fire:#E0702C;--lemon:#F2D22E;--line:rgba(255,255,255,0.14)}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Barlow Condensed','Arial Narrow',sans-serif;overflow:hidden}
-#root{position:fixed;inset:0;outline:none;user-select:none;-webkit-user-select:none;touch-action:none}
-#root:focus-visible{outline:3px solid var(--lava);outline-offset:-3px}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px}
-.hud-l{position:absolute;top:16px;left:16px;display:flex;flex-direction:column;gap:8px;padding:14px 18px;min-width:210px;max-width:min(300px,calc(100vw - 32px))}
-.hud-l .titolo{display:flex;align-items:baseline;gap:10px}
-.hud-l .titolo b{font-size:26px;font-weight:800;font-style:italic}
-.hud-l .titolo span{font-size:15px;font-weight:600;color:var(--lava);letter-spacing:.08em;text-transform:uppercase}
-.griglia{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px;row-gap:2px;font-size:15px;font-variant-numeric:tabular-nums}
-.griglia .k{color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.griglia .v{font-weight:700;font-size:19px;text-align:right}
-.griglia .molt{color:var(--lemon);font-weight:800;font-size:20px}
-.codice{display:flex;flex-direction:column;gap:6px;padding-top:8px;border-top:1px solid var(--line)}
-.codice .k{font-size:14px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-.codice .c{font-size:26px;font-weight:800;letter-spacing:.06em;color:var(--lemon);user-select:text;-webkit-user-select:text}
-.codice .n{font-size:14px;color:var(--soft)}
-.hud-r{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.vel{display:flex;align-items:baseline;gap:6px;padding:8px 16px}
-.vel b{font-size:52px;font-weight:800;font-style:italic;line-height:1;font-variant-numeric:tabular-nums}
-.vel span{font-size:18px;font-weight:600;color:var(--muted)}
-.bottoni{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:560px}
-button,.btn{min-height:44px;padding:0 14px;border:1px solid rgba(255,255,255,0.2);border-radius:6px;background:rgba(20,17,16,0.8);color:var(--ink);font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
-button:hover,.btn:hover{background:rgba(40,32,28,0.95)}
-.primario{background:var(--fire);border-color:var(--fire);color:#fff8f1;font-weight:700}
-.primario:hover{background:#c85f22}
-.msg{position:absolute;top:34%;left:50%;transform:translateX(-50%);padding:10px 28px;font-size:40px;font-weight:800;font-style:italic;color:var(--lava);white-space:nowrap;pointer-events:none;background:rgba(20,17,16,0.82);border-radius:6px}
-.cinebar{position:absolute;left:16px;right:16px;top:12px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
-.cinebar .rec{display:flex;align-items:center;gap:10px;padding:6px 12px;background:rgba(0,0,0,0.55);border-radius:4px;font-size:17px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-.cinebar .rec i{width:12px;height:12px;border-radius:50%;background:#e0452c;display:inline-block}
-.velo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(10,8,7,0.45)}
-.carta{width:min(560px,100%);max-height:calc(100% - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:24px 28px;background:rgba(20,17,16,0.95);border:1px solid rgba(240,163,94,0.5);border-radius:8px}
-.carta .kick{font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--lava)}
-.carta h2{margin:0;font-size:34px;font-weight:800;font-style:italic;line-height:1}
-.carta ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:19px;line-height:1.3;color:#e8e0d8}
-.tot{font-size:44px;font-weight:800;font-style:italic;line-height:1;font-variant-numeric:tabular-nums}
-.aiuto{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);max-width:min(640px,calc(100vw - 32px));padding:6px 12px;background:rgba(20,17,16,0.6);border-radius:4px;font-size:15px;color:#e8e0d8;text-align:center;pointer-events:none}
-.touch{position:absolute;left:16px;right:16px;bottom:56px;display:none;justify-content:space-between;pointer-events:none}
-.touch>div{display:flex;gap:10px;pointer-events:auto}
-.touch button{width:72px;height:72px;justify-content:center;font-size:18px;touch-action:none}
-.touch .tondo{border-radius:50%}
-@media (pointer:coarse){.touch{display:flex}.aiuto{display:none}}
-[hidden]{display:none!important}
-</style>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<script src="./assets/ce4a5148eb193bdbaf8513fefb830840.js"></script>
+<script src="./assets/ef39745054f5825e43060d74da70466c.js"></script>
+<script src="./assets/439c22e5b621981fbea9fa76159a76d9.js"></script>
+<script src="./assets/e862c14c3ab7dbf695c916d28e89ca22.js"></script>
 </head>
 <body>
-<div id="root" tabindex="0" aria-label="Circuito da cross sull'Etna. Guida con le frecce o WASD, R per rimettere in pista, C per cambiare camera, V per la ripresa cinematica.">
-  <canvas id="gl"></canvas>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#141110}
+a{color:#f0a35e}a:hover{color:#ffc58f}
+.etna-root:focus{outline:none}
+.etna-root:focus-visible{outline:3px solid #f0a35e;outline-offset:-3px}
+.etna-btn{cursor:pointer}
+.etna-btn:hover{background:rgba(40,32,28,0.9)}
+.etna-btn:active{background:rgba(224,112,44,0.75)}
+.etna-mi{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:#f4efe9;font-family:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;box-sizing:border-box}
+.etna-mi:hover,.etna-mi:focus-visible{background:rgba(224,112,44,0.28);outline:none}
+.etna-k{font-size:11px;font-weight:700;color:#c9bfb6;border:1px solid rgba(255,255,255,0.22);border-radius:3px;padding:1px 5px}
+</style>
+</helmet>
+<div data-etna-root="1" class="etna-root" tabindex="0" aria-label="Circuito da cross sull'Etna. Guida con le frecce o WASD, R per rimettere in pista, C per cambiare camera, V per la ripresa cinematica." style="position: relative; width: 100%; height: 100vh; min-height: 520px; overflow: hidden; background: #141110; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #f4efe9; user-select: none; -webkit-user-select: none; touch-action: none">
+<canvas data-etna-gl="1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block"></canvas>
 
-  <div id="hudGuida">
-    <div class="hud-l panel">
-      <div class="titolo"><b>ETNA CROSS</b><span>Terra lavica</span></div>
-      <div class="griglia">
-        <span class="k">Giro</span><span class="v" id="lap">—</span>
-        <span class="k">Tempo</span><span class="v" id="time">0:00.0</span>
-        <span class="k">Ultimo</span><span class="v" id="last">—</span>
-        <span class="k">Migliore</span><span class="v" id="best" style="color:var(--lava)">—</span>
-        <span class="k">Prezzo limoni</span><span class="v molt" id="molt">×1,00</span>
-      </div>
-      <div class="codice" id="boxCodice" hidden>
-        <span class="k">Codice per il Limoneto</span>
-        <span class="c" id="codice"></span>
-        <span class="n" id="statoCodice"></span>
-      </div>
-    </div>
-    <div class="hud-r">
-      <div class="vel panel"><b id="kmh">0</b><span>km/h</span></div>
-      <div class="bottoni">
-        <button id="bAudio" aria-label="Attiva o disattiva l'audio (M)">Audio: sì</button>
-        <button id="bIstr">Come si gioca</button>
-        <button id="bCine">Ripresa cinematica</button>
-        <button id="bCam">Inseguimento</button>
-        <button id="bReset">Rimetti in pista</button>
-      </div>
-    </div>
-  </div>
+<sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 5px; padding: 8px 11px; background: rgba(20,17,16,0.74); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; min-width: 150px">
+<div style="display: flex; align-items: baseline; gap: 7px; white-space: nowrap">
+<span style="font-size: 17px; font-weight: 800; font-style: italic; letter-spacing: 0.02em; color: #f4efe9">ETNA CROSS</span>
+<span style="font-size: 11px; font-weight: 600; color: #f0a35e; letter-spacing: 0.08em; text-transform: uppercase">Terra lavica</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 0; font-size: 11px; align-items: baseline">
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Giro</span>
+<span style="font-weight: 700; font-size: 14px; text-align: right; font-variant-numeric: tabular-nums">{{lap}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Tempo</span>
+<span style="font-weight: 700; font-size: 14px; text-align: right; font-variant-numeric: tabular-nums">{{time}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Ultimo</span>
+<span style="font-weight: 600; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums">{{last}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Migliore</span>
+<span style="font-weight: 700; font-size: 13px; text-align: right; color: #f0a35e; font-variant-numeric: tabular-nums">{{best}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Limoni</span>
+<span style="font-weight: 800; font-size: 14px; text-align: right; color: #F2D22E; font-variant-numeric: tabular-nums">{{moltTxt}}</span>
+</div>
+<sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 2px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.12); max-width: 190px">
+<span style="font-size: 10px; color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Codice per il Limoneto</span>
+<span style="font-size: 17px; font-weight: 800; letter-spacing: 0.05em; color: #F2D22E; user-select: text; -webkit-user-select: text">{{codice}}</span>
+<span style="font-size: 11px; color: #d6ccc3; line-height: 1.2">{{statoCodice}}</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
 
-  <div class="cinebar" id="cinebar" hidden>
-    <div class="rec"><i></i><span id="shot">Ripresa cinematica</span><span id="kmhC" style="font-weight:500;color:var(--soft)"></span></div>
-    <div class="bottoni">
-      <button id="bShot">Cambia inquadratura</button>
-      <button id="bVolante" class="primario">Prendi il volante</button>
-    </div>
-  </div>
+<sc-if value="{{cine}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 8px; padding: 5px 10px; background: rgba(0,0,0,0.55); border-radius: 4px; max-width: calc(100% - 200px)">
+<svg aria-hidden="true" width="9" height="9" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#e0452c"></circle></svg>
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #f4efe9">{{shot}}</span>
+</div>
+</sc-if>
 
-  <div class="msg" id="msg" hidden></div>
-
-  <div class="velo" id="istr" hidden>
-    <div class="carta">
-      <span class="kick">Come si gioca</span>
-      <h2>Due giri sulla terra lavica</h2>
-      <ul>
-        <li>Guida il camion VCU con le frecce o WASD. R ti rimette in pista, C cambia camera, V avvia o ferma la ripresa cinematica.</li>
-        <li>La gara dura 2 giri: il cronometro parte quando passi il traguardo guidando tu.</li>
-        <li>Prendi i limoni con la scritta ×1,1, ×1,25 e ×1,5: alzano il prezzo dei limoni fino a ×3. Quelli dorati sono in alto dopo i salti e si prendono solo in volo.</li>
-        <li>In volo il gas alza il muso e il freno lo abbassa: atterra parallelo alla discesa per non perdere velocità. Muretti, rocce e pini sono solidi, nel fango si scivola.</li>
-        <li>A fine gara ricevi un codice: scrivilo nel Limoneto e Gelso ti pagherà i limoni di più alla prossima vendita.</li>
-      </ul>
-      <button class="primario" id="bCapito" style="align-self:flex-start;font-size:19px;min-height:48px;padding:0 22px">Ho capito</button>
-    </div>
-  </div>
-
-  <div class="velo" id="fine" hidden>
-    <div class="carta" style="width:min(460px,100%);border-color:rgba(242,210,46,0.55)">
-      <span class="kick">Gara finita</span>
-      <span class="tot" id="totale"></span>
-      <span style="font-size:18px;color:var(--soft)" id="tempi"></span>
-      <span style="font-size:26px;font-weight:800;color:var(--lemon)" id="moltFine"></span>
-      <div id="fineCodice" style="display:flex;flex-direction:column;gap:4px">
-        <span style="font-size:16px;color:var(--muted)">Codice per il Limoneto</span>
-        <span style="font-size:32px;font-weight:800;letter-spacing:.06em;color:var(--lemon);user-select:text;-webkit-user-select:text" id="codiceFine"></span>
-      </div>
-      <span style="font-size:17px;color:var(--soft)" id="fineNoCodice">Nessun limone × preso: niente codice questa volta.</span>
-      <div class="bottoni" style="justify-content:flex-start">
-        <button id="bCopia">Copia codice</button>
-        <a class="btn primario" id="bTorna" href="../index.html">Torna al Limoneto</a>
-        <button id="bNuova">Nuova gara</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="aiuto" id="aiuto">Frecce / WASD · R rimetti in pista · C camera · V ripresa · M audio</div>
-
-  <div class="touch" id="touch">
-    <div>
-      <button class="tondo" data-btn="left" aria-label="Sterza a sinistra">◀</button>
-      <button class="tondo" data-btn="right" aria-label="Sterza a destra">▶</button>
-    </div>
-    <div>
-      <button data-btn="down" aria-label="Freno">FRENO</button>
-      <button data-btn="up" aria-label="Accelera" class="primario" style="width:90px">GAS</button>
-    </div>
-  </div>
+<div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
+<div style="display: flex; align-items: center; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 4px; padding: 4px 10px; background: rgba(20,17,16,0.74); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; height: 30px; box-sizing: border-box">
+<span style="font-size: 22px; font-weight: 800; font-style: italic; line-height: 1; font-variant-numeric: tabular-nums">{{kmh}}</span>
+<span style="font-size: 11px; font-weight: 600; color: #c9bfb6">km/h</span>
+</div>
+<button class="etna-btn" onClick="{{menuBtn}}" aria-label="Menu" aria-expanded="{{menuAperto}}" style="height: 30px; display: flex; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid rgba(240,163,94,0.55); border-radius: 6px; background: rgba(20,17,16,0.8); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase">
+<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+<span>Menu</span>
+</button>
+</div>
+<sc-if value="{{menuAperto}}" hint-placeholder-val="{{false}}">
+<div role="menu" style="display: flex; flex-direction: column; min-width: 190px; padding: 4px; background: rgba(20,17,16,0.94); border: 1px solid rgba(255,255,255,0.14); border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.35)">
+<sc-if value="{{cine}}" hint-placeholder-val="{{true}}">
+<button class="etna-mi" role="menuitem" onClick="{{cineBtn}}" style="color: #f0a35e; font-weight: 700">Prendi il volante</button>
+</sc-if>
+<sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
+<button class="etna-mi" role="menuitem" onClick="{{cineBtn}}">Ripresa cinematica <span class="etna-k">V</span></button>
+</sc-if>
+<button class="etna-mi" role="menuitem" onClick="{{camBtn}}">{{camLabel}} <span class="etna-k">C</span></button>
+<sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
+<button class="etna-mi" role="menuitem" onClick="{{resetBtn}}">Rimetti in pista <span class="etna-k">R</span></button>
+</sc-if>
+<button class="etna-mi" role="menuitem" onClick="{{audioBtn}}">{{audioLabel}} <span class="etna-k">M</span></button>
+<button class="etna-mi" role="menuitem" onClick="{{apriIstruzioni}}">Come si gioca</button>
+<sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
+<div style="height: 1px; margin: 4px 6px; background: rgba(255,255,255,0.12)"></div>
+<button class="etna-mi" role="menuitem" onClick="{{copiaCodice}}" style="color: #F2D22E">{{copiaLabel}}</button>
+</sc-if>
+<a class="etna-mi" role="menuitem" href="../index.html" onClick="{{tornaLimoneto}}" style="text-decoration: none">Torna al Limoneto</a>
+</div>
+</sc-if>
 </div>
 
-<script src="js/three.min.js"></script>
-<script src="js/camion-futuristico.js"></script>
-<script src="js/circuito-etna.js"></script>
-<script src="js/suoni-etna.js"></script>
-<script>
-(function(){
-  const $=id=>document.getElementById(id), root=$('root');
-  const q=new URLSearchParams(location.search), daLimoneto=q.get('da')==='limoneto';
-  let sigla=null,moltInviato=null,ultimo={};
-  const game=window.CircuitoEtna({host:root,canvas:$('gl'),avvio:daLimoneto||q.get('avvio')==='guida'?'guida':'ripresa',ora:q.get('ora')==='tramonto'?'tramonto':'giorno',cassette:true,onHud:aggiorna});
+<sc-if value="{{showIstruzioni}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10,8,7,0.45)">
+<div style="width: min(440px, 100%); max-height: calc(100% - 24px); overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; padding: 16px 20px; background: rgba(20,17,16,0.94); border: 1px solid rgba(240,163,94,0.5); border-radius: 8px">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #f0a35e">Come si gioca</span>
+<span style="font-size: 23px; font-weight: 800; font-style: italic; line-height: 1">Due giri sulla terra lavica</span>
+<ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 14px; line-height: 1.3; color: #e8e0d8">
+<li>Guida il camion VCU, pilotato da Limo, con le frecce o WASD. R ti rimette in pista, C cambia camera (inseguimento, drone, cabina), V avvia o ferma la ripresa cinematica, M l'audio. Tutti i comandi sono anche nel Menu in alto a destra.</li>
+<li>La gara dura 2 giri: il cronometro parte quando passi il traguardo guidando tu.</li>
+<li>Prendi i limoni con la scritta ×1,05, ×1,15 e ×1,3: si sommano e alzano il prezzo dei limoni fino a ×4, ma solo se li prendi quasi tutti nei due giri. Quelli dorati sono in alto dopo i salti e si prendono solo in volo.</li>
+<li>Dal kicker si stacca a muso alto. In volo il gas alza il muso e il freno lo abbassa: un tocco di freno e atterri parallelo alla discesa senza perdere velocità. Col gas sempre premuto in volo si atterra sul retro. Muretti, rocce e pini sono solidi, nel fango si scivola.</li>
+<li>A fine gara ricevi un codice: scrivilo nel Limoneto e Gelso ti pagherà i limoni di più alla prossima vendita.</li>
+</ul>
+<button class="etna-btn" onClick="{{chiudiIstruzioni}}" style="align-self: flex-start; min-height: 36px; padding: 0 16px; border: 0; border-radius: 6px; background: #E0702C; color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 700">Ho capito</button>
+</div>
+</div>
+</sc-if>
 
-  // codice moltiplicatore: lo stesso calcolo del Limoneto (centesimi, sigla della gara, controllo)
-  function nuovaSigla(){const A='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';sigla=[0,0,0].map(()=>A[Math.floor(Math.random()*36)]).join('');}
-  function codiceEtna(m){if(!sigla)nuovaSigla();const k=Math.round((Math.min(3,Math.max(1,m))-1)*100),t=k+':'+sigla+':limoneto-etna';let h=7;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>>0;
-    return 'ETNA-'+k.toString(36).toUpperCase().padStart(2,'0')+sigla+(h%1296).toString(36).toUpperCase().padStart(2,'0');}
-  // se il circuito è stato aperto dal Limoneto, gli manda il codice da solo
-  function inviaLimoneto(codice){const msg={tipo:'etna-cross-molt',codice};let n=0;
-    const visita=(w,d)=>{if(!w||d>4)return;try{w.postMessage(msg,'*');n++;}catch(e){}let k=0;try{k=w.frames.length;}catch(e){}for(let i=0;i<k;i++){try{visita(w.frames[i],d+1);}catch(e){}}};
-    try{if(window.opener)visita(window.opener,0);}catch(e){}try{if(window.parent&&window.parent!==window)visita(window.parent,0);}catch(e){}return n>0;}
+<sc-if value="{{finita}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10,8,7,0.4)">
+<div style="width: min(360px, 100%); box-sizing: border-box; display: flex; flex-direction: column; gap: 7px; padding: 16px 20px; background: rgba(20,17,16,0.94); border: 1px solid rgba(242,210,46,0.55); border-radius: 8px">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #f0a35e">Gara finita</span>
+<span style="font-size: 30px; font-weight: 800; font-style: italic; line-height: 1; font-variant-numeric: tabular-nums">{{totale}}</span>
+<span style="font-size: 13px; color: #d6ccc3; font-variant-numeric: tabular-nums">{{tempiTxt}}</span>
+<span style="font-size: 18px; font-weight: 800; color: #F2D22E">Prezzo limoni {{moltTxt}}</span>
+<sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 12px; color: #c9bfb6">Codice per il Limoneto</span>
+<span style="font-size: 22px; font-weight: 800; letter-spacing: 0.06em; color: #F2D22E; user-select: text; -webkit-user-select: text">{{codice}}</span>
+</sc-if>
+<sc-if value="{{senzaCodice}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 13px; color: #d6ccc3">Nessun limone × preso: niente codice questa volta.</span>
+</sc-if>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
+<button class="etna-btn" onClick="{{copiaCodice}}" style="min-height: 34px; padding: 0 12px; border: 1px solid rgba(242,210,46,0.6); border-radius: 6px; background: rgba(20,17,16,0.78); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 600">{{copiaLabel}}</button>
+</sc-if>
+<a href="../index.html" onClick="{{tornaLimoneto}}" style="min-height: 34px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: rgba(224,112,44,0.75); color: #fff8f1; font-size: 13px; font-weight: 700; text-decoration: none">Torna al Limoneto</a>
+<button class="etna-btn" onClick="{{nuovaGara}}" style="min-height: 34px; padding: 0 12px; border: 1px solid rgba(255,255,255,0.22); border-radius: 6px; background: rgba(20,17,16,0.78); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 600">Nuova gara</button>
+</div>
+</div>
+</div>
+</sc-if>
 
-  function aggiorna(h){ultimo=h;
-    $('hudGuida').hidden=!!h.cine;$('cinebar').hidden=!h.cine;$('touch').style.visibility=h.auto?'hidden':'visible';
-    $('lap').textContent=h.lap;$('time').textContent=h.time;$('last').textContent=h.last;$('best').textContent=h.best;$('molt').textContent=h.moltTxt;
-    $('kmh').textContent=h.kmh;$('kmhC').textContent=h.kmh+' km/h';$('shot').textContent=h.shot||'Ripresa cinematica';$('bCam').textContent=h.cam;
-    $('msg').hidden=!h.msg;$('msg').textContent=h.msg||'';
-    const conCodice=h.molt>1.001,codice=conCodice?codiceEtna(h.molt):'';
-    if(conCodice&&h.molt!==moltInviato){moltInviato=h.molt;const ok=inviaLimoneto(codice);$('statoCodice').textContent=ok?'Inviato al Limoneto aperto. Se non arriva, scrivilo lì.':'Scrivilo nel Limoneto, nel riquadro che appare dopo la consegna.';}
-    $('boxCodice').hidden=!conCodice;$('codice').textContent=codice;
-    $('fine').hidden=!h.finita;
-    if(h.finita){$('totale').textContent=h.totale;$('tempi').textContent=(h.tempi||[]).map((t,i)=>'Giro '+(i+1)+': '+t).join(' · ');$('moltFine').textContent='Prezzo limoni '+h.moltTxt;
-      $('fineCodice').hidden=!conCodice;$('fineNoCodice').hidden=conCodice;$('bCopia').hidden=!conCodice;$('codiceFine').textContent=codice;}
+<sc-if value="{{hasMsg}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; top: 34%; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none">
+<div style="padding: 6px 18px; background: rgba(20,17,16,0.78); border-radius: 6px; font-size: 26px; font-weight: 800; font-style: italic; color: #f0a35e; letter-spacing: 0.02em">{{msg}}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showHint}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 12px 18px; background: rgba(20,17,16,0.82); border: 1px solid rgba(240,163,94,0.5); border-radius: 8px; text-align: center; pointer-events: none; max-width: 80%">
+<span style="font-size: 18px; font-weight: 700">Clicca sul circuito per guidare</span>
+<span style="font-size: 13px; color: #d6ccc3">Frecce o WASD per guidare · R rimetti in pista · C cambia camera · V ripresa cinematica</span>
+<span style="font-size: 12px; color: #d6ccc3">In volo: gas alza il muso, freno lo abbassa. Atterra parallelo alla discesa per non perdere velocità.</span>
+<span style="font-size: 12px; color: #d6ccc3">Prendi i limoni con la scritta × per alzare il prezzo dei limoni. Muretti, rocce e pini sono solidi.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{showTouch}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; pointer-events: none">
+<div style="display: flex; gap: 10px; pointer-events: auto">
+<button class="etna-btn" data-etna-btn="left" aria-label="Sterza a sinistra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<button class="etna-btn" data-etna-btn="right" aria-label="Sterza a destra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+</div>
+<span style="font-size: 11px; color: #e8e0d8; padding: 4px 8px; background: rgba(20,17,16,0.55); border-radius: 4px; text-align: center">Frecce / WASD · R · C · V · M</span>
+<div style="display: flex; gap: 10px; pointer-events: auto">
+<button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
+<button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"avvio":{"editor":"enum","options":["ripresa","guida"],"default":"ripresa"},"ora":{"editor":"enum","options":["giorno","tramonto"],"default":"giorno"},"cassette":{"editor":"boolean","default":true},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this._alive = true;
+    this._bound = new WeakSet();
+    const boot = () => {
+      if (!this._alive) return;
+      const root = document.querySelector('[data-etna-root]');
+      const cv = root && root.querySelector('canvas[data-etna-gl]');
+      if (!root || !cv || !window.THREE || !window.CamionFuturistico || !window.CircuitoEtna) { this._t = setTimeout(boot, 120); return; }
+      this._root = root;
+      this.game = window.CircuitoEtna({
+        host: root, canvas: cv,
+        avvio: this.avvioQ(),
+        ora: this.props.ora ?? 'giorno',
+        cassette: this.props.cassette ?? true,
+        onHud: (h) => { if (this._alive) this.setState(h); }
+      });
+      // pacchetto audio: si accende al primo gesto (regola dei browser); M attiva o toglie l'audio
+      if (window.SuoniEtna) {
+        try { this.audio = window.SuoniEtna.crea({ volume: 0.8, motore: 'v8turbo' }); this.game.setSuoni(this.audio); } catch (e) { this.audio = null; }
+        const sblocca = () => { if (this.audio) this.audio.sblocca(); };
+        root.addEventListener('pointerdown', sblocca);
+        root.addEventListener('keydown', (e) => { sblocca(); if (e.code === 'KeyM' && !e.repeat) this.toggleAudio(); });
+      }
+      // Esc chiude il menu; un tocco sul circuito anche
+      root.addEventListener('keydown', (e) => { if (e.code === 'Escape' && (this.state || {}).menu) this.setState({ menu: false }); });
+      cv.addEventListener('pointerdown', () => { if ((this.state || {}).menu) this.setState({ menu: false }); });
+      const chk = () => setTimeout(() => { if (this._alive) this.setState({ focused: root.contains(document.activeElement) }); }, 0);
+      root.addEventListener('focusin', chk);
+      root.addEventListener('focusout', chk);
+      root.addEventListener('pointerdown', () => { if (!root.contains(document.activeElement)) root.focus(); });
+      this.bindTouch();
+    };
+    boot();
   }
-
-  // audio: si accende al primo gesto; M o il pulsante lo tolgono
-  let audio=null;try{audio=SuoniEtna.crea({volume:0.8,motore:'v8turbo'});game.setSuoni(audio);}catch(e){}
-  const sblocca=()=>{if(audio)audio.sblocca();};
-  function toggleAudio(){if(!audio)return;sblocca();$('bAudio').textContent=audio.muto(!audio.eMuto())?'Audio: no':'Audio: sì';}
-  root.addEventListener('pointerdown',sblocca);root.addEventListener('keydown',e=>{sblocca();if(e.code==='KeyM'&&!e.repeat)toggleAudio();});
-  $('bAudio').onclick=()=>{toggleAudio();root.focus();};
-  const focus=()=>root.focus();
-  function istruzioni(on){$('istr').hidden=!on;if(!on){try{localStorage.setItem('etna-istruzioni-viste','1');}catch(e){}focus();}}
-  let viste=false;try{viste=localStorage.getItem('etna-istruzioni-viste')==='1';}catch(e){}
-  istruzioni(!viste);
-  $('bIstr').onclick=()=>istruzioni(true);$('bCapito').onclick=()=>istruzioni(false);
-  $('bCine').onclick=()=>{game.toggleCine();focus();};$('bVolante').onclick=()=>{game.toggleCine();focus();};
-  $('bCam').onclick=()=>{game.cycleCam();focus();};$('bShot').onclick=()=>{game.cycleCam();focus();};
-  $('bReset').onclick=()=>{game.reset();focus();};
-  $('bNuova').onclick=()=>{game.nuovaGara();nuovaSigla();moltInviato=null;$('bCopia').textContent='Copia codice';focus();};
-  $('bCopia').onclick=()=>{const c=codiceEtna(ultimo.molt||1);try{navigator.clipboard.writeText(c).then(()=>{$('bCopia').textContent='Copiato';},()=>{});}catch(e){}};
-  root.addEventListener('pointerdown',e=>{if(e.target===root||e.target.id==='gl')focus();});
-  document.querySelectorAll('[data-btn]').forEach(b=>{const n=b.dataset.btn,on=e=>{e.preventDefault();game.press(n,true);try{b.setPointerCapture(e.pointerId);}catch(_){}},off=()=>game.press(n,false);
-    b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off);b.addEventListener('contextmenu',e=>e.preventDefault());});
-  if(daLimoneto&&window.parent!==window){$('aiuto').hidden=true;$('bTorna').onclick=e=>{e.preventDefault();try{audio&&audio.muto(true);}catch(_){}try{parent.postMessage({tipo:'etna-cross-chiudi'},'*');}catch(_){}};}
-  focus();
-})();
+  bindTouch() {
+    if (!this._root || !this.game) return;
+    this._root.querySelectorAll('[data-etna-btn]').forEach((b) => {
+      if (this._bound.has(b)) return;
+      this._bound.add(b);
+      const n = b.getAttribute('data-etna-btn');
+      const on = (e) => { e.preventDefault(); this.game.press(n, true); try { b.setPointerCapture(e.pointerId); } catch (_) {} };
+      const off = () => { if (this.game) this.game.press(n, false); };
+      b.addEventListener('pointerdown', on);
+      b.addEventListener('pointerup', off);
+      b.addEventListener('pointercancel', off);
+      b.addEventListener('lostpointercapture', off);
+      b.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
+  }
+  componentDidUpdate(prev, prevState) {
+    this.bindTouch();
+    const st = this.state || {};
+    if ((st.molt || 1) > 1.001 && st.molt !== this._moltInviato) { this._moltInviato = st.molt; const ok = this.inviaLimoneto(this.codiceEtna(st.molt)); if (ok !== !!st.inviato || st.copiato) this.setState({ inviato: ok, copiato: false }); }
+    if (st.finita && !this._tempoInviato && st.totS != null) { this._tempoInviato = true; this.inviaLimoneto(null, { tipo: 'etna-cross-tempo', totale: +st.totS.toFixed(2), best: st.bestS != null ? +st.bestS.toFixed(2) : null, molt: st.molt || 1, codice: (st.molt || 1) > 1.001 ? this.codiceEtna(st.molt) : null }); }
+    if (!this.game) return;
+    if (prev.ora !== this.props.ora) this.game.setOra(this.props.ora ?? 'giorno');
+    if (prev.cassette !== this.props.cassette) this.game.setCassette(this.props.cassette ?? true);
+  }
+  componentWillUnmount() {
+    this._alive = false;
+    clearTimeout(this._t);
+    if (this.game) this.game.destroy();
+    if (this.audio) this.audio.ferma();
+  }
+  // stesso codice del Limoneto: moltiplicatore in centesimi, sigla della sessione, controllo
+  codiceEtna(m) {
+    if (!this._sigla) { const A = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; this._sigla = [0, 0, 0].map(() => A[Math.floor(Math.random() * 36)]).join(''); }
+    const k = Math.round((Math.min(4, Math.max(1, m)) - 1) * 100), n = this._sigla, t = k + ':' + n + ':limoneto-etna';
+    let h = 7; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+    return 'ETNA-' + k.toString(36).toUpperCase().padStart(2, '0') + n + (h % 1296).toString(36).toUpperCase().padStart(2, '0');
+  }
+  // prova a passare il codice alla scheda del Limoneto che ha aperto il circuito
+  inviaLimoneto(codice, extra) {
+    const msg = extra || { tipo: 'etna-cross-molt', codice }; let n = 0;
+    const visita = (w, d) => { if (!w || d > 4) return; try { w.postMessage(msg, '*'); n++; } catch (e) {} let k = 0; try { k = w.frames.length; } catch (e) {} for (let i = 0; i < k; i++) { try { visita(w.frames[i], d + 1); } catch (e) {} } };
+    try { if (window.opener) visita(window.opener, 0); } catch (e) {}
+    try { if (window.top && window.top.opener) visita(window.top.opener, 0); } catch (e) {}
+    try { if (window.parent && window.parent !== window) visita(window.parent, 0); } catch (e) {}
+    return n > 0;
+  }
+  avvioQ() { let q = null; try { q = new URLSearchParams(location.search).get('avvio'); } catch (e) {} return q || this.props.avvio || 'ripresa'; }
+  inLimoneto() { try { return window.parent && window.parent !== window; } catch (e) { return false; } }
+  tornaLimoneto(e) { if (!this.inLimoneto()) return; if (e && e.preventDefault) e.preventDefault(); try { if (this.audio) this.audio.muto(true); } catch (_) {} try { window.parent.postMessage({ tipo: 'etna-cross-chiudi' }, '*'); } catch (_) {} }
+  toggleAudio() {
+    if (!this.audio) return;
+    this.audio.sblocca();
+    const m = this.audio.muto(!this.audio.eMuto());
+    this.setState({ muto: m });
+  }
+  istruzioniAperte() {
+    const s = this.state || {};
+    if (s.istruzioni != null) return s.istruzioni;
+    try { return localStorage.getItem('etna-istruzioni-viste') !== '1'; } catch (e) { return true; }
+  }
+  renderVals() {
+    const s = this.state || {};
+    const cine = s.cine ?? (this.avvioQ() === 'ripresa');
+    const auto = s.auto ?? cine;
+    const refocus = () => { if (this._root) this._root.focus(); };
+    return {
+      kmh: s.kmh ?? 0,
+      lap: s.lap ?? '—',
+      time: s.time ?? '0:00.0',
+      last: s.last ?? '—',
+      best: s.best ?? '—',
+      moltTxt: s.moltTxt ?? '×1,00',
+      haCodice: (s.molt || 1) > 1.001,
+      codice: (s.molt || 1) > 1.001 ? this.codiceEtna(s.molt) : '',
+      statoCodice: s.inviato ? 'Inviato al Limoneto aperto. Se non arriva, copialo dal Menu.' : 'Copialo dal Menu e scrivilo nel Limoneto dopo la consegna.',
+      tornaLimoneto: (e) => this.tornaLimoneto(e),
+      copiaLabel: s.copiato ? 'Copiato' : 'Copia codice',
+      copiaCodice: () => { const c = this.codiceEtna(s.molt || 1); try { navigator.clipboard.writeText(c).then(() => this.setState({ copiato: true }), () => {}); } catch (e) {} if (this._root) this._root.focus(); },
+      msg: s.msg || '',
+      hasMsg: !!s.msg,
+      cam: s.cam || 'Inseguimento',
+      camLabel: cine ? 'Cambia inquadratura' : 'Camera: ' + (s.cam || 'Inseguimento'),
+      menuAperto: !!s.menu,
+      menuBtn: () => this.setState({ menu: !s.menu }),
+      shot: s.shot || 'Ripresa cinematica',
+      cine: cine,
+      notCine: !cine,
+      showTouch: !auto,
+      showHint: !s.focused && !cine && !this.istruzioniAperte() && !s.finita,
+      showIstruzioni: this.istruzioniAperte(),
+      audioLabel: s.muto ? 'Audio: no' : 'Audio: sì',
+      audioBtn: () => { this.toggleAudio(); if (this._root) this._root.focus(); },
+      apriIstruzioni: () => this.setState({ istruzioni: true, menu: false }),
+      chiudiIstruzioni: () => { try { localStorage.setItem('etna-istruzioni-viste', '1'); } catch (e) {} this.setState({ istruzioni: false }); if (this._root) this._root.focus(); },
+      finita: !!s.finita,
+      totale: s.totale || '',
+      tempiTxt: (s.tempi || []).map((t, i) => 'Giro ' + (i + 1) + ': ' + t).join(' · '),
+      senzaCodice: !((s.molt || 1) > 1.001),
+      nuovaGara: () => { if (this.game) { this.game.nuovaGara(); this._sigla = null; this._moltInviato = null; this._tempoInviato = false; this.setState({ copiato: false, inviato: false }); if (this._root) this._root.focus(); } },
+      cineBtn: () => { if (this.game) { this.game.toggleCine(); this.setState({ menu: false }); refocus(); } },
+      camBtn: () => { if (this.game) { this.game.cycleCam(); refocus(); } },
+      resetBtn: () => { if (this.game) { this.game.reset(); this.setState({ menu: false }); refocus(); } }
+    };
+  }
+}
 </script>
 </body>
 </html>
