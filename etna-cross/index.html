@@ -25,6 +25,15 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 .etna-btn:active{background:rgba(224,112,44,0.75)}
 .etna-mi{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:#f4efe9;font-family:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;box-sizing:border-box}
 .etna-mi:hover,.etna-mi:focus-visible{background:rgba(224,112,44,0.28);outline:none}
+@media (pointer:coarse),(max-width:900px){
+[data-etna-pad]{left:calc(8px + env(safe-area-inset-left))!important;right:calc(8px + env(safe-area-inset-right))!important}
+[data-etna-pad] > div{gap:clamp(6px,2.2vw,14px)!important}
+[data-etna-btn="left"],[data-etna-btn="right"]{width:clamp(60px,19vw,84px)!important;height:clamp(60px,19vw,84px)!important}
+[data-etna-btn="down"]{width:clamp(64px,20vw,92px)!important;height:clamp(60px,19vw,84px)!important;font-size:clamp(14px,4vw,18px)!important}
+[data-etna-btn="up"]{width:clamp(72px,24vw,112px)!important;height:clamp(68px,22vw,96px)!important;font-size:clamp(15px,4.4vw,20px)!important}
+[data-etna-btn] svg{width:clamp(26px,8vw,34px)!important;height:clamp(26px,8vw,34px)!important}
+[data-etna-pad] > span{display:none!important}
+}
 .etna-k{font-size:11px;font-weight:700;color:#c9bfb6;border:1px solid rgba(255,255,255,0.22);border-radius:3px;padding:1px 5px}
 </style>
 </helmet>
@@ -158,19 +167,19 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 </sc-if>
 
 <sc-if value="{{showTouch}}" hint-placeholder-val="{{false}}">
-<div style="position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; pointer-events: none">
+<div data-etna-pad="1" style="position: absolute; left: calc(10px + env(safe-area-inset-left)); right: calc(10px + env(safe-area-inset-right)); bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; pointer-events: none">
 <div style="display: flex; gap: 10px; pointer-events: auto">
-<button class="etna-btn" data-etna-btn="left" aria-label="Sterza a sinistra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<button class="etna-btn" data-etna-btn="left" aria-label="Sterza a sinistra" style="width: 56px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
 </button>
-<button class="etna-btn" data-etna-btn="right" aria-label="Sterza a destra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<button class="etna-btn" data-etna-btn="right" aria-label="Sterza a destra" style="width: 56px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
 </button>
 </div>
 <span style="font-size: 11px; color: #e8e0d8; padding: 4px 8px; background: rgba(20,17,16,0.55); border-radius: 4px; text-align: center">Frecce / WASD · R · C · V · M</span>
 <div style="display: flex; gap: 10px; pointer-events: auto">
-<button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
-<button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
+<button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
+<button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; touch-action: none; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
 </div>
 </div>
 </sc-if>

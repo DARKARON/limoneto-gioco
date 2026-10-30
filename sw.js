@@ -1,4 +1,4 @@
-const CACHE = 'limoneto-gioco-v86';
+const CACHE = 'limoneto-gioco-v89';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icona-192.png', './icona-512.png', './icona-maskable.png'];
 
 self.addEventListener('install', (e) => {
