@@ -129,6 +129,17 @@ let seed=7;const rnd=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^se
 // ---------- scena ----------
 const ren=new T.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(mob?1.6:2,devicePixelRatio||1));ren.shadowMap.enabled=true;ren.shadowMap.type=T.PCFSoftShadowMap;
 document.body.prepend(ren.domElement);
+function provaTexture(ren){try{const rt=new T.WebGLRenderTarget(8,8),c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#ff0000';x.fillRect(0,0,256,256);
+  const tx=new T.CanvasTexture(c);tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.anisotropy=4;tx.encoding=T.sRGBEncoding;const sc=new T.Scene();sc.add(new T.AmbientLight(0xffffff,1));
+  const cam=new T.OrthographicCamera(-1,1,1,-1,0,10);cam.position.z=5;const g=new T.PlaneGeometry(2,2),uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*130+300,uv.getY(i)*130+40);
+  const cc=new T.Color();ren.getClearColor(cc);const ca=ren.getClearAlpha(),px=new Uint8Array(256);let ok=true;
+  for(const M of [T.MeshPhongMaterial,T.MeshLambertMaterial,T.MeshStandardMaterial]){const m=new M({map:tx}),me=new T.Mesh(g,m);sc.add(me);ren.setRenderTarget(rt);ren.setClearColor(0x000000,1);ren.clear();ren.render(sc,cam);ren.readRenderTargetPixels(rt,0,0,8,8,px);sc.remove(me);m.dispose();if(px[4*27]<40)ok=false;}
+  ren.setRenderTarget(null);ren.setClearColor(cc,ca);rt.dispose();tx.dispose();g.dispose();return ok;}catch(e){return true;}}
+const __sempM=new WeakSet(),__sempC=new WeakMap();
+function semplifica(scene,lin){scene.traverse(o=>{if(!o.isMesh)return;(Array.isArray(o.material)?o.material:[o.material]).forEach(mt=>{if(!mt||__sempM.has(mt)||!mt.map||!mt.color||mt.isShaderMaterial)return;__sempM.add(mt);const t=mt.map;if(t.wrapS!==T.RepeatWrapping)return;
+  let a=__sempC.get(t);if(!a){a=new T.Color(0.8,0.8,0.8);try{const im=t.image,c=document.createElement('canvas');c.width=c.height=8;const x=c.getContext('2d');x.drawImage(im,0,0,8,8);const d=x.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}a.setRGB(r/64/255,g/64/255,b/64/255);if(lin&&t.encoding===T.sRGBEncoding)a.convertSRGBToLinear();}catch(e){}__sempC.set(t,a);}
+  mt.color.multiply(a);mt.map=null;mt.needsUpdate=true;});});}
+const SEMP=(/[?&]grafica=semplice/.test(location.search)||(()=>{try{return localStorage.getItem('limoneto-grafica')==='semplice';}catch(e){return false;}})())||ren.capabilities.precision!=='highp'||!provaTexture(ren);window.__graficaSemplice=SEMP;
 const sc=new T.Scene();sc.fog=new T.Fog(0xCBEAF7,45,150);
 const cam=new T.PerspectiveCamera(60,1,0.1,900);
 sc.add(new T.HemisphereLight(0xE4F4FF,0x6E9A40,0.75));
@@ -358,7 +369,7 @@ function fmt(t){const m=Math.floor(t/60),s=t-m*60;return m+':'+(s<10?'0':'')+s.t
 function msg(t){const m=$('msg');m.textContent=t;m.style.opacity=1;msgT=1.3;}
 function hudCuori(){[...$('cuori').children].forEach((c,i)=>c.className=i<cuori?'':'perso');}
 function piuZagare(n){presi+=n;$('zag').textContent=presi;}
-function reset(){costruisci();LC.g.visible=!!CFG.bonus;B.gv.visible=!CFG.bonus;B.cocc.visible=!CFG.bonus;PROI.forEach(p=>{p.vivo=false;p.m.visible=false;});ricarica=0;colpi=0;sb=0;xb=0;vx=0;v=0;cuori=3;inv=0;lento=0;tempo=0;presi=0;urti=0;turbo=0;aria=false;by=0;vby=0;ventoT=0;inRap=null;$('zag').textContent='0';hudCuori();}
+function reset(){costruisci();if(SEMP)semplifica(sc,false);LC.g.visible=!!CFG.bonus;B.gv.visible=!CFG.bonus;B.cocc.visible=!CFG.bonus;PROI.forEach(p=>{p.vivo=false;p.m.visible=false;});ricarica=0;colpi=0;sb=0;xb=0;vx=0;v=0;cuori=3;inv=0;lento=0;tempo=0;presi=0;urti=0;turbo=0;aria=false;by=0;vby=0;ventoT=0;inRap=null;$('zag').textContent='0';hudCuori();}
 async function parti(){audio();if(AC&&AC.state==='suspended')AC.resume();await chiediGiro();reset();['vInizio','vFine','vPausa'].forEach(i=>$(i).hidden=true);$('hud').hidden=false;$('prog').hidden=false;$('btnP').style.display='block';
   stato='conto';conto=3.2;setTimeout(()=>{if(mob&&!haGiro){['padL','padR'].forEach(i=>$(i).style.display='flex');}if(mob&&CFG.bonus)$('padF').style.display='flex';if(mob){const av=$('avTilt');$('avTiltT').textContent=haGiro?'Inclina il cellulare a destra e a sinistra per muovere la barchetta':'Tieni premuto ◀ ▶ per muovere la barchetta';av.style.display='flex';clearTimeout(window.__avT);window.__avT=setTimeout(()=>av.style.display='none',4000);}const ai=$('aiuto');ai.textContent=(mob?(haGiro?'Inclina il telefono per guidare':'Tieni premuto ◀ ▶ per guidare'):'Frecce ← → per guidare')+(CFG.bonus?(mob?' · tocca 🍋 per sparare':' · Spazio per sparare'):'');ai.style.display='block';setTimeout(()=>ai.style.display='none',3500);},900);}
 function pausa(on){if(on&&(stato==='gara'||stato==='conto')){stato='pausa';$('vPausa').hidden=false;}else if(!on&&stato==='pausa'){$('vPausa').hidden=true;stato=conto>0?'conto':'gara';last=performance.now();}}
