@@ -269,7 +269,7 @@ class Component extends DCLogic {
   }
   avvioQ() { let q = null; try { q = new URLSearchParams(location.search).get('avvio'); } catch (e) {} return q || this.props.avvio || 'ripresa'; }
   inLimoneto() { try { return window.parent && window.parent !== window; } catch (e) { return false; } }
-  tornaLimoneto(e) { if (!this.inLimoneto()) return; if (e && e.preventDefault) e.preventDefault(); try { if (this.audio) this.audio.muto(true); } catch (_) {} try { window.parent.postMessage({ tipo: 'etna-cross-chiudi' }, '*'); } catch (_) {} }
+  tornaLimoneto(e) { if (!this.inLimoneto()) return; if (e && e.preventDefault) e.preventDefault(); try { if (this.audio) this.audio.muto(true); } catch (_) {} let ok = false; try { if (window.parent.__chiudiMinigioco) { window.parent.__chiudiMinigioco(); ok = true; } } catch (_) {} if (!ok) { try { window.parent.postMessage({ tipo: 'etna-cross-chiudi' }, '*'); } catch (_) {} } }
   toggleAudio() {
     if (!this.audio) return;
     this.audio.sblocca();
