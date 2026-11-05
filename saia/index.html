@@ -43,6 +43,7 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%}
 .livelli{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .liv{display:block;width:100%;box-sizing:border-box;white-space:normal;padding:10px 12px;border:3px solid #cfe3c4;border-radius:18px;background:#f6fbf2;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700;text-align:left;color:#1f3d17;min-height:70px;touch-action:manipulation}
 .liv b{display:block;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;line-height:1.15}.liv span{display:block;font-size:14px;line-height:1.3;color:#5b6b52;margin-top:2px}.liv i{display:block;font-style:normal;font-size:13px;line-height:1.2;letter-spacing:3px;color:#d99a00;margin-top:2px}
+.liv.lock{opacity:.55;cursor:not-allowed}
 .liv.bonus{grid-column:1 / -1;background:#fff8dc;border-color:#f2c94c}.liv.bonus b{color:#8a5a00}
 .liv.sel{border-color:#3f9a3a;background:#fff3c4;box-shadow:0 4px 0 rgba(0,0,0,.15)}
 [hidden]{display:none!important}
@@ -112,9 +113,14 @@ const LIV=[
     pool:p=>p<0.12?[['sasso',3],['rana',2],['anatra',1]]:[['sasso',2],['duesassi',2],['rametto',2],['rana',1],['chiusa',2],['anatra',2],['pesce',1]]},
   {nome:'Regata dell\'Etna',sotto:'Campione',desc:'Tutto il percorso: barchette avversarie da sorpassare, anatre, pesci, rapide, cascate e vento.',L:620,v0:5,v1:8.8,gap:[15,9],casc:[{s:178,d:0.9},{s:388,d:0.9},{s:545,d:1.0}],rap:[{s0:262,s1:300},{s0:452,s1:492}],vento:[{s:118,dir:1},{s:335,dir:-1},{s:505,dir:1}],turbo:[140,350,515],cuori:[320,425],
     pool:p=>p<0.1?[['sasso',3],['rana',2],['anatra',1]]:p<0.3?[['sasso',3],['rametto',2],['rana',2],['chiusa',2],['anatra',2],['pesce',1],['rivale',1]]:[['sasso',2],['duesassi',2],['rametto',2],['rana',1],['chiusa',2],['anatre',2],['pesce',2],['rivale',2]]}];
-LIV.push({nome:'Limo cannoniere',sotto:'Livello bonus',bonus:true,desc:'Limo sale a bordo con il suo cannoncino! Spara limoni contro sassi, rametti, botti e chiuse per farli volare via. I bersagli valgono 3 zagare.',L:520,v0:4.6,v1:7,gap:[11,8],casc:[],rap:[],vento:[],turbo:[],cuori:[180,360],
+LIV.push({nome:'Limo cannoniere',sotto:'Livello bonus',bonus:true,desc:'Limo sale a bordo con il suo cannoncino! Spara limoni contro rametti, botti e bersagli per farli volare via (i bersagli valgono 3 zagare). Sassi e chiuse di legno sono troppo duri: schivali!',L:520,v0:4.6,v1:7,gap:[11,8],casc:[],rap:[],vento:[],turbo:[],cuori:[180,360],
   pool:p=>p<0.12?[['sasso',3],['botte',3],['bersaglio',2]]:[['sasso',3],['duesassi',2],['rametto',2],['chiusa',2],['botte',3],['bersaglio',3]]});
+LIV.push({nome:'Il Gatto Pirata',sotto:'Livello segreto',bonus:true,pirata:true,desc:'Tre tratti di saia separati da due cascate: in ognuno ti aspetta un Gatto Pirata, ogni volta più forte. Ti lancia botti per sbarrarti la strada: affondalo a colpi di limone prima che salti giù dalla cascata!',L:600,v0:4.6,v1:6.8,gap:[14,11],casc:[{s:200,d:1.0},{s:400,d:1.0}],rap:[],vento:[],turbo:[],cuori:[200,400],
+  pool:p=>[['sasso',3],['duesassi',2],['rametto',2],['botte',1]]});
+var PIR=null,avvisoDuro=false,pirOnd=0,pirAff=0,pirAtt=0;
+function pirataOk(){try{return localStorage.getItem('saia-pirata')==='1'||/[?&]pirata=1/.test(location.search);}catch(e){return false;}}
 let LV=Math.max(0,Math.min(LIV.length-1,+(localStorage.getItem('saia-livello')||0)||0)),CFG,L,CASC,RAP,VENTO,TURBO,CUORI;
+if(LIV[LV].pirata&&!pirataOk())LV=4;
 function applicaLivello(i){LV=i;CFG=LIV[i];L=CFG.L;CASC=CFG.casc.map(c=>({...c}));RAP=CFG.rap.map(r=>({...r}));VENTO=CFG.vento.map(v=>({...v}));TURBO=CFG.turbo.slice();CUORI=CFG.cuori.slice();}
 applicaLivello(LV);
 const sm=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -139,7 +145,7 @@ const __sempM=new WeakSet(),__sempC=new WeakMap();
 function semplifica(scene,lin){scene.traverse(o=>{if(!o.isMesh)return;(Array.isArray(o.material)?o.material:[o.material]).forEach(mt=>{if(!mt||__sempM.has(mt)||!mt.map||!mt.color||mt.isShaderMaterial)return;__sempM.add(mt);const t=mt.map;if(t.wrapS!==T.RepeatWrapping)return;
   let a=__sempC.get(t);if(!a){a=new T.Color(0.8,0.8,0.8);try{const im=t.image,c=document.createElement('canvas');c.width=c.height=8;const x=c.getContext('2d');x.drawImage(im,0,0,8,8);const d=x.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}a.setRGB(r/64/255,g/64/255,b/64/255);if(lin&&t.encoding===T.sRGBEncoding)a.convertSRGBToLinear();}catch(e){}__sempC.set(t,a);}
   mt.color.multiply(a);mt.map=null;mt.needsUpdate=true;});});}
-const SEMP=(/[?&]grafica=semplice/.test(location.search)||(()=>{try{return localStorage.getItem('limoneto-grafica')==='semplice';}catch(e){return false;}})())||ren.capabilities.precision!=='highp'||!provaTexture(ren);window.__graficaSemplice=SEMP;
+const SEMP=(/[?&]grafica=semplice/.test(location.search)||(()=>{try{return localStorage.getItem('limoneto-grafica')==='semplice';}catch(e){return false;}})())||ren.capabilities.precision!=='highp'||!provaTexture(ren);window.__graficaSemplice=SEMP;window.SEMP=SEMP;
 const sc=new T.Scene();sc.fog=new T.Fog(0xCBEAF7,45,150);
 const cam=new T.PerspectiveCamera(60,1,0.1,900);
 sc.add(new T.HemisphereLight(0xE4F4FF,0x6E9A40,0.75));
@@ -250,6 +256,28 @@ function limoCannone(){const g=new T.Group(),ar=Lm(0xD9822B),bi=Lm(0xFFF6E8),ne=
   const ba=new T.Group(),bs=new T.Mesh(new T.CylinderGeometry(0.005,0.005,0.3,4),Lm(0x7A5A3F));bs.position.y=0.15;ba.add(bs);const bf=new T.Mesh(new T.PlaneGeometry(0.12,0.08),new T.MeshLambertMaterial({color:0xFFD43B,side:T.DoubleSide}));bf.position.set(0.06,0.26,0);ba.add(bf);ba.position.set(0,0.17,0.4);g.add(ba);
   g.visible=false;return{g,ca,fl,te};}
 const LC=limoCannone();B.g.add(LC.g);
+const PIRO=[{hp:6,vela:0x1a1a1a,sc:1.2,drop:[1.8,1.6],doppia:0,ws:0.9,premio:10},{hp:8,vela:0x7A0F0F,sc:1.3,drop:[1.4,1.2],doppia:0.3,ws:1.2,premio:15},{hp:10,vela:0x2B1A4A,sc:1.42,drop:[1.1,0.9],doppia:0.55,ws:1.5,premio:20}];
+function creaPirata(s){const P0=PIRO[pirOnd],bb=barchetta(P0.vela,0xFFC83D,0xB08A5A);bb.cocc.visible=false;const gp=gattoPirata();bb.g.add(gp);bb.g.scale.setScalar(P0.sc);metti(bb.g,s,0,0);PIR={s,c:0,r:0.3*P0.sc/1.2,lung:0.9*P0.sc/1.2,m:bb.g,gv:bb.gv,gatto:gp,pirata:true,hp:P0.hp,hp0:P0.hp,drop:2.5,ph:0,cfg:P0};ostacoli.push(PIR);if(window.SEMP)semplifica(sc,false);}
+function gattoPirata(){const g=new T.Group(),pe=Lm(0x55525E),bi=Lm(0xF2F2F2),ne=Lm(0x111111);
+  const c=new T.Mesh(new T.SphereGeometry(1,14,10),pe);c.scale.set(0.09,0.085,0.1);c.position.set(0,0.27,0.2);c.castShadow=true;g.add(c);
+  const pt=new T.Mesh(new T.SphereGeometry(1,12,8),bi);pt.scale.set(0.055,0.06,0.04);pt.position.set(0,0.27,0.27);g.add(pt);
+  const cd=new T.Mesh(new T.TorusGeometry(0.08,0.016,6,12,Math.PI),pe);cd.rotation.y=Math.PI/2;cd.position.set(0,0.27,0.12);g.add(cd);
+  const te=new T.Group();te.position.set(0,0.41,0.22);g.add(te);
+  const tt=new T.Mesh(new T.SphereGeometry(0.08,14,10),pe);tt.castShadow=true;te.add(tt);
+  const mu=new T.Mesh(new T.SphereGeometry(1,12,8),bi);mu.scale.set(0.045,0.03,0.03);mu.position.set(0,-0.025,0.065);te.add(mu);
+  const na=new T.Mesh(new T.SphereGeometry(0.012,8,6),Lm(0xE8667A));na.position.set(0,-0.008,0.09);te.add(na);
+  const oc=new T.Mesh(new T.SphereGeometry(0.017,8,6),Lm(0xFFD43B));oc.position.set(0.032,0.02,0.068);te.add(oc);const pu=new T.Mesh(new T.SphereGeometry(0.008,6,4),ne);pu.position.set(0.032,0.02,0.084);te.add(pu);
+  const ben=new T.Mesh(new T.CylinderGeometry(0.025,0.025,0.01,12),ne);ben.rotation.x=Math.PI/2;ben.position.set(-0.032,0.02,0.074);te.add(ben);
+  const lac=new T.Mesh(new T.TorusGeometry(0.081,0.004,4,24),ne);lac.rotation.set(0.35,0,0.5);te.add(lac);
+  [-1,1].forEach(s=>{const o=new T.Mesh(new T.ConeGeometry(0.028,0.07,4),pe);o.position.set(s*0.07,0.05,0);o.rotation.z=-s*0.7;te.add(o);
+    const b=new T.Mesh(new T.BoxGeometry(0.06,0.003,0.003),bi);b.position.set(s*0.06,-0.022,0.07);b.rotation.z=s*0.15;te.add(b);});
+  const ala=new T.Mesh(new T.CylinderGeometry(0.12,0.12,0.015,3),ne);ala.position.y=0.075;ala.rotation.y=Math.PI;te.add(ala);
+  const cap=new T.Mesh(new T.CylinderGeometry(0.05,0.065,0.06,12),ne);cap.position.y=0.105;te.add(cap);
+  const tes=new T.Mesh(new T.SphereGeometry(0.016,8,6),bi);tes.position.set(0,0.105,0.062);te.add(tes);
+  const pa=new T.Mesh(new T.CylinderGeometry(0.006,0.006,0.4,4),Lm(0x7A5A3F));pa.position.set(0.13,0.38,0.3);g.add(pa);
+  const ba=new T.Mesh(new T.PlaneGeometry(0.16,0.1),new T.MeshLambertMaterial({color:0x111111,side:T.DoubleSide}));ba.position.set(0.21,0.53,0.3);g.add(ba);
+  const ts=new T.Mesh(new T.CircleGeometry(0.022,12),new T.MeshBasicMaterial({color:0xffffff,side:T.DoubleSide}));ts.position.set(0.21,0.535,0.302);g.add(ts);
+  return g;}
 function botte(){const g=new T.Group(),m=new T.Mesh(new T.CylinderGeometry(0.24,0.24,0.5,16),Lm(0x9A6A3C));m.rotation.z=Math.PI/2;m.castShadow=true;g.add(m);
   [-0.17,0,0.17].forEach(x=>{const f=new T.Mesh(new T.CylinderGeometry(0.255,0.255,0.04,16),Lm(0x4a4a4a));f.rotation.z=Math.PI/2;f.position.x=x;g.add(f);});g.position.y=0.05;const w=new T.Group();w.add(g);return w;}
 function bersaglio(){const g=new T.Group();[[0.3,0xE23B2E],[0.22,0xFFFFFF],[0.14,0xE23B2E],[0.06,0xFFFFFF]].forEach(([r,c],i)=>[-1,1].forEach(sd=>{const d=new T.Mesh(new T.CylinderGeometry(r,r,0.04,24),Lm(c));d.rotation.x=Math.PI/2;d.position.set(0,0.4,sd*0.01*i);g.add(d);}));
@@ -323,6 +351,7 @@ function costruisci(){while(gruppoLivello.children.length)gruppoLivello.remove(g
     else if(tipo==='bersaglio'){const x=(rnd()*2-1)*0.7,m=metti(bersaglio(),s,x,0,0);ostacoli.push({s,c:x,r:0.28,m,bersaglio:true,galleggia:true,ph:rnd()*6});}
     else{const gw=0.95+0.25*(1-p),gc=(rnd()*2-1)*(HW-gw/2-0.12),m=metti(chiusa(gc,gw),s,0,0);ostacoli.push({s,blk:[[-HW,gc-gw/2],[gc+gw/2,HW]],d:0.12,m});Z(s-4,gc*0.5);Z(s-2,gc);Z(s,gc);}
     s+=(CFG.gap[0]+(CFG.gap[1]-CFG.gap[0])*p)*(0.85+rnd()*0.35);}
+  PIR=null;pirOnd=0;pirAff=0;pirAtt=0;if(CFG.pirata)creaPirata(14);
   RAP.forEach(r=>{metti(cartello('RAPIDE'),r.s0-9,HW+0.7,0.2,-0.4);let k=1;for(let q=r.s0+4;q<r.s1-3;q+=6.5){const m=metti(sasso(0.27),q,k*0.55,0.02,rnd()*6);ostacoli.push({s:q,c:k*0.55,r:0.27,m});Z(q,-k*0.55);k=-k;}});
   CASC.forEach(c=>{metti(cartello('CASCATA'),c.s-10,-HW-0.7,0.2,0.4);const vt=CFG.v0+(CFG.v1-CFG.v0)*(c.s/L),h0=H(c.s-0.1);[1.2,2.5,3.8].forEach((d,i)=>{const t=d/vt,y=h0+0.18+2.4*t-4.5*t*t;Z(c.s+d,(i-1)*0.25,y);});});
   TURBO.forEach(q=>{const x=(rnd()*2-1)*0.6,m=metti(limoneOro(),q,x,0.35);premi.push({tipo:'turbo',s:q,x,m,preso:false,b:rnd()*6});});
@@ -345,7 +374,7 @@ function rumore(d,f,v,q){if(!AC||!NB)return;const t=AC.currentTime,s=AC.createBu
 const SU={zagara:()=>{tono(880,0.12,'sine',0.12);tono(1320,0.18,'sine',0.1,null,0.07);},botta:()=>{tono(180,0.3,'sine',0.3,60);tono(90,0.25,'triangle',0.2,50);},bip:()=>tono(660,0.15,'square',0.07),via:()=>tono(990,0.35,'square',0.08),
   qua:()=>{tono(560,0.1,'sawtooth',0.1,380);tono(520,0.12,'sawtooth',0.1,340,0.15);},splash:()=>{rumore(0.6,900,0.35);tono(140,0.25,'sine',0.18,60);},salto:()=>tono(280,0.35,'sine',0.12,760),vento:()=>rumore(1.6,500,0.18,0.5),
   turbo:()=>{tono(300,0.6,'sawtooth',0.06,1300);[784,1047,1319].forEach((f,i)=>tono(f,0.2,'triangle',0.1,null,0.1+i*0.08));},sorpasso:()=>[784,988,1175].forEach((f,i)=>tono(f,0.16,'triangle',0.11,null,i*0.07)),
-  cuore:()=>[660,880,1100].forEach((f,i)=>tono(f,0.2,'sine',0.12,null,i*0.09)),sparo:()=>{tono(160,0.18,'square',0.1,55);rumore(0.25,1400,0.22);},pow:()=>{tono(220,0.2,'square',0.08,90);rumore(0.3,1500,0.2);},
+  cuore:()=>[660,880,1100].forEach((f,i)=>tono(f,0.2,'sine',0.12,null,i*0.09)),tonk:()=>tono(220,0.08,'square',0.06,120),miao:()=>tono(900,0.28,'triangle',0.09,420),sparo:()=>{tono(160,0.18,'square',0.1,55);rumore(0.25,1400,0.22);},pow:()=>{tono(220,0.2,'square',0.08,90);rumore(0.3,1500,0.2);},
   fine:()=>[523,659,784,1047].forEach((f,i)=>tono(f,0.3,'triangle',0.13,null,i*0.13)),capovolta:()=>[392,330,262].forEach((f,i)=>tono(f,0.35,'triangle',0.12,null,i*0.18))};
 
 // ---------- comandi ----------
@@ -361,24 +390,25 @@ ren.domElement.addEventListener('pointerdown',()=>{if(CFG.bonus)spara();});
 
 // ---------- gara ----------
 let stato='menu',sb=0,xb=0,vx=0,v=0,cuori=3,inv=0,lento=0,tempo=0,presi=0,conto=0,urti=0,last=0,scuoti=0,msgT=0,turbo=0,aria=false,by=0,vby=0,ventoT=0,ventoD=0,inRap=null;
-function scegliLivello(i){if(stato!=='menu')return;localStorage.setItem('saia-livello',i);if(i!==mondoLV){applicaLivello(i);costruisciMondo();costruisci();mondoLV=i;}else applicaLivello(i);mostraLivelli();}
-function mostraLivelli(){const el=$('livelli');el.innerHTML=LIV.map((c,i)=>'<button class="liv'+(c.bonus?' bonus':'')+(i===LV?' sel':'')+'" data-i="'+i+'" aria-pressed="'+(i===LV)+'"><b>'+(c.bonus?'★ ':(i+1)+'. ')+c.nome+'</b><span>'+c.sotto+'</span><i>'+(c.bonus?'Spara con il cannoncino':'●'.repeat(i+1)+'○'.repeat(3-i))+'</i></button>').join('');
+function scegliLivello(i){if(stato!=='menu')return;if(LIV[i].pirata&&!pirataOk()){$('lvDesc').textContent='Arriva al traguardo di Limo cannoniere per sbloccare il Gatto Pirata.';return;}localStorage.setItem('saia-livello',i);if(i!==mondoLV){applicaLivello(i);costruisciMondo();costruisci();mondoLV=i;}else applicaLivello(i);mostraLivelli();}
+function mostraLivelli(){const el=$('livelli'),ok=pirataOk();el.innerHTML=LIV.map((c,i)=>{const lock=c.pirata&&!ok;return '<button class="liv'+(c.bonus?' bonus':'')+(lock?' lock':'')+(i===LV?' sel':'')+'" data-i="'+i+'" aria-pressed="'+(i===LV)+'"'+(lock?' aria-disabled="true"':'')+'><b>'+(lock?'🔒 ':c.pirata?'🏴‍☠️ ':c.bonus?'★ ':(i+1)+'. ')+c.nome+'</b><span>'+(lock?'Finisci Limo cannoniere per sbloccarlo':c.sotto)+'</span><i>'+(c.pirata?'Sfida il gatto pirata':c.bonus?'Spara con il cannoncino':'●'.repeat(i+1)+'○'.repeat(3-i))+'</i></button>';}).join('');
   el.querySelectorAll('.liv').forEach(b=>b.onclick=()=>scegliLivello(+b.dataset.i));$('lvDesc').textContent=CFG.desc;const r=+localStorage.getItem('saia-record-'+LV)||0;$('record').textContent=r?'Il tuo record in '+CFG.nome+': '+fmt(r):'';}
 setTimeout(mostraLivelli,0);
 function fmt(t){const m=Math.floor(t/60),s=t-m*60;return m+':'+(s<10?'0':'')+s.toFixed(1);}
 function msg(t){const m=$('msg');m.textContent=t;m.style.opacity=1;msgT=1.3;}
 function hudCuori(){[...$('cuori').children].forEach((c,i)=>c.className=i<cuori?'':'perso');}
 function piuZagare(n){presi+=n;$('zag').textContent=presi;}
-function reset(){costruisci();if(SEMP)semplifica(sc,false);LC.g.visible=!!CFG.bonus;B.gv.visible=!CFG.bonus;B.cocc.visible=!CFG.bonus;PROI.forEach(p=>{p.vivo=false;p.m.visible=false;});ricarica=0;colpi=0;sb=0;xb=0;vx=0;v=0;cuori=3;inv=0;lento=0;tempo=0;presi=0;urti=0;turbo=0;aria=false;by=0;vby=0;ventoT=0;inRap=null;$('zag').textContent='0';hudCuori();}
+function reset(){costruisci();avvisoDuro=false;if(SEMP)semplifica(sc,false);LC.g.visible=!!CFG.bonus;B.gv.visible=!CFG.bonus;B.cocc.visible=!CFG.bonus;PROI.forEach(p=>{p.vivo=false;p.m.visible=false;});ricarica=0;colpi=0;sb=0;xb=0;vx=0;v=0;cuori=3;inv=0;lento=0;tempo=0;presi=0;urti=0;turbo=0;aria=false;by=0;vby=0;ventoT=0;inRap=null;$('zag').textContent='0';hudCuori();}
 async function parti(){audio();if(AC&&AC.state==='suspended')AC.resume();await chiediGiro();reset();['vInizio','vFine','vPausa'].forEach(i=>$(i).hidden=true);$('hud').hidden=false;$('prog').hidden=false;$('btnP').style.display='block';
   stato='conto';conto=3.2;setTimeout(()=>{if(mob&&!haGiro){['padL','padR'].forEach(i=>$(i).style.display='flex');}if(mob&&CFG.bonus)$('padF').style.display='flex';if(mob){const av=$('avTilt');$('avTiltT').textContent=haGiro?'Inclina il cellulare a destra e a sinistra per muovere la barchetta':'Tieni premuto ◀ ▶ per muovere la barchetta';av.style.display='flex';clearTimeout(window.__avT);window.__avT=setTimeout(()=>av.style.display='none',4000);}const ai=$('aiuto');ai.textContent=(mob?(haGiro?'Inclina il telefono per guidare':'Tieni premuto ◀ ▶ per guidare'):'Frecce ← → per guidare')+(CFG.bonus?(mob?' · tocca 🍋 per sparare':' · Spazio per sparare'):'');ai.style.display='block';setTimeout(()=>ai.style.display='none',3500);},900);}
 function pausa(on){if(on&&(stato==='gara'||stato==='conto')){stato='pausa';$('vPausa').hidden=false;}else if(!on&&stato==='pausa'){$('vPausa').hidden=true;stato=conto>0?'conto':'gara';last=performance.now();}}
 function fine(arrivato){stato='fine';$('btnP').style.display='none';['padL','padR','padF','avTilt'].forEach(i=>$(i).style.display='none');if(acquaG)acquaG.gain.value=0;B.alone.visible=false;
   const tot=zagare.length,st=[arrivato,arrivato&&presi>=Math.ceil(tot/2),arrivato&&cuori===3];const nst=st.filter(Boolean).length;
   let nuovo=false;if(arrivato){const kk='saia-record-'+LV,r0=+localStorage.getItem(kk)||0;if(!r0||tempo<r0){localStorage.setItem(kk,tempo);nuovo=true;}}
+  let sblocco=false;if(arrivato&&CFG.bonus&&!CFG.pirata&&!pirataOk()){try{localStorage.setItem('saia-pirata','1');}catch(e){}sblocco=true;}
   $('fK').textContent=(arrivato?'Traguardo':'Oh no!')+' · '+CFG.nome;$('fT').textContent=arrivato?(nst===3?'Regata perfetta!':'Sei arrivato!'):'La barchetta si è rovesciata';
   [...$('fStelle').children].forEach((c,i)=>c.className=st[i]?'':'no');
-  $('fP').textContent=(arrivato?'Tempo '+fmt(tempo)+(nuovo?' · nuovo record! ':' · '):'Sei arrivato a '+Math.round(sb)+' m su '+L+'. ')+'Zagare raccolte: '+presi+'.'+(CFG.bonus?' Bersagli colpiti da Limo: '+colpi+'.':'');
+  $('fP').textContent=(arrivato?'Tempo '+fmt(tempo)+(nuovo?' · nuovo record! ':' · '):'Sei arrivato a '+Math.round(sb)+' m su '+L+'. ')+'Zagare raccolte: '+presi+'.'+(CFG.bonus?' Bersagli colpiti da Limo: '+colpi+'.':'')+(CFG.pirata?(pirAff>=3?' Hai sconfitto il Gatto Pirata tutte e 3 le volte! 🏴‍☠️':' Gatto Pirata affondato '+pirAff+' volte su 3.'):'')+(sblocco?' Hai sbloccato il livello segreto: il Gatto Pirata! 🏴‍☠️':'');setTimeout(mostraLivelli,0);
   setTimeout(()=>{$('vFine').hidden=false;},arrivato?700:900);(arrivato?SU.fine:SU.capovolta)();
   manda({tipo:'saia-fine',arrivato,zagare:presi,totale:tot,stelle:nst,tempo:+tempo.toFixed(1),cuori,livello:LV+1});}
 const esci=()=>{try{AC&&AC.suspend();}catch(e){}if(!IN_LIM){location.href='../index.html';return;}let ok=false;try{if(parent.__chiudiMinigioco){parent.__chiudiMinigioco();ok=true;}}catch(e){}if(!ok)manda({tipo:'saia-chiudi'});};
@@ -388,8 +418,9 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)pausa(true)
 function vola(o){const f=frame(o.s);o.via={t:0,v:V(f.t.x*4+(Math.random()-0.5)*3,4.5+Math.random()*2,f.t.z*4+(Math.random()-0.5)*3),r:V(Math.random()*8,Math.random()*8,Math.random()*8)};}
 function spara(){if(!CFG.bonus||ricarica>0||!(stato==='gara'||(stato==='conto'&&conto<=0)))return;const p=PROI.find(q=>!q.vivo);if(!p)return;ricarica=0.32;rinculo=0.12;flash=0.09;
   p.vivo=true;p.s=sb+0.5;p.x=xb;p.y=by+0.36;p.vy=0.9;p.t=0;p.m.visible=true;SU.sparo();}
-function colpitoDa(o,s,x){if(o.anatra||o.rana||o.pesce||o.rivale||o.colpito||o.via)return false;const ds=Math.abs(o.s-s);
-  if(o.r!=null)return ds<o.r+0.28&&Math.abs(o.c-x)<o.r+0.14;if(o.blk)return ds<0.45&&o.blk.some(([a,b])=>x+0.1>a&&x-0.1<b);return ds<0.45&&x+0.1>o.a&&x-0.1<o.b;}
+function colpitoDa(o,s,x){if(o.anatra||o.rana||o.pesce||o.rivale||o.via||(o.colpito&&!o.pirata))return false;const ds=Math.abs(o.s-s);let k=false;
+  if(o.r!=null)k=ds<o.r+(o.pirata?0.6:0.28)&&Math.abs(o.c-x)<o.r+0.14;else if(o.blk)k=ds<0.45&&o.blk.some(([a,b])=>x+0.1>a&&x-0.1<b);else k=ds<0.45&&x+0.1>o.a&&x-0.1<o.b;
+  if(!k)return false;return(o.blk||(o.r!=null&&!o.galleggia&&!o.pirata))?'duro':true;}
 function colpisce(o){const ds=Math.abs(o.s-sb);
   if(o.pesce)return o.vis&&o.y<0.38&&ds<0.35&&Math.abs(o.c-xb)<0.3;
   if(o.r!=null)return ds<o.r+(o.lung||0.3)&&Math.abs(o.c-xb)<o.r+0.16;
@@ -434,9 +465,19 @@ function step(dt){
   if(CFG.bonus){rinculo=Math.max(0,rinculo-dt);flash=Math.max(0,flash-dt);LC.ca.position.z=rinculo*0.5;LC.fl.material.opacity=flash>0?0.95:0;LC.te.rotation.y=Math.sin(t*2)*0.15;LC.te.rotation.x=rinculo>0?-0.2:Math.sin(t*5)*0.04;
     for(const p of PROI){if(!p.vivo)continue;p.t+=dt;p.s+=(14+v)*dt;p.vy-=2.2*dt;p.y+=p.vy*dt;const q=P(p.s,p.x,0);q.y=p.y;p.m.position.copy(q);p.m.rotation.x+=dt*10;
       if(Math.random()<0.6)spruzzo(q,V(0,0.1,0),0.3,0.1,0,0xFFE680);
-      let hit=null;for(const o of ostacoli){if(Math.abs(o.s-p.s)>1)continue;if(colpitoDa(o,p.s,p.x)){hit=o;break;}}
+      let hit=null,duro=false;for(const o of ostacoli){if(Math.abs(o.s-p.s)>1)continue;const r=colpitoDa(o,p.s,p.x);if(r){hit=o;duro=r==='duro';break;}}
+      if(hit&&duro){p.vivo=false;p.m.visible=false;botto(q,8,0xd8d8d8,0.5);SU.tonk();if(!avvisoDuro){avvisoDuro=true;msg(hit.blk?'Le chiuse di legno non si rompono!':'I sassi non si rompono: schivali!');}continue;}
+      if(hit&&hit.pirata){p.vivo=false;p.m.visible=false;hit.hp--;hit.hitT=0.35;botto(q,12,0xFFD43B,0.8);SU.miao();if(hit.hp<=0){vola(hit);hit.affondato=true;pirAff++;const pr=hit.cfg.premio;piuZagare(pr);if(pirOnd<2){msg('Affondato! +'+pr+' 🌼 Dopo la cascata ne arriva un altro!');}else msg('Hai sconfitto il Gatto Pirata! +'+pr+' 🌼');}else msg('Miao! Ancora '+hit.hp+(hit.hp===1?' colpo':' colpi'));continue;}
       if(hit){vola(hit);hit.colpito=true;p.vivo=false;p.m.visible=false;colpi++;const n=hit.bersaglio?3:1;piuZagare(n);msg(hit.bersaglio?'Centro! +3 🌼':'Colpito! +1 🌼');SU.pow();botto(q,12,0xFFD43B,0.8);continue;}
       if(p.t>1.4||p.y<H(p.s)){p.vivo=false;p.m.visible=false;botto(q,6,0xffffff,0.4);}}}
+  if(CFG.pirata&&stato==='gara')for(let k=1;k<=2;k++){const c=CASC[k-1];if(c&&pirOnd<k&&!aria&&sb>c.s+5){if(PIR&&!PIR.via){PIR.m.visible=false;PIR.via={t:9,v:V(0,0,0),r:V(0,0,0)};}pirOnd=k;creaPirata(sb+14);msg(k===1?'Tratto 2: arriva un Gatto Pirata più forte!':'Tratto 3: il Gatto Pirata più forte di tutti!');SU.miao();}}
+  if(PIR&&!PIR.via){const o=PIR;
+    if(o.colpito){o.cT=(o.cT||0)+dt;if(o.cT>1.4){o.colpito=false;o.cT=0;}}
+    if(stato==='gara'){const gap=o.s-sb,vp=o.s>L-6?v+3:Math.max(0,v+(7-gap)*0.9);o.s=Math.min(L+12,o.s+vp*dt);const cF=CASC[pirOnd];if(cF&&o.s>=cF.s-0.5){vola(o);o.scappato=true;msg('Il Gatto Pirata salta giù dalla cascata!');}
+      let tc=0.5*Math.sin(t*o.cfg.ws);for(const q of ostacoli){if(q===o||q.via)continue;const d=q.s-o.s;if(d<0||d>2.6)continue;if(q.r!=null&&Math.abs(q.c-tc)<0.62)tc=q.c>0?q.c-0.72:q.c+0.72;else if(q.a!=null&&tc>q.a-0.25&&tc<q.b+0.25)tc=q.a<0?(q.b+HW)/2:(q.a-HW)/2;}
+      tc=Math.max(-(HW-0.3),Math.min(HW-0.3,tc));o.c+=(tc-o.c)*Math.min(1,dt*3);
+      o.drop-=dt;if(o.drop<=0&&o.s<L-14&&gap>3&&!o.via&&!inZona(o.s-0.9)){o.drop=o.cfg.drop[0]+Math.random()*o.cfg.drop[1];const ds=o.s-0.9,xs=[o.c];if(Math.random()<o.cfg.doppia)xs.push(o.c>0?o.c-0.85:o.c+0.85);xs.forEach(x=>{const m=metti(botte(),ds,x,0,Math.random()*0.6-0.3);ostacoli.push({s:ds,c:x,r:0.3,m,galleggia:true,ph:Math.random()*6});});if(!o.avvisato){o.avvisato=true;msg('Arrr! Il Gatto Pirata lancia le botti!');}}}
+    o.hitT=Math.max(0,(o.hitT||0)-dt);posa(o.m,o.s,o.c,0.04+Math.sin(t*3)*0.015,0);o.m.rotation.z=Math.sin(t*1.9)*0.05+Math.sin(o.hitT*40)*o.hitT*0.6;o.gv.rotation.z=Math.sin(t*4)*0.03;o.gatto.rotation.y=Math.sin(t*1.3)*0.3;}
   // ostacoli che si muovono
   for(const o of ostacoli){if(Math.abs(o.s-sb)>70&&!o.via)continue;
     if(o.via){o.via.t+=dt;o.via.v.y-=9*dt;o.m.position.addScaledVector(o.via.v,dt);o.m.rotation.x+=o.via.r.x*dt;o.m.rotation.z+=o.via.r.z*dt;if(o.via.t>1.8)o.m.visible=false;continue;}
