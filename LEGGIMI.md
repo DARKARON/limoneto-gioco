@@ -45,8 +45,12 @@ Lo script è già compilato per il tuo foglio: legge email e password dalla sche
 5. Copia l'**URL dell'app web** (finisce con `/exec`).
 6. Apri `accesso-sito.json`, incolla l'URL tra le virgolette di `"url"` e caricalo su GitHub.
 
-Gli adottanti entrano con **la mail del pagamento e la password della mail di benvenuto**,
-le stesse dell'area riservata. I punteggi vanno nella scheda nuova **Classifica gioco**.
+Gli adottanti entrano con **le stesse credenziali dell'area riservata**: nome utente
+(oppure la mail) e password, lette dalla scheda **Adozioni**.
+
+**Aggiornare lo script** (dopo ogni modifica): incolla il codice nuovo nello stesso progetto,
+salva, poi **Esegui il deploy → Gestisci deployment → matita → Versione: Nuova versione →
+Esegui il deploy**. L'URL resta lo stesso. I punteggi vanno nella scheda nuova **Classifica gioco**.
 
 ## Accesso degli adottanti (a mano, se non usi il foglio)
 

@@ -6,10 +6,10 @@
 // Dopo aver incollato la nuova versione: Esegui il deploy → Gestisci deployment → matita → Versione: Nuova versione → Esegui il deploy (l'URL resta lo stesso).
 
 const ID_FOGLIO = '1xee5XFQl0FKTE9LpI_0EflihMvPwbujq_05hBisILiI';
-const SCHEDA_ADOZIONI = 'Adozioni';          // email, password, adottante, formula, albero…
+const SCHEDA_ADOZIONI = 'Adozioni';          // utente, password, email, adottante, formula, albero…
 const SCHEDA_ALBERI = 'Alberi';              // numero, email, nomePianta, nomeProposto, varieta…
 const ID_CLASSIFICA = '17UOMmpXewMmTkz7sxsm8vpTWiIVhKP2_TjTbVBAJDYM'; // Drive › SuperEtnaFood › Classifica Limoneto - Il gioco
-const MANSIONI = { irrigazione: 'Concimare e irrigare', potatura: 'Potare/trattamenti', raccolta: 'Raccogliere', erba: 'Tagliare l\'erba', concime: 'Concimare' };
+const MANSIONI = { irrigazione: 'Concimare e irrigare', potatura: 'Potare/trattamenti', raccolta: 'Raccogliere', erba: 'Tagliare l\'erba', concime: 'Concimare', etnacross: 'Etna Cross (2 giri)' };
 const SEGRETO = 'CAMBIA-QUESTA-FRASE-SEGRETA'; // scrivi una frase lunga qualsiasi e non dirla a nessuno
 
 function doPost(e) {
@@ -29,27 +29,35 @@ function norm(s) { return String(s == null ? '' : s).trim().toLowerCase(); }
 function firma(u) { return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(u, SEGRETO)); }
 function tabella(nome) {
   const sh = SpreadsheetApp.openById(ID_FOGLIO).getSheetByName(nome);
-  if (!sh) return { righe: [], col: () => -1 };
-  const v = sh.getDataRange().getValues(), h = v[0].map(norm);
-  return { righe: v.slice(1), col: k => h.indexOf(norm(k)) };
+  if (!sh) return { righe: [], testo: [], h: [], col: () => -1 };
+  const rg = sh.getDataRange(), v = rg.getValues(), t = rg.getDisplayValues(), h = v[0].map(norm);
+  return { righe: v.slice(1), testo: t.slice(1), h, col: k => h.indexOf(norm(k)) };
 }
+function colonne(A, prova) { return A.h.map((x, i) => prova(x.replace(/[\s_.-]+/g, '')) ? i : -1).filter(i => i >= 0); }
 
 function login(d) {
   const u = norm(d.utente), p = String(d.password || '').trim();
   if (!u || !p) return { ok: false };
-  const A = tabella(SCHEDA_ADOZIONI), ie = A.col('email'), ip = A.col('password');
-  const riga = A.righe.find(r => norm(r[ie]) === u && String(r[ip]).trim() === p);
-  if (!riga) return { ok: false };
+  // Stesse credenziali dell'area riservata: vale il nome utente OPPURE la mail, password come scritta nel foglio.
+  const A = tabella(SCHEDA_ADOZIONI);
+  const cu = colonne(A, x => /utente|user|login|email|mail/.test(x));
+  const cp = colonne(A, x => /password|pass|pwd|chiave/.test(x));
+  if (!cu.length || !cp.length) return { ok: false, errore: 'manca la colonna utente o password' };
+  const pari = (r, t, i) => String(r[i]).trim() === p || String(t[i]).trim() === p;
+  const k = A.righe.findIndex((r, n) => cu.some(i => norm(r[i]) === u || norm(A.testo[n][i]) === u) && cp.some(i => pari(r, A.testo[n], i)));
+  if (k < 0) return { ok: false };
+  const riga = A.righe[k];
+  const email = norm(riga[A.col('email')]);
   const val = (T, r, k) => { const i = T.col(k); return i >= 0 ? r[i] : ''; };
   let albero = Number(val(A, riga, 'albero')) || null, nome = String(val(A, riga, 'adottante') || ''), varieta = '';
   const B = tabella(SCHEDA_ALBERI);
-  const ra = B.righe.find(r => (albero && Number(val(B, r, 'numero')) === albero) || (!albero && norm(val(B, r, 'email')) === u));
+  const ra = B.righe.find(r => (albero && Number(val(B, r, 'numero')) === albero) || (!albero && email && norm(val(B, r, 'email')) === email));
   if (ra) {
     albero = albero || Number(val(B, ra, 'numero')) || null;
     nome = String(val(B, ra, 'nomePianta') || val(B, ra, 'nomeProposto') || nome || '');
     varieta = String(val(B, ra, 'varieta') || '');
   }
-  return { ok: true, nome: nome || u.split('@')[0], albero, formula: String(val(A, riga, 'formula') || ''), varieta, token: firma(u) };
+  return { ok: true, nome: nome || u, albero, formula: String(val(A, riga, 'formula') || ''), varieta, token: firma(u) };
 }
 
 function foglioClassifica() {
@@ -57,14 +65,15 @@ function foglioClassifica() {
   sh.getRange(1, 1, 1, 6).setValues([['Data', 'Nome albero', 'Albero n.', 'Mansione svolta', 'Tempo impiegato', 'Punteggio']]).setFontWeight('bold');
   return sh;
 }
+function tempoGara(d) { const t = String(d.tempoTxt || ''); return /^\d+:\d\d(\.\d)?$/.test(t) ? t : mmss(d.tempo); }
 function mmss(sec) { sec = Math.max(0, Math.round(Number(sec) || 0)); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
 
 function invia(d) {
   const u = norm(d.utente);
   if (!u || d.token !== firma(u)) return { ok: false };
   const sh = foglioClassifica();
-  sh.appendRow([new Date(), String(d.nome || '').slice(0, 40), d.albero || '', MANSIONI[d.missione] || String(d.missione || ''), mmss(d.tempo), Math.round(Number(d.punti) || 0)]);
-  sh.getRange(sh.getLastRow(), 5).setNumberFormat('@').setValue(mmss(d.tempo));
+  sh.appendRow([new Date(), String(d.nome || '').slice(0, 40), d.albero || '', MANSIONI[d.missione] || String(d.missione || ''), tempoGara(d), Math.round(Number(d.punti) || 0)]);
+  sh.getRange(sh.getLastRow(), 5).setNumberFormat('@').setValue(tempoGara(d));
   return { ok: true };
 }
 
@@ -72,5 +81,6 @@ function leggi() {
   const sh = foglioClassifica(), inv = {};
   Object.keys(MANSIONI).forEach(k => inv[norm(MANSIONI[k])] = k); inv[norm('Irrigare')] = 'irrigazione'; inv[norm('Potare')] = 'potatura';
   const v = sh.getDataRange().getValues().slice(1).filter(r => r[1] !== '').sort((a, b) => Number(b[5]) - Number(a[5]));
-  return { ok: true, righe: v.slice(0, 200).map(r => ({ nome: r[1], albero: r[2], missione: inv[norm(r[3])] || r[3], tempo: String(r[4]), punti: Number(r[5]) || 0 })) };
+  const gare = v.filter(r => inv[norm(r[3])] === 'etnacross'), lav = v.filter(r => inv[norm(r[3])] !== 'etnacross');
+  return { ok: true, righe: lav.slice(0, 200).concat(gare.slice(0, 200)).map(r => ({ nome: r[1], albero: r[2], missione: inv[norm(r[3])] || r[3], tempo: String(r[4]), punti: Number(r[5]) || 0 })) };
 }
