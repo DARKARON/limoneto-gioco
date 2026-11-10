@@ -1,6 +1,11 @@
 // Sottofondo natura generato: ruscello, uccellini, carillon pentatonico lento.
 (function(){
-  let ctx=null, master=null, on=false, timers=[], vol=0.5, duck=1;
+  // Un solo AudioContext per musica ed effetti, sbloccato al primo tocco (anche su iPhone).
+  window.audioLimoneto=function(){ if(!window.__audioL){ try{ window.__audioL=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } } return window.__audioL; };
+  const sblocca=()=>{ const c=window.audioLimoneto(); if(!c) return; if(c.state!=='running'){ c.resume(); try{ const b=c.createBuffer(1,1,22050), s=c.createBufferSource(); s.buffer=b; s.connect(c.destination); s.start(0); }catch(e){} } };
+  ['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,sblocca,true));
+  document.addEventListener('visibilitychange',()=>{ const c=window.__audioL; if(!c) return; if(document.hidden) c.suspend(); else c.resume(); });
+  let ctx=null, master=null, on=false, timers=[], vol=0.5, duck=1, nodi=[];
   function noiseBuf(c){ const len=c.sampleRate*4, b=c.createBuffer(1,len,c.sampleRate), d=b.getChannelData(0); let last=0;
     for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; d[i]=last*3.5; } return b; }
   function ruscello(){
@@ -10,7 +15,7 @@
     const g=ctx.createGain(); g.gain.value=0.16;
     const lfo=ctx.createOscillator(), lg=ctx.createGain(); lfo.frequency.value=0.13; lg.gain.value=380; lfo.connect(lg); lg.connect(bp.frequency);
     const lfo2=ctx.createOscillator(), lg2=ctx.createGain(); lfo2.frequency.value=0.07; lg2.gain.value=0.05; lfo2.connect(lg2); lg2.connect(g.gain);
-    src.connect(hp); hp.connect(bp); bp.connect(g); g.connect(master); src.start(); lfo.start(); lfo2.start();
+    src.connect(hp); hp.connect(bp); bp.connect(g); g.connect(master); src.start(); lfo.start(); lfo2.start(); nodi.push(src,lfo,lfo2,g);
     // gorgoglii
     const gorg=()=>{ if(!on) return; const t=ctx.currentTime, o=ctx.createOscillator(), gg=ctx.createGain(); o.type='sine';
       const f=500+Math.random()*900; o.frequency.setValueAtTime(f,t); o.frequency.exponentialRampToValueAtTime(f*1.8,t+0.05);
@@ -46,11 +51,11 @@
     timers.push(setTimeout(frase,8000));
   }
   function applica(){ if(master&&ctx) master.gain.setTargetAtTime(on?vol*duck:0,ctx.currentTime,0.6); }
-  document.addEventListener('visibilitychange',()=>{ if(!ctx) return; if(document.hidden) ctx.suspend(); else if(on) ctx.resume(); });
+  
   window.Ambiente={
-    start(){ if(on) return; try{ if(!ctx){ ctx=new (window.AudioContext||window.webkitAudioContext)(); master=ctx.createGain(); master.gain.value=0; master.connect(ctx.destination); } }catch(e){ return; }
+    start(){ if(on) return; try{ if(!ctx){ ctx=window.audioLimoneto(); if(!ctx) return; master=ctx.createGain(); master.gain.value=0; master.connect(ctx.destination); } }catch(e){ return; }
       if(ctx.state==='suspended') ctx.resume(); on=true; applica(); ruscello(); timers.push(setTimeout(cinguettio,1200)); timers.push(setTimeout(frase,2500)); },
-    stop(){ if(!on) return; on=false; applica(); timers.forEach(clearTimeout); timers=[]; const c=ctx; setTimeout(()=>{ if(!on&&c){ c.close(); if(ctx===c){ ctx=null; master=null; } } },1500); },
+    stop(){ if(!on) return; on=false; applica(); timers.forEach(clearTimeout); timers=[]; const n=nodi; nodi=[]; setTimeout(()=>{ n.forEach(x=>{ try{ x.stop?x.stop():x.disconnect(); }catch(e){} }); },1500); },
     sblocca(){ if(ctx&&ctx.state==='suspended') ctx.resume(); },
     abbassa(x){ duck=x?0.3:1; applica(); },
     get attivo(){ return on; }
