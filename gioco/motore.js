@@ -315,7 +315,14 @@ class Motore{
       const buio=new THREE.Mesh(new THREE.CircleGeometry(R0,24),new THREE.MeshBasicMaterial({color:0x0F1314}));buio.rotation.x=-Math.PI/2;buio.position.set(PX,py+0.3,PZ);
       this.acquaPozzo=new THREE.Mesh(new THREE.CircleGeometry(R0-0.01,24),new THREE.MeshLambertMaterial({color:0x2F5D6E}));this.acquaPozzo.rotation.x=-Math.PI/2;this.acquaPozzo.position.set(PX,py+0.5,PZ);this.pozzoY=py;
       const ferro=new THREE.MeshLambertMaterial({color:0x3B3633});
-      sc.add(muro,buio,this.acquaPozzo);LM().pozzoExtra(sc,PX,py,PZ,this.matMuro);
+      sc.add(muro,buio,this.acquaPozzo);this.pozzoTetto=LM().pozzoExtra(sc,PX,py,PZ,this.matMuro);this.pozzoMuro=muro;
+      // rovine: anello di pietre crollato, sassi sparsi ed erbacce
+      {const rv=new THREE.Group();rv.position.set(PX,py,PZ);const sas=new THREE.MeshLambertMaterial({color:0x6E6862}),erb=new THREE.MeshLambertMaterial({color:0x5E8A2E});
+        for(let i=0;i<20;i++){const a=i/20*Math.PI*2;if(rnd(i,7)<0.28)continue;const h=0.12+rnd(i,3)*0.42,b=new THREE.Mesh(new THREE.BoxGeometry(0.3,h,0.24),this.matMuro);b.position.set(Math.cos(a)*0.65,h/2-0.04,Math.sin(a)*0.65);b.rotation.set((rnd(i,5)-.5)*0.25,-a,(rnd(i,9)-.5)*0.3);b.castShadow=b.receiveShadow=true;rv.add(b);}
+        for(let i=0;i<9;i++){const a=rnd(i,11)*6.28,r=1.0+rnd(i,13)*0.8,s=0.12+rnd(i,17)*0.16,b=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),i%3?sas:this.matMuro);b.position.set(Math.cos(a)*r,s*0.5,Math.sin(a)*r);b.rotation.set(rnd(i,19)*3,rnd(i,23)*3,0);b.castShadow=true;rv.add(b);}
+        const tr=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.06,0.12),new THREE.MeshLambertMaterial({color:0x5A4330}));tr.position.set(0.9,0.05,-0.7);tr.rotation.set(0,0.6,0.08);rv.add(tr);
+        for(let i=0;i<7;i++){const a=rnd(i,29)*6.28,r=0.5+rnd(i,31)*0.5,c=new THREE.Mesh(new THREE.ConeGeometry(0.08,0.3+rnd(i,37)*0.2,5),erb);c.position.set(Math.cos(a)*r,0.15,Math.sin(a)*r);rv.add(c);}
+        rv.visible=false;sc.add(rv);this.pozzoRovine=rv;this.pozzoBuio=buio;}
       const lab=etichetta('Pozzo','#ffffff','#2f6b1f');lab.position.set(PX,py+2.7,PZ);sc.add(lab);}
     // cancello
     {const S0=D.strada[0],S1=D.strada[Math.min(3,D.strada.length-1)],dx=S1[0]-S0[0],dz=S1[1]-S0[1],dl=Math.hypot(dx,dz)||1,ux=-dz/dl,uz=dx/dl;
@@ -817,6 +824,8 @@ class Motore{
     if(nome==='camion')return{x:this.camion.x,y:Y(this.camion.x,this.camion.z)+3,z:this.camion.z};
     let b=null,bd=1e9;this.ordine.forEach(n=>{const p=this.piante[n],d=Math.hypot(p.x-this.pos.x,p.z-this.pos.z);if(d>2.5&&d<bd){bd=d;b=p;}});return{x:b.x,y:b.y0+0.25,z:b.z,n:b.n};}
   livelloPozzo(f){this.acquaPozzo.position.y=this.pozzoY+0.12+0.7*Math.max(0,Math.min(1,f));}
+  // 0 diroccato · 1 bordi rifatti · 2 copertura con carrucola · 3 pieno d'acqua
+  setPozzo(l){l=l==null?3:l;if(this.pozzoMuro)this.pozzoMuro.visible=l>=1;if(this.pozzoRovine)this.pozzoRovine.visible=l<1;if(this.pozzoTetto)this.pozzoTetto.visible=l>=2;if(this.acquaPozzo)this.acquaPozzo.visible=l>=3;if(this.pozzoBuio)this.pozzoBuio.position.y=this.pozzoY+(l>=1?0.3:0.02);}
   centroPiante(){let x=0,z=0;this.ordine.forEach(n=>{x+=this.piante[n].x;z+=this.piante[n].z;});return{x:x/this.ordine.length,z:z/this.ordine.length};}
   _input(){
     const el=this.renderer.domElement;let drag=null,pinch=0;

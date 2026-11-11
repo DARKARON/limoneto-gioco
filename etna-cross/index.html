@@ -8,7 +8,7 @@
 <script src="./support.js"></script>
 <script src="./assets/ce4a5148eb193bdbaf8513fefb830840.js"></script>
 <script src="./assets/ef39745054f5825e43060d74da70466c.js"></script>
-<script src="./assets/439c22e5b621981fbea9fa76159a76d9.js"></script>
+<script src="./assets/6a93a34fdec7648ac4d201a8480c8b96.js"></script>
 <script src="./assets/e862c14c3ab7dbf695c916d28e89ca22.js"></script>
 </head>
 <body>
@@ -34,17 +34,19 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 [data-etna-btn] svg{width:clamp(26px,8vw,34px)!important;height:clamp(26px,8vw,34px)!important}
 [data-etna-pad] > span{display:none!important}
 }
+.etna-pista:hover{border-color:#f0a35e}
+.etna-pista:focus-visible{outline:3px solid #f0a35e;outline-offset:2px}
 .etna-k{font-size:11px;font-weight:700;color:#c9bfb6;border:1px solid rgba(255,255,255,0.22);border-radius:3px;padding:1px 5px}
 </style>
 </helmet>
-<div data-etna-root="1" class="etna-root" tabindex="0" aria-label="Circuito da cross sull'Etna. Guida con le frecce o WASD, R per rimettere in pista, C per cambiare camera, V per la ripresa cinematica." style="position: relative; width: 100%; height: 100vh; min-height: 520px; overflow: hidden; background: #141110; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #f4efe9; user-select: none; -webkit-user-select: none; touch-action: none">
+<div data-etna-root="1" class="etna-root" tabindex="0" aria-label="Etna Cross: tre circuiti da cross, terra lavica, neve ed erba alta. Guida con le frecce o WASD, R per rimettere in pista, C per cambiare camera, V per la ripresa cinematica." style="position: relative; width: 100%; height: 100vh; min-height: 520px; overflow: hidden; background: #141110; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; color: #f4efe9; user-select: none; -webkit-user-select: none; touch-action: none">
 <canvas data-etna-gl="1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block"></canvas>
 
 <sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
 <div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 5px; padding: 8px 11px; background: rgba(20,17,16,0.74); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; min-width: 150px">
 <div style="display: flex; align-items: baseline; gap: 7px; white-space: nowrap">
 <span style="font-size: 17px; font-weight: 800; font-style: italic; letter-spacing: 0.02em; color: #f4efe9">ETNA CROSS</span>
-<span style="font-size: 11px; font-weight: 600; color: #f0a35e; letter-spacing: 0.08em; text-transform: uppercase">Terra lavica</span>
+<span style="font-size: 11px; font-weight: 600; color: #f0a35e; letter-spacing: 0.08em; text-transform: uppercase">{{pistaNome}}</span>
 </div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 0; font-size: 11px; align-items: baseline">
 <span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Giro</span>
@@ -75,6 +77,7 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 </div>
 </sc-if>
 
+<sc-if value="{{inGara}}" hint-placeholder-val="{{true}}">
 <div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">
 <div style="display: flex; align-items: center; gap: 6px">
 <div style="display: flex; align-items: baseline; gap: 4px; padding: 4px 10px; background: rgba(20,17,16,0.74); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; height: 30px; box-sizing: border-box">
@@ -99,6 +102,7 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <button class="etna-mi" role="menuitem" onClick="{{resetBtn}}">Rimetti in pista <span class="etna-k">R</span></button>
 </sc-if>
 <button class="etna-mi" role="menuitem" onClick="{{audioBtn}}">{{audioLabel}} <span class="etna-k">M</span></button>
+<button class="etna-mi" role="menuitem" onClick="{{cambiaPista}}">Cambia circuito</button>
 <button class="etna-mi" role="menuitem" onClick="{{apriIstruzioni}}">Come si gioca</button>
 <sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
 <div style="height: 1px; margin: 4px 6px; background: rgba(255,255,255,0.12)"></div>
@@ -108,17 +112,56 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 </div>
 </sc-if>
 </div>
+</sc-if>
+
+<sc-if value="{{scegli}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(14,11,10,0.86); overflow-y: auto">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 100%">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="font-size: 30px; font-weight: 800; font-style: italic; letter-spacing: 0.02em; line-height: 1; white-space: nowrap">ETNA CROSS</span>
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #f0a35e">Scegli il circuito</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px">
+<button class="etna-btn etna-pista" onClick="{{sceltaEtna}}" style="width: 196px; display: flex; flex-direction: column; gap: 0; padding: 0; border: 1px solid rgba(240,163,94,0.45); border-radius: 8px; background: rgba(20,17,16,0.9); color: #f4efe9; font-family: inherit; text-align: left; overflow: hidden">
+<svg aria-hidden="true" width="196" height="96" viewBox="0 0 196 96" style="display: block"><rect width="196" height="96" fill="#7fa6cf"></rect><path d="M0 70 L70 30 L84 24 L96 30 L196 64 L196 96 L0 96 Z" fill="#3a3432"></path><path d="M70 30 L84 24 L96 30 L90 34 L80 31 Z" fill="#e6e8ec"></path><path d="M88 22 C 96 10, 118 8, 132 2" stroke="#e9e6e2" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.8"></path><path d="M0 78 L196 72 L196 96 L0 96 Z" fill="#5b3324"></path><path d="M40 96 C 70 84, 120 82, 160 74" stroke="#8a5a40" stroke-width="9" fill="none"></path><ellipse cx="128" cy="86" rx="16" ry="4" fill="#2c1c14"></ellipse></svg>
+<span style="display: flex; flex-direction: column; gap: 3px; padding: 9px 11px 11px">
+<span style="font-size: 18px; font-weight: 800; font-style: italic">Terra lavica</span>
+<span style="font-size: 12px; line-height: 1.25; color: #d6ccc3">Sabbia vulcanica sotto l'Etna, salti e pozze di fango. Buona aderenza.</span>
+</span>
+</button>
+<button class="etna-btn etna-pista" onClick="{{sceltaNeve}}" style="width: 196px; display: flex; flex-direction: column; gap: 0; padding: 0; border: 1px solid rgba(190,214,240,0.5); border-radius: 8px; background: rgba(20,17,16,0.9); color: #f4efe9; font-family: inherit; text-align: left; overflow: hidden">
+<svg aria-hidden="true" width="196" height="96" viewBox="0 0 196 96" style="display: block"><rect width="196" height="96" fill="#b9c8d6"></rect><path d="M0 66 L60 26 L78 20 L94 28 L196 60 L196 96 L0 96 Z" fill="#eef2f6"></path><path d="M78 20 L94 28 L120 42 L90 38 Z" fill="#cfd8e2"></path><path d="M0 76 L196 70 L196 96 L0 96 Z" fill="#f4f7fa"></path><path d="M30 96 C 70 84, 120 82, 170 72" stroke="#c4c9cf" stroke-width="9" fill="none"></path><path d="M150 72 L158 50 L166 72 Z M146 64 L158 40 L170 64 Z" fill="#23392a"></path><path d="M152 50 L158 40 L164 50 Z" fill="#ffffff"></path><path d="M24 78 L30 60 L36 78 Z" fill="#23392a"></path><g fill="#ffffff"><circle cx="20" cy="18" r="1.6"></circle><circle cx="48" cy="40" r="1.4"></circle><circle cx="120" cy="14" r="1.8"></circle><circle cx="170" cy="30" r="1.5"></circle><circle cx="104" cy="58" r="1.3"></circle><circle cx="138" cy="34" r="1.2"></circle></g><ellipse cx="96" cy="86" rx="18" ry="3.5" fill="#d8e6f2" stroke="#ffffff" stroke-width="1"></ellipse></svg>
+<span style="display: flex; flex-direction: column; gap: 3px; padding: 9px 11px 11px">
+<span style="font-size: 18px; font-weight: 800; font-style: italic">Neve</span>
+<span style="font-size: 12px; line-height: 1.25; color: #d6ccc3">Neve battuta e placche di ghiaccio: si scivola, frena prima delle curve.</span>
+</span>
+</button>
+<button class="etna-btn etna-pista" onClick="{{sceltaErba}}" style="width: 196px; display: flex; flex-direction: column; gap: 0; padding: 0; border: 1px solid rgba(150,200,90,0.5); border-radius: 8px; background: rgba(20,17,16,0.9); color: #f4efe9; font-family: inherit; text-align: left; overflow: hidden">
+<svg aria-hidden="true" width="196" height="96" viewBox="0 0 196 96" style="display: block"><rect width="196" height="96" fill="#8fbbe0"></rect><path d="M0 60 C 40 44, 80 48, 120 56 C 150 62, 176 54, 196 50 L196 96 L0 96 Z" fill="#5f8a31"></path><path d="M0 74 L196 70 L196 96 L0 96 Z" fill="#46702a"></path><circle cx="164" cy="42" r="12" fill="#3f6624"></circle><rect x="162" y="48" width="4" height="16" fill="#4a3826"></rect><path d="M24 96 C 64 86, 120 84, 176 76" stroke="#6e4d2f" stroke-width="9" fill="none"></path><ellipse cx="98" cy="85" rx="34" ry="6" fill="#7f8c8f"></ellipse><ellipse cx="90" cy="84" rx="12" ry="1.6" fill="#c9d6da"></ellipse><g stroke="#9fbf4a" stroke-width="1.6" stroke-linecap="round"><path d="M10 96 L8 78"></path><path d="M14 96 L18 76"></path><path d="M18 96 L14 80"></path><path d="M180 96 L178 78"></path><path d="M186 96 L190 80"></path><path d="M150 96 L148 82"></path></g><g fill="#d8341f"><circle cx="16" cy="76" r="2"></circle><circle cx="188" cy="79" r="2"></circle></g></svg>
+<span style="display: flex; flex-direction: column; gap: 3px; padding: 9px 11px 11px">
+<span style="font-size: 18px; font-weight: 800; font-style: italic">Erba alta</span>
+<span style="font-size: 12px; line-height: 1.25; color: #d6ccc3">Prati d'erba alta e pozzanghere enormi che frenano e schizzano.</span>
+</span>
+</button>
+</div>
+<sc-if value="{{puoiTornare}}" hint-placeholder-val="{{false}}">
+<button class="etna-btn" onClick="{{tornaGara}}" style="min-height: 34px; padding: 0 14px; border: 1px solid rgba(255,255,255,0.22); border-radius: 6px; background: rgba(20,17,16,0.8); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 600">Torna alla gara</button>
+</sc-if>
+</div>
+</div>
+</sc-if>
 
 <sc-if value="{{showIstruzioni}}" hint-placeholder-val="{{false}}">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10,8,7,0.45)">
 <div style="width: min(440px, 100%); max-height: calc(100% - 24px); overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; padding: 16px 20px; background: rgba(20,17,16,0.94); border: 1px solid rgba(240,163,94,0.5); border-radius: 8px">
 <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #f0a35e">Come si gioca</span>
-<span style="font-size: 23px; font-weight: 800; font-style: italic; line-height: 1">Due giri sulla terra lavica</span>
+<span style="font-size: 23px; font-weight: 800; font-style: italic; line-height: 1">Due giri, tre circuiti</span>
 <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 14px; line-height: 1.3; color: #e8e0d8">
 <li>Guida il camion VCU, pilotato da Limo, con le frecce o WASD. R ti rimette in pista, C cambia camera (inseguimento, drone, cabina), V avvia o ferma la ripresa cinematica, M l'audio. Tutti i comandi sono anche nel Menu in alto a destra.</li>
 <li>La gara dura 2 giri: il cronometro parte quando passi il traguardo guidando tu.</li>
+<li>Terra lavica: buona aderenza e pozze di fango. Neve: si scivola, sulle placche di ghiaccio ancora di più, e la neve alta ai lati frena. Erba alta: fuori pista rallenti, le pozzanghere enormi frenano e schizzano. Il circuito si cambia dal Menu.</li>
 <li>Prendi i limoni con la scritta ×1,05, ×1,15 e ×1,3: si sommano e alzano il prezzo dei limoni fino a ×4, ma solo se li prendi quasi tutti nei due giri. Quelli dorati sono in alto dopo i salti e si prendono solo in volo.</li>
-<li>Dal kicker si stacca a muso alto. In volo il gas alza il muso e il freno lo abbassa: un tocco di freno e atterri parallelo alla discesa senza perdere velocità. Col gas sempre premuto in volo si atterra sul retro. Muretti, rocce e pini sono solidi, nel fango si scivola.</li>
+<li>Dal kicker si stacca a muso alto. In volo il gas alza il muso e il freno lo abbassa: un tocco di freno e atterri parallelo alla discesa senza perdere velocità. Col gas sempre premuto in volo si atterra sul retro. Muretti, rocce, alberi, cumuli di neve e rotoballe sono solidi.</li>
 <li>A fine gara ricevi un codice: scrivilo nel Limoneto e Gelso ti pagherà i limoni di più alla prossima vendita.</li>
 </ul>
 <button class="etna-btn" onClick="{{chiudiIstruzioni}}" style="align-self: flex-start; min-height: 36px; padding: 0 16px; border: 0; border-radius: 6px; background: #E0702C; color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 700">Ho capito</button>
@@ -169,23 +212,23 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <sc-if value="{{showTouch}}" hint-placeholder-val="{{false}}">
 <div data-etna-pad="1" style="position: absolute; left: calc(10px + env(safe-area-inset-left)); right: calc(10px + env(safe-area-inset-right)); bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; pointer-events: none">
 <div style="display: flex; gap: 10px; pointer-events: auto">
-<button class="etna-btn" data-etna-btn="left" aria-label="Sterza a sinistra" style="width: 56px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<button class="etna-btn" data-etna-btn="left" aria-label="Sterza a sinistra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
 </button>
-<button class="etna-btn" data-etna-btn="right" aria-label="Sterza a destra" style="width: 56px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
+<button class="etna-btn" data-etna-btn="right" aria-label="Sterza a destra" style="width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 50%; background: rgba(20,17,16,0.6); color: #f4efe9; display: flex; align-items: center; justify-content: center; touch-action: none">
 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
 </button>
 </div>
 <span style="font-size: 11px; color: #e8e0d8; padding: 4px 8px; background: rgba(20,17,16,0.55); border-radius: 4px; text-align: center">Frecce / WASD · R · C · V · M</span>
 <div style="display: flex; gap: 10px; pointer-events: auto">
-<button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; touch-action: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
-<button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; touch-action: none; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
+<button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
+<button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
 </div>
 </div>
 </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"avvio":{"editor":"enum","options":["ripresa","guida"],"default":"ripresa"},"ora":{"editor":"enum","options":["giorno","tramonto"],"default":"giorno"},"cassette":{"editor":"boolean","default":true},"$preview":{"width":1280,"height":800}}'>
+<script type="text/x-dc" data-dc-script data-props='{"avvio":{"editor":"enum","options":["guida","ripresa"],"default":"guida"},"ora":{"editor":"enum","options":["giorno","tramonto"],"default":"giorno"},"cassette":{"editor":"boolean","default":true},"$preview":{"width":1280,"height":800}}'>
 class Component extends DCLogic {
   componentDidMount() {
     this._alive = true;
@@ -196,16 +239,11 @@ class Component extends DCLogic {
       const cv = root && root.querySelector('canvas[data-etna-gl]');
       if (!root || !cv || !window.THREE || !window.CamionFuturistico || !window.CircuitoEtna) { this._t = setTimeout(boot, 120); return; }
       this._root = root;
-      this.game = window.CircuitoEtna({
-        host: root, canvas: cv,
-        avvio: this.avvioQ(),
-        ora: this.props.ora ?? 'giorno',
-        cassette: this.props.cassette ?? true,
-        onHud: (h) => { if (this._alive) this.setState(h); }
-      });
+      this._cv = cv;
+      // il circuito parte quando lo scegli nella schermata iniziale
       // pacchetto audio: si accende al primo gesto (regola dei browser); M attiva o toglie l'audio
       if (window.SuoniEtna) {
-        try { this.audio = window.SuoniEtna.crea({ volume: 0.8, motore: 'v8turbo' }); this.game.setSuoni(this.audio); } catch (e) { this.audio = null; }
+        try { this.audio = window.SuoniEtna.crea({ volume: 0.8, motore: 'v8turbo' }); } catch (e) { this.audio = null; }
         const sblocca = () => { if (this.audio) this.audio.sblocca(); };
         root.addEventListener('pointerdown', sblocca);
         root.addEventListener('keydown', (e) => { sblocca(); if (e.code === 'KeyM' && !e.repeat) this.toggleAudio(); });
@@ -220,6 +258,22 @@ class Component extends DCLogic {
       this.bindTouch();
     };
     boot();
+  }
+  // crea (o ricrea) il gioco sul circuito scelto
+  avvia(pista) {
+    if (!this._root || !this._cv) return;
+    if (this.game) { try { this.game.destroy(); } catch (e) {} this.game = null; }
+    this._sigla = null; this._moltInviato = null; this._tempoInviato = false;
+    this.setState({ pista, scegli: false, menu: false, finita: false, molt: 1, moltTxt: '×1,00', copiato: false, inviato: false, msg: '', lap: '—', time: '0:00.0', last: '—', best: '—' });
+    this.game = window.CircuitoEtna({
+      host: this._root, canvas: this._cv, pista,
+      avvio: this.avvioQ(),
+      ora: this.props.ora ?? 'giorno',
+      cassette: this.props.cassette ?? true,
+      onHud: (h) => { if (this._alive) this.setState(h); }
+    });
+    if (this.audio) this.game.setSuoni(this.audio);
+    this._root.focus();
   }
   bindTouch() {
     if (!this._root || !this.game) return;
@@ -267,7 +321,7 @@ class Component extends DCLogic {
     try { if (window.parent && window.parent !== window) visita(window.parent, 0); } catch (e) {}
     return n > 0;
   }
-  avvioQ() { let q = null; try { q = new URLSearchParams(location.search).get('avvio'); } catch (e) {} return q || this.props.avvio || 'ripresa'; }
+  avvioQ() { let q = null; try { q = new URLSearchParams(location.search).get('avvio'); } catch (e) {} return q || this.props.avvio || 'guida'; }
   inLimoneto() { try { return window.parent && window.parent !== window; } catch (e) { return false; } }
   tornaLimoneto(e) { if (!this.inLimoneto()) return; if (e && e.preventDefault) e.preventDefault(); try { if (this.audio) this.audio.muto(true); } catch (_) {} let ok = false; try { if (window.parent.__chiudiMinigioco) { window.parent.__chiudiMinigioco(); ok = true; } } catch (_) {} if (!ok) { try { window.parent.postMessage({ tipo: 'etna-cross-chiudi' }, '*'); } catch (_) {} } }
   toggleAudio() {
@@ -286,7 +340,19 @@ class Component extends DCLogic {
     const cine = s.cine ?? (this.avvioQ() === 'ripresa');
     const auto = s.auto ?? cine;
     const refocus = () => { if (this._root) this._root.focus(); };
+    const scegli = !s.pista || !!s.scegli;
+    const nomi = { etna: 'Terra lavica', neve: 'Neve', erba: 'Erba alta' };
     return {
+      scegli: scegli,
+      inGara: !scegli,
+      puoiTornare: !!s.pista && !!s.scegli,
+      pistaNome: s.pistaNome || nomi[s.pista] || 'Terra lavica',
+      tornaLimoneto: (e) => this.tornaLimoneto(e),
+      sceltaEtna: () => this.avvia('etna'),
+      sceltaNeve: () => this.avvia('neve'),
+      sceltaErba: () => this.avvia('erba'),
+      cambiaPista: () => this.setState({ scegli: true, menu: false }),
+      tornaGara: () => { this.setState({ scegli: false }); refocus(); },
       kmh: s.kmh ?? 0,
       lap: s.lap ?? '—',
       time: s.time ?? '0:00.0',
@@ -296,26 +362,25 @@ class Component extends DCLogic {
       haCodice: (s.molt || 1) > 1.001,
       codice: (s.molt || 1) > 1.001 ? this.codiceEtna(s.molt) : '',
       statoCodice: s.inviato ? 'Inviato al Limoneto aperto. Se non arriva, copialo dal Menu.' : 'Copialo dal Menu e scrivilo nel Limoneto dopo la consegna.',
-      tornaLimoneto: (e) => this.tornaLimoneto(e),
       copiaLabel: s.copiato ? 'Copiato' : 'Copia codice',
       copiaCodice: () => { const c = this.codiceEtna(s.molt || 1); try { navigator.clipboard.writeText(c).then(() => this.setState({ copiato: true }), () => {}); } catch (e) {} if (this._root) this._root.focus(); },
       msg: s.msg || '',
-      hasMsg: !!s.msg,
+      hasMsg: !!s.msg && !scegli,
       cam: s.cam || 'Inseguimento',
       camLabel: cine ? 'Cambia inquadratura' : 'Camera: ' + (s.cam || 'Inseguimento'),
       menuAperto: !!s.menu,
       menuBtn: () => this.setState({ menu: !s.menu }),
       shot: s.shot || 'Ripresa cinematica',
-      cine: cine,
-      notCine: !cine,
-      showTouch: !auto,
-      showHint: !s.focused && !cine && !this.istruzioniAperte() && !s.finita,
-      showIstruzioni: this.istruzioniAperte(),
+      cine: cine && !scegli,
+      notCine: !cine && !scegli,
+      showTouch: !auto && !scegli,
+      showHint: !s.focused && !cine && !this.istruzioniAperte() && !s.finita && !scegli,
+      showIstruzioni: this.istruzioniAperte() && !scegli,
       audioLabel: s.muto ? 'Audio: no' : 'Audio: sì',
       audioBtn: () => { this.toggleAudio(); if (this._root) this._root.focus(); },
       apriIstruzioni: () => this.setState({ istruzioni: true, menu: false }),
       chiudiIstruzioni: () => { try { localStorage.setItem('etna-istruzioni-viste', '1'); } catch (e) {} this.setState({ istruzioni: false }); if (this._root) this._root.focus(); },
-      finita: !!s.finita,
+      finita: !!s.finita && !scegli,
       totale: s.totale || '',
       tempiTxt: (s.tempi || []).map((t, i) => 'Giro ' + (i + 1) + ': ' + t).join(' · '),
       senzaCodice: !((s.molt || 1) > 1.001),
