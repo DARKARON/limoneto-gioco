@@ -24,7 +24,7 @@ function rng(seed){let s=(seed*9301+49297)%2147483647;return()=>{s=(s*16807)%214
 const POZZO={x:-42.71,z:-86.04};
 const SCH={}; F.SCHEDE.forEach(s=>SCH[s.n]=s);
 const V3=(a,b,c)=>new THREE.Vector3(a,b,c);
-const ACCENTO=0xFFC83D;
+const ACCENTO=0x1E8FFF;
 const LM=()=>window.LimonetoModelli;
 
 function texturePietra(){

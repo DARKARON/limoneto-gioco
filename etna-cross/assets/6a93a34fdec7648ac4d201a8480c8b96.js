@@ -495,6 +495,8 @@ function CircuitoEtna(opts){
   let SU=opts.suoni||null;const suono=(n,a,b)=>{if(SU&&SU[n]){try{SU[n](a,b);}catch(e){}}};
   const GIRI=Math.max(1,opts.giri||2);let finita=false,totale=null,tempi=[];
   let wasMud=false,flipT=0;
+  // guida facile: frena da sola prima delle curve e tiene il camion dentro i paletti
+  let facile=!!opts.facile,rescueT=0;const ea={st:0,cut:false,br:false};
   // si parte fermi in guida; la ripresa cinematografica arriva a fine gara (o con avvio:'ripresa')
   let cine=opts.avvio==='ripresa',auto=cine,fineT=null,shot=null,shotN=0,noBlur=2,lb=0;
   const CAMS=['Inseguimento','Drone','Cabina'];
@@ -519,6 +521,15 @@ function CircuitoEtna(opts){
     ap.up=v<vt-0.5;ap.dn=v>vt+2.2;
     if(v<1.5){stuckT+=dt;if(stuckT>3){stuckT=0;placeAt(idx);}}else stuckT=0;
   }
+  function aiuto(){
+    if(!car.ground){ea.st=0;ea.cut=false;ea.br=false;return;}
+    const v=Math.max(0,car.vF),sy=Math.sin(car.yaw),cy=Math.cos(car.yaw);
+    const ti=(idx+Math.round((6+v*0.5)/DS))%N,dx=TX[ti]-car.x,dz=TZ[ti]-car.z;
+    ea.st=clamp(Math.atan2(dx*cy-dz*sy,dx*sy+dz*cy)*2.2,-1,1);
+    let km=0;for(let k=4;k<Math.round((22+v*1.8)/DS);k+=3)km=Math.max(km,curv[(idx+k)%N]);
+    const vt=clamp(Math.sqrt(car.mu*9.8*0.7/Math.max(km,0.004)),7,22);
+    ea.cut=v>vt-0.5;ea.br=v>vt+1.5;
+  }
 
   function step(dt){
     let sy=Math.sin(car.yaw),cy=Math.cos(car.yaw);
@@ -526,7 +537,11 @@ function CircuitoEtna(opts){
     const vF0=vF,vy0=car.vy,wasGround=car.ground;
     const d=Ds(car.x,car.z),on=d<HW+0.8,mud=mudAt(car.x,car.z),vmax=on?27:TH.presa.vFuori;
     car.mu=lerp(on?TH.presa.pista:TH.presa.fuori,TH.presa.pozza,smst((mud-0.15)/0.6));
-    const st=auto?ap.st:(K.left||Kt.left?1:0)-(K.right||Kt.right?1:0),up=finita&&!auto?false:auto?ap.up:(K.up||Kt.up),dn=finita&&!auto?car.vF>0.5:auto?ap.dn:(K.down||Kt.down);
+    const pst=(K.left||Kt.left?1:0)-(K.right||Kt.right?1:0);let st,up,dn;
+    if(auto){st=ap.st;up=ap.up;dn=ap.dn;}
+    else{st=pst;up=K.up||Kt.up;dn=K.down||Kt.down;
+      if(facile&&car.vF>1){st=pst?clamp(pst*0.8+ea.st*0.4,-1,1):ea.st*0.8;if(ea.cut)up=false;if(ea.br)dn=true;}
+      if(finita){up=false;dn=car.vF>0.5;}}
     car.steer+=(st-car.steer)*Math.min(1,dt*7);car.gas=up?1:0;
     if(car.ground){
       let aE,drive=true;
@@ -778,9 +793,14 @@ function CircuitoEtna(opts){
   const clock=new THREE.Clock();let raf=0,alive=true;
   function loop(){if(!alive)return;raf=requestAnimationFrame(loop);frame(Math.min(0.05,clock.getDelta()),true);}
   function frame(dt,draw){dt=Math.max(dt,0.001);time+=dt;
-    if(auto)autopilot(dt);
+    if(auto)autopilot(dt);else if(facile)aiuto();
     const n=Math.max(1,Math.ceil(dt/(1/120))),h=dt/n;for(let i=0;i<n;i++)step(h);
     updLap(dt);
+    // fermo o fuori pista per 3 secondi: il camion torna da solo sul tracciato
+    if(!auto&&!finita&&car.ground){const off=Ds(car.x,car.z)>HW+0.8,spinge=K.up||Kt.up||K.down||Kt.down;
+      if(off||(spinge&&Math.abs(car.vF)<1.5)){rescueT+=dt;if(rescueT>1.2&&rescueT-dt<=1.2)say('Ti rimetto in pista…',1.9);
+        if(rescueT>3){rescueT=0;placeAt(idx);camSnap=true;noBlur=2;say('Di nuovo in pista',1.2);}}else rescueT=0;}
+    else if(auto||finita)rescueT=0;
     poseTruck(dt);if(T.userData.sterza)T.userData.sterza(car.steer*0.3*(car.ground?1:0.6));T.userData.muovi(car.wheelV*dt);skidUpd();
     if(SU&&SU.aggiorna){const fm=mudAt(car.x,car.z);if(fm>0.35&&!wasMud&&car.ground&&Math.abs(car.vF)>5)suono('schizzo');wasMud=fm>0.35;
       try{SU.aggiorna({vel:car.vF,ruote:car.wheelV,gas:car.gas||0,slittamento:car.slip,aTerra:car.ground,fango:fm,fuoriPista:Ds(car.x,car.z)>HW+0.8});}catch(e){}}
@@ -809,7 +829,8 @@ function CircuitoEtna(opts){
 
   const api={
     press(n,v){if(n in K){Kt[n]=!!v;if(v)takeOver();}},
-    reset(){placeAt(idx);camSnap=true;noBlur=2;say('Rimesso in pista',1);},
+    reset(){placeAt(idx);rescueT=0;camSnap=true;noBlur=2;say('Rimesso in pista',1);},
+    setFacile(v){facile=!!v;},
     cycleCam(){if(cine){newShot();return;}camMode=(camMode+1)%3;camSnap=true;noBlur=2;},
     toggleCine(){cine=!cine;auto=cine;shot=null;camSnap=true;noBlur=2;if(!cine){camMode=0;say('Guida',1);}},
     setOra,
