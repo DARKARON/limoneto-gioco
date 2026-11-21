@@ -204,13 +204,13 @@ class Motore{
     const cv=document.createElement('canvas');cv.width=512;cv.height=200;const k=cv.getContext('2d');const tx=new THREE.CanvasTexture(cv);tx.anisotropy=4;
     const dis=()=>{k.clearRect(0,0,512,200);const rr=(X,Yy,Ww,Hh,Q)=>{k.beginPath();k.moveTo(X+Q,Yy);k.arcTo(X+Ww,Yy,X+Ww,Yy+Hh,Q);k.arcTo(X+Ww,Yy+Hh,X,Yy+Hh,Q);k.arcTo(X,Yy+Hh,X,Yy,Q);k.arcTo(X,Yy,X+Ww,Yy,Q);k.closePath();};
       k.fillStyle='#1d6e9a';rr(0,0,512,200,46);k.fill();k.fillStyle='#46C0E0';rr(10,10,492,180,38);k.fill();k.lineWidth=8;k.strokeStyle='#ffffff';k.stroke();
-      k.textAlign='center';k.textBaseline='middle';k.font='700 92px Fredoka, "Trebuchet MS", sans-serif';k.lineWidth=14;k.strokeStyle='#ffffff';k.strokeText('REGATA',256,82);k.fillStyle='#14506f';k.fillText('REGATA',256,82);
-      k.font='700 44px Nunito, "Trebuchet MS", sans-serif';k.fillStyle='#ffffff';k.fillText('nella saia',256,152);tx.needsUpdate=true;};dis();try{document.fonts&&document.fonts.load('700 92px Fredoka').then(dis);}catch(e){}
+      k.textAlign='center';k.textBaseline='middle';k.font='700 70px Fredoka, "Trebuchet MS", sans-serif';k.lineWidth=12;k.strokeStyle='#ffffff';k.strokeText('MINIGIOCHI',256,80,470);k.fillStyle='#14506f';k.fillText('MINIGIOCHI',256,80,470);
+      k.font='700 44px Nunito, "Trebuchet MS", sans-serif';k.fillStyle='#ffffff';k.fillText('regata · aereo',256,152,470);tx.needsUpdate=true;};dis();try{document.fonts&&document.fonts.load('700 70px Fredoka').then(dis);}catch(e){}
     const ins=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.6,0.06),[leg,leg,leg,leg,new THREE.MeshLambertMaterial({map:tx}),leg]);ins.position.set(0.85,1.9,0.14);ins.castShadow=true;g.add(ins);
     const ban=[0xFFC83D,0xE23B2E,0x46C0E0,0xffffff];[-0.75,0.75].forEach(x=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.7,6),leg);p.position.set(x,wy-py+0.5,-0.05);g.add(p);});
     for(let i=0;i<6;i++){const f=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.14,3),L(ban[i%4]));f.rotation.x=Math.PI;f.position.set(-0.62+i*0.25,wy-py+0.78-Math.sin(i/5*Math.PI)*0.08,-0.05);g.add(f);}
     this._contorno&&this._contorno(ins);
-    this.regataLab=etichetta('Regata','#0088b0','#ffffff');this.regataLab.position.set(px,wy+3.1,pz);this.scene.add(this.regataLab);
+    this.regataLab=etichetta('Minigiochi','#0088b0','#ffffff');this.regataLab.position.set(px,wy+3.1,pz);this.scene.add(this.regataLab);
     const cx=sx+nx*1.6,cz=sz+nz*1.6;this.colSaia={x:cx,z:cz,px:px+Math.cos(g.rotation.y)*0.85,pz:pz-Math.sin(g.rotation.y)*0.85};}
   _nuvole(){const g=this.nuvole=new THREE.Group(),mt=this.matNuvole=new THREE.MeshLambertMaterial({color:0xffffff,emissive:0x8495a8,fog:false}),sg=new THREE.SphereGeometry(1,14,10);
     g.position.set(D.x0+C/2,0,D.z0+R/2);

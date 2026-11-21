@@ -43,22 +43,22 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <canvas data-etna-gl="1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block"></canvas>
 
 <sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
-<div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; padding: 9px 13px; background: rgba(20,17,16,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; min-width: min(200px, 44vw); box-sizing: border-box">
-<div style="display: flex; align-items: baseline; gap: 8px; white-space: nowrap">
-<span style="font-size: clamp(17px, 4.4vw, 21px); font-weight: 800; font-style: italic; letter-spacing: 0.02em; color: #f4efe9">ETNA CROSS</span>
-<span style="font-size: clamp(12px, 3.2vw, 14px); font-weight: 600; color: #f0a35e; letter-spacing: 0.06em; text-transform: uppercase">{{pistaNome}}</span>
+<div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 5px; padding: 8px 11px; background: rgba(20,17,16,0.74); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; min-width: 150px">
+<div style="display: flex; align-items: baseline; gap: 7px; white-space: nowrap">
+<span style="font-size: 17px; font-weight: 800; font-style: italic; letter-spacing: 0.02em; color: #f4efe9">ETNA CROSS</span>
+<span style="font-size: 11px; font-weight: 600; color: #f0a35e; letter-spacing: 0.08em; text-transform: uppercase">{{pistaNome}}</span>
 </div>
-<div style="display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 1px; font-size: clamp(13px, 3.4vw, 15px); align-items: baseline">
-<span style="color: #d6ccc3">Giro</span>
-<span style="font-weight: 700; font-size: clamp(16px, 4.2vw, 19px); text-align: right; font-variant-numeric: tabular-nums">{{lap}}</span>
-<span style="color: #d6ccc3">Tempo</span>
-<span style="font-weight: 700; font-size: clamp(16px, 4.2vw, 19px); text-align: right; font-variant-numeric: tabular-nums">{{time}}</span>
-<span style="color: #d6ccc3">Giro prima</span>
-<span style="font-weight: 600; font-size: clamp(15px, 3.8vw, 17px); text-align: right; font-variant-numeric: tabular-nums">{{last}}</span>
-<span style="color: #d6ccc3">Giro migliore</span>
-<span style="font-weight: 700; font-size: clamp(15px, 3.8vw, 17px); text-align: right; color: #f0a35e; font-variant-numeric: tabular-nums">{{best}}</span>
-<span style="color: #d6ccc3">Prezzo limoni</span>
-<span style="font-weight: 800; font-size: clamp(16px, 4.2vw, 19px); text-align: right; color: #F2D22E; font-variant-numeric: tabular-nums">{{moltTxt}}</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 0; font-size: 11px; align-items: baseline">
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Giro</span>
+<span style="font-weight: 700; font-size: 14px; text-align: right; font-variant-numeric: tabular-nums">{{lap}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Tempo</span>
+<span style="font-weight: 700; font-size: 14px; text-align: right; font-variant-numeric: tabular-nums">{{time}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Ultimo</span>
+<span style="font-weight: 600; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums">{{last}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Migliore</span>
+<span style="font-weight: 700; font-size: 13px; text-align: right; color: #f0a35e; font-variant-numeric: tabular-nums">{{best}}</span>
+<span style="color: #c9bfb6; letter-spacing: 0.08em; text-transform: uppercase">Limoni</span>
+<span style="font-weight: 800; font-size: 14px; text-align: right; color: #F2D22E; font-variant-numeric: tabular-nums">{{moltTxt}}</span>
 </div>
 <sc-if value="{{haCodice}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 2px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.12); max-width: 190px">
@@ -100,7 +100,6 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <button class="etna-mi" role="menuitem" onClick="{{camBtn}}">{{camLabel}} <span class="etna-k">C</span></button>
 <sc-if value="{{notCine}}" hint-placeholder-val="{{false}}">
 <button class="etna-mi" role="menuitem" onClick="{{resetBtn}}">Rimetti in pista <span class="etna-k">R</span></button>
-<button class="etna-mi" role="menuitem" onClick="{{facileBtn}}">{{facileLabel}}</button>
 </sc-if>
 <button class="etna-mi" role="menuitem" onClick="{{audioBtn}}">{{audioLabel}} <span class="etna-k">M</span></button>
 <button class="etna-mi" role="menuitem" onClick="{{cambiaPista}}">Cambia circuito</button>
@@ -145,10 +144,6 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 </span>
 </button>
 </div>
-<button class="etna-btn" onClick="{{facileBtn}}" aria-pressed="{{facileOn}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 14px; border: 1px solid rgba(242,210,46,0.55); border-radius: 8px; background: rgba(20,17,16,0.9); color: #f4efe9; font-family: inherit; text-align: left">
-<span style="font-size: 17px; font-weight: 800; color: #F2D22E; white-space: nowrap">{{facileLabel}}</span>
-<span style="font-size: 14px; line-height: 1.2; color: #d6ccc3">Frena da solo in curva e ti tiene dentro i paletti</span>
-</button>
 <sc-if value="{{puoiTornare}}" hint-placeholder-val="{{false}}">
 <button class="etna-btn" onClick="{{tornaGara}}" style="min-height: 34px; padding: 0 14px; border: 1px solid rgba(255,255,255,0.22); border-radius: 6px; background: rgba(20,17,16,0.8); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 600">Torna alla gara</button>
 </sc-if>
@@ -163,7 +158,6 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <span style="font-size: 23px; font-weight: 800; font-style: italic; line-height: 1">Due giri, tre circuiti</span>
 <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 14px; line-height: 1.3; color: #e8e0d8">
 <li>Guida il camion VCU, pilotato da Limo, con le frecce o WASD. R ti rimette in pista, C cambia camera (inseguimento, drone, cabina), V avvia o ferma la ripresa cinematica, M l'audio. Tutti i comandi sono anche nel Menu in alto a destra.</li>
-<li>Se resti fermo o fuori pista per 3 secondi, il camion torna da solo sul tracciato. Con la guida facile frena da solo prima delle curve e ti aiuta a sterzare.</li>
 <li>La gara dura 2 giri: il cronometro parte quando passi il traguardo guidando tu.</li>
 <li>Terra lavica: buona aderenza e pozze di fango. Neve: si scivola, sulle placche di ghiaccio ancora di più, e la neve alta ai lati frena. Erba alta: fuori pista rallenti, le pozzanghere enormi frenano e schizzano. Il circuito si cambia dal Menu.</li>
 <li>Prendi i limoni con la scritta ×1,05, ×1,15 e ×1,3: si sommano e alzano il prezzo dei limoni fino a ×4, ma solo se li prendi quasi tutti nei due giri. Quelli dorati sono in alto dopo i salti e si prendono solo in volo.</li>
@@ -225,7 +219,7 @@ a{color:#f0a35e}a:hover{color:#ffc58f}
 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
 </button>
 </div>
-<span style="font-size: 14px; line-height: 1.3; color: #f4efe9; padding: 5px 10px; background: rgba(20,17,16,0.7); border-radius: 4px; text-align: center">Frecce: guida · R: rimetti in pista · C: camera · M: audio</span>
+<span style="font-size: 11px; color: #e8e0d8; padding: 4px 8px; background: rgba(20,17,16,0.55); border-radius: 4px; text-align: center">Frecce / WASD · R · C · V · M</span>
 <div style="display: flex; gap: 10px; pointer-events: auto">
 <button class="etna-btn" data-etna-btn="down" aria-label="Freno e retromarcia" style="width: 62px; height: 56px; border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; background: rgba(20,17,16,0.6); color: #f4efe9; font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; touch-action: none">FRENO</button>
 <button class="etna-btn" data-etna-btn="up" aria-label="Accelera" style="width: 72px; height: 56px; border: 1px solid rgba(240,163,94,0.6); border-radius: 9px; background: rgba(224,112,44,0.45); color: #fff8f1; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; touch-action: none">GAS</button>
@@ -274,7 +268,6 @@ class Component extends DCLogic {
     this.game = window.CircuitoEtna({
       host: this._root, canvas: this._cv, pista,
       avvio: this.avvioQ(),
-      facile: this.facileOn(),
       ora: this.props.ora ?? 'giorno',
       cassette: this.props.cassette ?? true,
       onHud: (h) => { if (this._alive) this.setState(h); }
@@ -337,18 +330,6 @@ class Component extends DCLogic {
     const m = this.audio.muto(!this.audio.eMuto());
     this.setState({ muto: m });
   }
-  facileOn() {
-    const s = this.state || {};
-    if (s.facile != null) return s.facile;
-    try { return localStorage.getItem('etna-guida-facile') === '1'; } catch (e) { return false; }
-  }
-  toggleFacile() {
-    const v = !this.facileOn();
-    try { localStorage.setItem('etna-guida-facile', v ? '1' : '0'); } catch (e) {}
-    if (this.game && this.game.setFacile) this.game.setFacile(v);
-    this.setState({ facile: v, menu: false });
-    if (this._root) this._root.focus();
-  }
   istruzioniAperte() {
     const s = this.state || {};
     if (s.istruzioni != null) return s.istruzioni;
@@ -396,9 +377,6 @@ class Component extends DCLogic {
       showHint: !s.focused && !cine && !this.istruzioniAperte() && !s.finita && !scegli,
       showIstruzioni: this.istruzioniAperte() && !scegli,
       audioLabel: s.muto ? 'Audio: no' : 'Audio: sì',
-      facileOn: this.facileOn(),
-      facileLabel: this.facileOn() ? 'Guida facile: sì' : 'Guida facile: no',
-      facileBtn: () => this.toggleFacile(),
       audioBtn: () => { this.toggleAudio(); if (this._root) this._root.focus(); },
       apriIstruzioni: () => this.setState({ istruzioni: true, menu: false }),
       chiudiIstruzioni: () => { try { localStorage.setItem('etna-istruzioni-viste', '1'); } catch (e) {} this.setState({ istruzioni: false }); if (this._root) this._root.focus(); },
