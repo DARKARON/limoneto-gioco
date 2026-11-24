@@ -8,61 +8,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 /* VOICE: gioco da cortile, allegro, raccontato dall'aereo stesso
-   IDEA: una telecamera che insegue l'aereo di foglie di limone da dietro, sopra il prato a strisce
-   PICTURE: il campo di volo in prima persona, grande in cima alla pagina, con cartelli, monete e nuvole in 3D
+   IDEA: la stradina del limoneto vista da dietro l'aereo di foglie, a tutto schermo
+   PICTURE: il campo di volo riempie lo schermo; comandi grandi in basso, uguali su telefono e computer
    COLOUR and TYPE: azzurro cielo dominante, legno caldo di supporto, oro moneta come accento; Baloo 2 + Nunito
-   LAYOUT: titolo breve, campo di gioco a tutta larghezza, la mia officina a griglia sotto */
+   LAYOUT: gioco a pieno schermo, barra in alto (dati e pulsanti), pulsanti grandi in basso, officina in un menu sopra il gioco */
 :root{color-scheme:light dark;
 --bg:light-dark(#e4f3ff,#0c1530);--ink:light-dark(#13213d,#eef3ff);--soft:light-dark(#4a5b7c,#a9b7d6);
 --card:light-dark(#ffffff,#16224a);--line:light-dark(#c9def2,#2a3a6e);
 --coral:#ff5a3c;--coralInk:#fff;--gold:#ffc21a}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip}
-.band{padding:clamp(20px,3vw,40px) max(5vw,16px)}
-h1,h2,h3{font-family:"Baloo 2",Nunito,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
-h1{font-size:clamp(32px,4.4vw,46px);font-weight:800}
-h2{font-size:32px;font-weight:800}
+html,body{height:100%}
+body{margin:0;background:#4fb0ff;color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+[hidden]{display:none!important}
+h2,h3{font-family:"Baloo 2",Nunito,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
+h2{font-size:30px;font-weight:800}
 h3{font-size:20px;font-weight:800}
-.top{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;padding-bottom:16px}
-.top p{margin:6px 0 0;color:var(--soft);max-width:62ch}
-.wallet{display:flex;gap:10px;flex-wrap:wrap}
-.wallet>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 16px;min-width:104px}
-.lbl{display:block;font-size:13px;color:var(--soft);font-weight:700}
-.wallet b{font:800 24px/1.1 "Baloo 2",sans-serif;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .coin{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3b0 0 18%,var(--gold) 20% 70%,#d99a00 72%);box-shadow:inset 0 0 0 2px #c98a00;flex:none;vertical-align:-.08em}
-.stage{position:relative;height:clamp(380px,66vh,640px);margin:0 max(5vw,16px);border-radius:22px;overflow:hidden;box-shadow:0 14px 40px -18px rgba(10,40,90,.45);border:1px solid var(--line);background:#4fb0ff}
-.stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block;cursor:crosshair}
-.hud{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
-.hud>div{background:rgba(255,255,255,.84);color:#13213d;border-radius:12px;padding:5px 12px;backdrop-filter:blur(4px)}
+.stage{position:fixed;inset:0;overflow:hidden;background:#4fb0ff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block;cursor:pointer}
+button{font:800 16px/1 Nunito,sans-serif;min-height:44px;border-radius:12px;border:0;cursor:pointer;padding:0 18px;background:var(--coral);color:var(--coralInk);display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+button:hover:not(:disabled){filter:brightness(1.07)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{background:light-dark(#dfe7f2,#26335f);color:light-dark(#4f5d78,#a3aed0);cursor:not-allowed}
+/* barra in alto */
+.topbar{position:absolute;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
+.hud{display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
+.hud>div{background:rgba(255,255,255,.88);color:#13213d;border-radius:12px;padding:4px 12px;backdrop-filter:blur(4px)}
 .hud span{display:block;font-size:13px;font-weight:700;color:#4a5b7c}
 .hud b{font:800 20px/1.1 "Baloo 2",sans-serif;white-space:nowrap;display:flex;gap:5px;align-items:center}
-.fuel i{display:block;width:96px;height:10px;border-radius:6px;background:#dbe5f3;margin-top:5px;overflow:hidden}
+.fuel i{display:block;width:84px;height:10px;border-radius:6px;background:#dbe5f3;margin-top:6px;overflow:hidden}
 .fuel em{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff5a3c,#ffb020);border-radius:6px}
-.hint{position:absolute;left:50%;top:78px;transform:translateX(-50%);margin:0;background:rgba(19,33,61,.8);color:#fff;font-weight:700;padding:8px 16px;border-radius:999px;pointer-events:none;font-size:15px;max-width:min(92%,560px);text-align:center;text-wrap:balance}
+.tools{display:flex;gap:6px;pointer-events:auto;flex:none}
+.tool{min-height:48px;min-width:48px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.92);color:#13213d;box-shadow:0 2px 8px rgba(10,30,60,.18)}
+.tool svg{width:24px;height:24px;flex:none}
+#btSuono[aria-pressed=false]{color:#8a3a2a}
+@media(max-width:560px){.tool span{display:none}.tool{padding:0}.hud b{font-size:17px}.hud>div{padding:3px 9px}.fuel i{width:60px}}
+.hint{position:absolute;left:50%;top:76px;transform:translateX(-50%);margin:0;background:rgba(19,33,61,.82);color:#fff;font-weight:700;padding:8px 16px;border-radius:18px;pointer-events:none;font-size:15px;line-height:1.3;width:max-content;max-width:min(calc(100% - 140px),560px);text-align:center;text-wrap:balance}
 .hint:empty{display:none}
-.boost{position:absolute;right:14px;bottom:14px;min-height:64px;min-width:96px;border-radius:999px;font-size:18px;box-shadow:0 6px 0 #b4341f;touch-action:none;user-select:none;-webkit-user-select:none}
-.boost:active,.boost.on{transform:translateY(4px);box-shadow:0 2px 0 #b4341f}
-.boost[hidden]{display:none}
-.prog{position:absolute;right:14px;top:96px;bottom:96px;width:58px;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
-.prog[hidden]{display:none}
+/* pulsanti grandi in basso: gli stessi su telefono e computer */
+.pad{position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:12px;pointer-events:none}
+.pad .big{pointer-events:auto;min-height:76px;min-width:132px;padding:0 26px;font-size:21px;border-radius:999px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .05s}
+.pad .big svg{width:28px;height:28px;flex:none}
+#btLancia{margin:0 auto;max-width:100%;white-space:normal;line-height:1.15;text-align:center;box-shadow:0 6px 0 #b4341f}
+#btLancia.on,#boost.on{transform:translateY(4px);box-shadow:0 2px 0 #b4341f}
+.sali{background:#2e7d32;box-shadow:0 6px 0 #1b4d1e}
+.sali.on{transform:translateY(4px);box-shadow:0 2px 0 #1b4d1e}
+.colonna{display:flex;flex-direction:column;gap:12px;pointer-events:none}
+.scendi{background:#1f5fa8;box-shadow:0 6px 0 #123b6b}
+.scendi.on{transform:translateY(4px);box-shadow:0 2px 0 #123b6b}
+@media(max-height:520px){.colonna{gap:8px}.colonna .big{min-height:56px}}
+#boost{margin-left:auto;box-shadow:0 6px 0 #b4341f}
+@media(max-height:420px){.pad .big{min-height:62px;min-width:110px;font-size:18px}}
+.prog{position:absolute;right:max(12px,env(safe-area-inset-right));top:92px;bottom:118px;width:58px;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
 .prog b{background:rgba(255,255,255,.88);color:#13213d;border-radius:999px;padding:2px 8px;font:800 13px/1.3 Nunito,sans-serif;white-space:nowrap}
 .prog .track{position:relative;flex:1;width:16px;border-radius:10px;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(19,33,61,.35)}
 .prog .fill{position:absolute;left:0;right:0;bottom:0;height:0;border-radius:10px;background:linear-gradient(0deg,#3a8a3e,#ffd43b)}
 .prog .rec{position:absolute;left:-10px;right:-10px;height:0;border-top:3px solid #ff5a3c}
-.prog .rec[hidden]{display:none}
 .prog .tick{position:absolute;left:-4px;right:-4px;height:0;border-top:2px solid rgba(19,33,61,.55)}
 .prog .lv{position:absolute;left:-30px;transform:translateY(50%);font:800 12px/1.4 Nunito,sans-serif;font-style:normal;color:#13213d;background:rgba(255,255,255,.85);border-radius:6px;padding:0 5px}
 .prog .lv.on{background:#ff5a3c;color:#fff}
+.prog .me{position:absolute;left:50%;width:22px;height:22px;margin:0 0 -11px -11px;bottom:0;border-radius:70% 0;transform:rotate(-45deg);background:#2e7d32;box-shadow:0 0 0 3px #fff,0 2px 6px rgba(0,0,0,.35)}
+@media(max-width:600px),(max-height:480px){.prog{top:84px;bottom:104px;width:50px}.prog b{font-size:12px;padding:1px 6px}}
 .lvup{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);margin:0;text-align:center;pointer-events:none;color:#fff;font:800 clamp(28px,6vw,46px)/1.05 "Baloo 2",sans-serif;text-shadow:0 3px 0 #13213d,0 0 18px rgba(19,33,61,.55);opacity:0;transition:opacity .3s}
 .lvup.on{opacity:1}
 .lvup small{display:block;font-size:.5em;font-family:Nunito,sans-serif}
-.ctrl .solo-tel{display:none}
-.ctrl.tel .solo-tel{display:inline-flex}
-.prog .me{position:absolute;left:50%;width:22px;height:22px;margin:0 0 -11px -11px;bottom:0;border-radius:70% 0;transform:rotate(-45deg);background:#2e7d32;box-shadow:0 0 0 3px #fff,0 2px 6px rgba(0,0,0,.35)}
-@media(max-width:600px){.prog{top:88px;bottom:92px;width:50px}.prog b{font-size:12px;padding:1px 6px}}
-.result{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,20,45,.35);padding:16px}
-.result[hidden]{display:none}
+/* riepilogo del volo */
+.result{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,20,45,.35);padding:16px;overflow:auto}
 .rcard{background:var(--card);color:var(--ink);border-radius:20px;padding:22px 24px;width:min(370px,100%);box-shadow:0 20px 50px -20px rgba(0,0,0,.5);text-align:center}
 .rcard .big{font:800 clamp(40px,8vw,52px)/1 "Baloo 2",sans-serif;margin:4px 0 2px}
 .rcard .rec{display:inline-block;background:var(--gold);color:#3a2600;font-weight:800;border-radius:999px;padding:2px 12px;font-size:14px;margin-bottom:6px}
@@ -70,15 +82,31 @@ h3{font-size:20px;font-weight:800}
 .rows div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
 .rows div:last-child{border:0;font-weight:800;font-size:18px}
 .rows b{white-space:nowrap;display:flex;gap:5px;align-items:center}
-button{font:800 16px/1 Nunito,sans-serif;min-height:44px;border-radius:12px;border:0;cursor:pointer;padding:0 18px;background:var(--coral);color:var(--coralInk);display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
-button:hover:not(:disabled){filter:brightness(1.07)}
-button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-button:disabled{background:light-dark(#dfe7f2,#26335f);color:light-dark(#7f8da6,#8592b5);cursor:not-allowed}
-.rcard button{width:100%;font-size:18px;min-height:50px}
-.shophead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 24px;margin-bottom:16px}
-.shophead p{margin:0;color:var(--soft);max-width:56ch}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
-.up{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 14px;align-content:start}
+.rbtn{display:grid;gap:10px}
+.rcard button{width:100%;font-size:18px;min-height:52px}
+.rcard .second{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.rnote{margin:-6px 0 12px;font-weight:700;color:var(--ink)}
+.combo{background:#ffc21a!important;color:#3a2600!important}
+.combo b{color:#3a2600}
+.obi{list-style:none;margin:0 0 14px;padding:0;text-align:left;display:grid;gap:6px}
+.obi li{display:flex;justify-content:space-between;gap:10px;align-items:center;background:light-dark(#eef6ff,#101a3c);border-radius:10px;padding:7px 10px;font-size:15px;font-weight:700}
+.obi li.fatto{background:light-dark(#e3f4dc,#16351f)}
+.obi li b{white-space:nowrap;display:flex;gap:4px;align-items:center}
+.obi-tit{margin:0 0 6px;font-size:13px;font-weight:800;color:var(--soft);text-align:left;text-transform:uppercase;letter-spacing:.06em}
+.rcard .buy{background:#2e7d32}
+/* menu di gioco: officina, colori, istruzioni */
+.menu{position:absolute;inset:0;background:rgba(8,20,45,.55);display:grid;place-items:center;padding:max(10px,env(safe-area-inset-top)) 10px 10px}
+.mpanel{background:var(--bg);color:var(--ink);border-radius:20px;width:min(980px,100%);max-height:100%;overflow:auto;overscroll-behavior:contain;padding:18px clamp(16px,3vw,28px) 24px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);-webkit-user-select:text;user-select:text}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-18px;background:var(--bg);padding:6px 0 10px;z-index:1}
+.mhead .tool{background:var(--card);color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+.wallet{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.wallet>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 14px;min-width:96px}
+.lbl{display:block;font-size:13px;color:var(--soft);font-weight:700}
+.wallet b{font:800 22px/1.1 "Baloo 2",sans-serif;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nota{margin:4px 0 12px;color:var(--soft);max-width:70ch}
+.sez{margin-top:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.up{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 14px;align-content:start}
 .up .ic{width:52px;height:52px;border-radius:14px;background:light-dark(#e4f3ff,#0f1b3e);display:grid;place-items:center;grid-row:span 2}
 .up .ic svg{width:34px;height:34px}
 .up p{margin:2px 0 0;color:var(--soft);font-size:15px}
@@ -86,54 +114,52 @@ button:disabled{background:light-dark(#dfe7f2,#26335f);color:light-dark(#7f8da6,
 .pips i{width:10px;height:10px;border-radius:3px;background:light-dark(#dbe5f3,#26335f)}
 .pips i.on{background:var(--coral)}
 .val{font-size:14px!important;color:var(--ink)!important;margin-top:8px!important}
-.up button{grid-column:1/-1;margin-top:12px}
-.ghost{background:transparent;color:var(--soft);border:1px solid var(--line);margin-top:20px}
-.foot{color:var(--soft);font-size:15px;margin-top:10px;max-width:80ch}
-.esci{display:none;background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:48px;align-self:center}
-html.limoneto .esci{display:inline-flex}
-.colhead{margin-top:32px}
-.swatches{display:flex;flex-wrap:wrap;gap:12px}
+.up button{grid-column:1/-1;margin-top:10px;min-height:48px}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
 .sw{flex-direction:column;background:var(--card);color:var(--ink);border:2px solid var(--line);min-height:auto;padding:10px 14px;gap:6px;border-radius:14px;font-size:15px}
 .sw i{width:40px;height:40px;border-radius:70% 0;display:block;transform:rotate(-45deg);box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
 .sw[aria-pressed=true]{border-color:var(--coral);box-shadow:0 0 0 2px var(--coral)}
 .sw:disabled{background:var(--card);color:var(--soft);opacity:.6}
-.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin:12px max(5vw,16px) 0}
-.ctrl button{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-.ctrl button[aria-pressed=true]{background:var(--coral);color:var(--coralInk);border-color:var(--coral)}
-.rnote{margin:-6px 0 12px;font-weight:700;color:var(--ink)}
-.rnote[hidden]{display:none}
-.premio{display:none;margin:8px 0 0;font-weight:700;color:var(--ink)}
+.mfoot{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.ghost{background:transparent;color:var(--soft);border:1px solid var(--line)}
+.esci-top{display:none}
+html.limoneto .esci-top{display:inline-flex}
+.esci{display:none;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+html.limoneto .esci{display:inline-flex}
+.premio{display:none;margin:0 0 14px;font-weight:700}
 html.limoneto .premio{display:block}
-@media(max-width:600px){.hud b{font-size:17px}.hud>div{padding:4px 9px}.fuel i{width:70px}.hint{font-size:14px;top:auto;bottom:90px}.stage{margin:0 10px;border-radius:16px}}
+.howto{margin:6px 0 0;padding-left:20px;max-width:75ch}
+.howto li{margin:4px 0}
 </style>
 </head>
 <body>
-<header class="band top">
-  <div>
-    <h1>Sono un aereo di foglie di limone</h1>
-  </div>
-  <div class="wallet">
-    <div><span class="lbl">Le mie monete</span><b><span class="coin"></span><span id="coins">0</span></b></div>
-    <div><span class="lbl">Il mio record</span><b id="best">0 m</b></div>
-    <div><span class="lbl">I miei voli</span><b id="flights">0</b></div>
-    <div><span class="lbl">Il mio livello</span><b id="livW">1 di 5</b></div>
-    <button class="esci" id="esci"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M10 6 4 12l6 6M4 12h16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Torna al limoneto</button>
-  </div>
-</header>
-
-<section class="stage" id="stage">
-  <canvas id="game" aria-label="La stradina del limoneto, vista da dietro di me: trascinami giù per tendere l'elastico e lasciami andare"></canvas>
-  <div class="hud">
-    <div><span>Ho volato</span><b id="hDist">0 m</b></div>
-    <div><span>Sono a</span><b id="hAlt">0 m</b></div>
-    <div><span>Vado a</span><b id="hSpd">0 km/h</b></div>
-    <div><span>Ho preso</span><b><span class="coin"></span><span id="hLoot">0</span></b></div>
-    <div class="fuel" id="fuelBox"><span>Il mio razzo</span><i><em id="fuel"></em></i></div>
+<main class="stage" id="stage">
+  <canvas id="game" aria-label="La stradina del limoneto, vista da dietro l'aereo di foglie"></canvas>
+  <div class="topbar">
+    <div class="hud">
+      <div><span>Ho volato</span><b id="hDist">0 m</b></div>
+      <div><span>Ho preso</span><b><span class="coin"></span><span id="hLoot">0</span></b></div>
+      <div class="combo" id="comboBox" hidden><span>Combo</span><b id="hCombo">×2</b></div>
+      <div class="fuel" id="fuelBox"><span>Razzo</span><i><em id="fuel"></em></i></div>
+    </div>
+    <div class="tools">
+      <button class="tool esci-top" id="esciTop" aria-label="Torna al limoneto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 4 12l6 6M4 12h16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Limoneto</span></button>
+      <button class="tool" id="btMenu" aria-label="Apri l'officina"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg><span>Officina</span></button>
+      <button class="tool" id="btFull" aria-label="Schermo intero" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="icFull" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
+      <button class="tool" id="btSuono" aria-label="Suoni" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6L8 10z" fill="currentColor"/><path id="icOnde" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/><path id="icMuto" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button>
+    </div>
   </div>
   <p class="hint" id="hint"></p>
   <p class="lvup" id="lvup" aria-live="polite"></p>
-  <button class="boost" id="boost" hidden>Razzo</button>
   <div class="prog" id="prog" hidden aria-hidden="true"><b id="progTop">4.000 m</b><div class="track" id="progTrack"><i class="fill" id="progFill"></i><i class="rec" id="progRec"></i><i class="me" id="progMe"></i></div><b>0 m</b></div>
+  <div class="pad">
+    <button class="big" id="btLancia">Tieni premuto per tendere la fionda</button>
+    <div class="colonna" id="colAlette" hidden>
+      <button class="big sali" id="btSali"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Sali</button>
+      <button class="big scendi" id="btScendi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Scendi</button>
+    </div>
+    <button class="big" id="boost" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c4 3 5 9 3 14H9C7 11 8 5 12 2z" fill="currentColor"/><path d="M10 18l2 4 2-4" fill="#ffe135"/></svg>Razzo</button>
+  </div>
   <div class="result" id="result" hidden>
     <div class="rcard" role="dialog" aria-labelledby="rTitle">
       <h3 id="rTitle">Sono atterrato!</h3>
@@ -145,51 +171,67 @@ html.limoneto .premio{display:block}
         <div><span>Monete che ho preso in volo</span><b><span class="coin"></span><span id="rLoot">0</span></b></div>
         <div><span>Ti porto in tasca</span><b><span class="coin"></span><span id="rTot">0</span></b></div>
       </div>
-      <p class="rnote" id="rSblocco" hidden>Hai sbloccato i colori! Sotto l'officina puoi scegliere il mio.</p>
-      <button id="again">Rilanciami</button>
+      <p class="rnote" id="rSblocco" hidden>Hai sbloccato i colori! Li trovi nell'officina.</p>
+      <p class="obi-tit">Obiettivi</p>
+      <ul class="obi" id="rObi"></ul>
+      <div class="rbtn"><button id="again">Rilanciami</button><button class="buy" id="rBuy" hidden></button><button class="second" id="rMenu">Apri l'officina</button></div>
     </div>
   </div>
-</section>
-<div class="ctrl" id="ctrl">
-  <button id="btSuono" aria-pressed="true">Suoni accesi</button>
-  <button id="btGiro" class="solo-tel" aria-pressed="true">Guida col giroscopio</button>
-  <button id="btInv" class="solo-tel" aria-pressed="false">Inverti su e giù</button>
-  <button id="btTara" class="solo-tel">Rimetti dritto</button>
-</div>
-
-<section class="band">
-  <div class="shophead">
-    <h2>La mia officina</h2>
-    <p>Ogni potenziamento mi costa un po' di più del precedente. Mi ricordo tutto in questo browser.</p>
+  <div class="menu" id="menu" hidden>
+    <div class="mpanel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <div class="mhead"><h2 id="mTitle">La mia officina</h2><button class="tool" id="btChiudi" aria-label="Chiudi l'officina e torna a giocare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></button></div>
+      <div class="wallet">
+        <div><span class="lbl">Le mie monete</span><b><span class="coin"></span><span id="coins">0</span></b></div>
+        <div><span class="lbl">Il mio record</span><b id="best">0 m</b></div>
+        <div><span class="lbl">I miei voli</span><b id="flights">0</b></div>
+        <div><span class="lbl">Il mio livello</span><b id="livW">1 di 5</b></div>
+      </div>
+      <p class="premio">Dalla bancarella del limoneto: il primo volo di ogni giornata ti porta anche dobloni limone e punti.</p>
+      <h3>Obiettivi</h3>
+      <p class="nota">Completali in un volo solo: ognuno ti dà monete, e al suo posto ne arriva uno nuovo.</p>
+      <ul class="obi" id="mObi"></ul>
+      <h3 class="sez">Potenziamenti</h3>
+      <p class="nota">Ogni potenziamento mi costa un po' di più del precedente. Mi ricordo tutto in questo browser.</p>
+      <div class="grid" id="shop"></div>
+      <h3 class="sez">Il mio colore</h3>
+      <p class="nota" id="colNota"></p>
+      <div class="swatches" id="swatches"></div>
+      <h3 class="sez">Come si gioca</h3>
+      <ul class="howto">
+        <li><b>Lancio:</b> tieni premuto il pulsante grande in basso (o lo schermo, o la barra spaziatrice): la barra della fionda sale e scende. Lascia quando è nella zona verde in cima per un lancio perfetto, che mi dà il 12% di velocità in più.</li>
+        <li><b>Combo:</b> se prendi una moneta dopo l'altra senza pause, ognuna vale di più, fino al triplo.</li>
+        <li><b>Rimbalzi:</b> se tocco l'erba veloce e senza picchiare, rimbalzo e riparto. Al massimo due volte per volo.</li>
+        <li><b>Obiettivi:</b> nel riepilogo e nell'officina trovi tre obiettivi: completali per avere monete in più.</li>
+        <li><b>Salire e scendere:</b> da Pieghe affilate al livello 3 compaiono i pulsanti Sali e Scendi. Tieni premuto Sali (o lo schermo, o la freccia su): le mie alette di dietro puntano verso terra e salgo. Tieni premuto Scendi (o la freccia giù): puntano verso il cielo e scendo. Quando lasci plano da solo e non vado in stallo.</li>
+        <li><b>Razzo:</b> tieni premuto Razzo (o la barra spaziatrice, o il tasto R) per spingermi in avanti finché c'è carburante.</li>
+        <li><b>Monete:</b> segnano la rotta migliore per il mio aereo così com'è adesso. Seguile con Sali e Razzo: dove finiscono, è il punto più lontano che posso raggiungere. Più in basso ci sono altre file: il volo con il solo razzo senza Sali, la planata senza razzo e una fila radente sull'erba. Ogni potenziamento sposta la rotta più in là.</li>
+        <li><b>Insidie:</b> quando hai le alette arrivano i temporali, nuvole scure proprio sulla rotta migliore che mi spingono giù e mi rallentano: girateci intorno con Sali o Scendi. Anche gli uccelli diventano un ostacolo: se ne prendo uno rallento. Le correnti calde, colonne luccicanti vicino alla rotta bassa, invece mi portano su.</li>
+        <li><b>Livello bonus:</b> se arrivo ai 4.000 m il volo continua sopra l'Etna fino a 5.500 m, con il razzo pieno, monete d'oro che valgono il triplo e altri temporali.</li>
+        <li><b>Livelli:</b> la barra a destra mostra i 5 livelli del percorso. Ogni livello nuovo vale monete in più e mi ricarica il razzo di un quarto.</li>
+      </ul>
+      <div class="mfoot"><button class="esci" id="esci"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M10 6 4 12l6 6M4 12h16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Torna al limoneto</button><button class="ghost" id="reset">Rifammi da capo</button></div>
+    </div>
   </div>
-  <div class="grid" id="shop"></div>
-  <div class="shophead colhead">
-    <h2>Il mio colore</h2>
-    <p id="colNota"></p>
-  </div>
-  <div class="swatches" id="swatches"></div>
-  <button class="ghost" id="reset">Rifammi da capo</button>
-  <p class="foot" id="howto"></p>
-</section>
+</main>
 
 <script>
 {
 const $=s=>document.querySelector(s);
 const cv=$('#game'),ctx=cv.getContext('2d'),stage=$('#stage');
 const KEY='aereo-di-carta-v1',G=9.8,THRUST=15,STEP=1/120,LAUNCH_G=.38,NEAR=.2;
-const coarse=matchMedia('(pointer: coarse)').matches;
 const IN_LIM=(()=>{try{return window.parent&&window.parent!==window&&/da=limoneto/.test(location.search)}catch(e){return false}})();
 if(IN_LIM)document.documentElement.classList.add('limoneto');
 const manda=m=>{try{if(IN_LIM)parent.postMessage(m,'*')}catch(e){}};
+$('#esciTop').addEventListener('click',()=>$('#esci').click());
 $('#esci').addEventListener('click',()=>{let ok=false;try{if(parent.__chiudiMinigioco){parent.__chiudiMinigioco();ok=true}}catch(e){}if(!ok)manda({tipo:'aereo-chiudi'})});
 const nf=(n,d=0)=>n.toLocaleString('it-IT',{maximumFractionDigits:d});
 
 const UP=[
  {id:'elastico',name:'Elastico',desc:'Mi lancia più veloce.',base:25,max:12,fmt:l=>`${nf(14+3.5*l,1)} m/s`},
- {id:'ali',name:'Pieghe affilate',desc:'Taglio l’aria con meno attrito. Al livello 3 mi monti le alette posteriori per salire e scendere.',base:30,max:12,fmt:l=>`attrito ${Math.round(100*.88**l)}%`},
+ {id:'ali',name:'Pieghe affilate',desc:'Taglio l’aria con meno attrito. Al livello 3 mi monti le alette posteriori e compare il pulsante Sali.',base:30,max:12,fmt:l=>`attrito ${Math.round(87*.88**l)}%`},
  {id:'carta',name:'Foglie leggere',desc:'Mi sostengo meglio e plano più a lungo.',base:40,max:10,fmt:l=>`portanza ${Math.round(100*(1+.09*l))}%`},
  {id:'rampa',name:'Rampa',desc:'Parto più in alto.',base:35,max:10,fmt:l=>`${2+3*l} m`},
- {id:'razzo',name:'Razzo',desc:'Tieni premuto e mi spingo in avanti.',base:80,max:10,fmt:l=>l?`${nf(.9*l,1)} s di spinta`:'non ce l’ho'},
+ {id:'razzo',name:'Razzo',desc:'Tieni premuto e mi spingo in avanti.',base:80,max:10,fmt:l=>l?`${nf(1.8*l,1)} s di spinta`:'non ce l’ho'},
  {id:'zecca',name:'Salvadanaio',desc:'Ti do più monete per ogni metro.',base:60,max:10,fmt:l=>`×${nf(1+.25*l,2)} monete`}
 ];
 const ICON={
@@ -217,24 +259,14 @@ let st=load();
 const lv=id=>Math.max(1,st.lv[id]||0);
 const alette=()=>lv('ali')>=3;
 const cost=(u,l)=>Math.round(u.base*1.55**l);
-const stats=()=>({v0:14+3.5*lv('elastico'),kD:.03*.88**lv('ali'),kL:.06*(1+.09*lv('carta')),ramp:2+3*lv('rampa'),fuel:.9*lv('razzo'),mult:1+.25*lv('zecca')});
+const stats=()=>({v0:14+3.5*lv('elastico'),kD:.026*.88**lv('ali'),kL:.06*(1+.09*lv('carta')),ramp:2+3*lv('rampa'),fuel:1.8*lv('razzo'),mult:1+.25*lv('zecca')});
 
 let dpr=1,W=0,H=0,F=1,cx=0,cy=0;
-let S=stats(),state='aim',plane,coins=[],pops=[],boosting=false,flightT=0;
+let S=stats(),state='aim',plane,coins=[],insidie=[],colpiti=new Set(),tempo=0,pops=[],boosting=false,flightT=0;
 let dragging=false,dragStart=null,power=0,aimYaw=0;
 let ptX=0,ptY=0,inX=0,inY=0,joy=null;
-const giro={ok:false,roll:0,pit:0,r0:null,p0:null};let giroChiesto=false;
-const giroOn=()=>coarse&&st.giro!==false;
-function angoloSchermo(){const a=(screen.orientation&&screen.orientation.angle!=null)?screen.orientation.angle:(window.orientation||0);return((a%360)+360)%360}
-function suGiro(e){if(e.gamma==null&&e.beta==null)return;giro.ok=true;const a=angoloSchermo();
-  giro.roll=a===90?e.beta:a===270?-e.beta:a===180?-e.gamma:e.gamma;
-  giro.pit=a===90?e.gamma:a===270?-e.gamma:a===180?e.beta:-e.beta;if(giro.r0==null)tara()}
-async function chiediGiro(){if(giroChiesto||!giroOn())return;giroChiesto=true;
-  try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted'){giroChiesto=false;return}}addEventListener('deviceorientation',suGiro)}catch(e){giroChiesto=false}}
-function tara(){giro.r0=giro.roll;giro.p0=giro.pit}
-function giroIn(){if(state!=='fly'||!giroOn()||!giro.ok||joy||giro.r0==null)return null;
-  let dr=giro.roll-giro.r0,dp=giro.pit-giro.p0;if(dp>90)dp-=180;if(dp<-90)dp+=180;if(dr>90)dr-=180;if(dr<-90)dr+=180;
-  return[dz(cl(dr/22)),dz(cl(dp/18))*(st.inv?-1:1)]}const keys=new Set();
+let salendo=false,scendendo=false,menuAperto=false,pDir=1,combo=0,comboT=-9,volo={};
+const keys=new Set();
 const C={x:0,y:0,z:0},cam={yaw:0,pitch:0,roll:0};
 
 const stars=Array.from({length:90},()=>({a:Math.random()*6.283,e:.04+Math.random()*.9,r:Math.random()*1.3+.4}));
@@ -244,18 +276,67 @@ function resize(){dpr=Math.min(2,window.devicePixelRatio||1);W=cv.width=Math.rou
 const ro=new ResizeObserver(resize);ro.observe(stage);resize();
 
 function rnd(n){const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
-function makeCoins(){
-  coins=[];let x=14;
-  while(x<9000){
-    x+=8+Math.random()*16;const spread=Math.min(14,2+x*.02),hm=Math.min(70,3+x*.045);
-    const z=(Math.random()-.5)*2*spread,y=1+Math.random()*hm;
-    if(Math.random()<.3){for(let i=0;i<5;i++)coins.push({x:x+i*4,y,z,got:false});x+=20}
-    else coins.push({x,y,z,got:false});
-  }
+/* la rotta migliore per questo aereo: provo il volo con razzo subito e Sali tenuto per tempi diversi, e tengo quello che va più lontano */
+function rotta(solo,senzaRazzo){
+  const prove=solo!=null?[solo]:alette()?[0,3,6,9,12,16,20,26,34]:[0];let best=null;
+  for(const ts of prove){
+    const p={x:-2.2,y:S.ramp+1.2-.45,z:0,psi:0,v:S.v0,g:LAUNCH_G,fuel:S.fuel},pts=[];let t=0,iy=0,k=0,lvS=1;
+    while(p.y>0&&t<1500&&p.x<PERCORSO){const b=!senzaRazzo&&p.fuel>0;if(b)p.fuel-=STEP;const lnS=livelloDi(p.x);if(lnS>lvS){lvS=lnS;p.fuel=Math.min(S.fuel,p.fuel+S.fuel/4)}
+      let ty=Math.max(-.6,Math.min(.3,(-.05-p.g)*3))*.6;if(alette())ty=t<ts?(p.v<8?Math.max(0,(p.v-5)/3)*.9:.9):Math.max(-.6,Math.min(.3,(-.05-p.g)*3));
+      iy+=(ty-iy)*Math.min(1,STEP*6);integ(p,STEP,b,iy,0);t+=STEP;if((k++)%6===0)pts.push([p.x,Math.max(0,p.y)])}
+    if(!best||p.x>best.x)best={x:p.x,pts}}
+  return best.pts;
 }
+const quotaSu=(pts,x)=>{let lo=0,hi=pts.length-1;if(!pts.length)return 1.5;if(x>=pts[hi][0])return pts[hi][1];while(hi-lo>1){const m=(lo+hi)>>1;pts[m][0]<x?lo=m:hi=m}const a=pts[lo],b=pts[hi],f=(x-a[0])/((b[0]-a[0])||1);return a[1]+(b[1]-a[1])*f};
+function makeCoins(){
+  coins=[];const occ=new Set(),metti=(x,y)=>{const k=Math.round(x/3)+'|'+Math.round(y/3);if(occ.has(k))return;occ.add(k);coins.push({x,y:Math.max(1.4,y),z:0,got:false})};
+  // quattro traiettorie, dall'alto in basso: la migliore (Sali e razzo), solo razzo, nessun razzo, e una fila radente sull'erba
+  const top=rotta(),soloR=alette()?rotta(0):top,planata=S.fuel>0?rotta(alette()?0:null,true):soloR,fineDi=r=>r.length?Math.min(PERCORSO,r[r.length-1][0]):0;
+  const linea=(r,passo,da,gruppi)=>{const fine=fineDi(r);let x=da;while(x<fine-4){
+    if(gruppi&&Math.random()<.25){for(let i=0;i<5&&x<fine;i++){metti(x,quotaSu(r,x));x+=4}x+=passo+Math.random()*10}
+    else{metti(x,quotaSu(r,x));x+=passo+Math.random()*10}}};
+  linea(top,14,14,true);
+  if(soloR!==top)linea(soloR,13,20,true);
+  if(planata!==soloR)linea(planata,12,24,true);
+  // fila radente: monete basse a 2-4 m lungo la stradina, fin dove arriva il volo più lungo
+  const fineMax=Math.max(fineDi(top),fineDi(soloR),fineDi(planata));let x=30;
+  while(x<fineMax-4){metti(x,2+Math.random()*2);x+=26+Math.random()*16}
+  // e qualche moneta a metà fra la fila più alta e quella sotto, dove sono lontane
+  x=40;while(x<fineDi(top)-4){const a=quotaSu(top,x),b=x<fineDi(soloR)?quotaSu(soloR,x):2;if(a-b>14&&Math.random()<.4)metti(x,(a+b)/2);x+=30+Math.random()*12}
+  // insidie: con le alette arrivano i temporali proprio sulla rotta migliore; le correnti calde aiutano chi vola basso
+  insidie=[];
+  if(alette()){x=520;let a=0;while(x<Math.max(fineDi(top),fineDi(soloR))-40){const r=(a++%2&&x<fineDi(soloR))||x>=fineDi(top)?soloR:top,y=quotaSu(r,x);if(y>10)insidie.push({tipo:'temporale',x,y:y+(Math.random()-.4)*6,r:9+Math.random()*4});x+=220+Math.random()*180}}
+  x=380;while(x<fineMax-30){const yb=quotaSu(planata,x);insidie.push({tipo:'corrente',x,y:Math.max(0,yb-14),h:42,r:5.5});x+=520+Math.random()*320}
+}
+/* livello bonus dopo i 4.000 m: monete d'oro e temporali fino a 5.500 m */
+const BONUS_FINE=5500,PERFETTO=.9;
+/* obiettivi: sempre tre attivi, si completano in un volo solo */
+const tondo5=n=>Math.max(5,Math.round(n/5)*5),tondo10=n=>Math.max(10,Math.round(n/10)*10);
+const TIPI_OBI={
+  dist:{nuovo:()=>tondo10(Math.max(60,(st.best||0)*1.05+20)),testo:n=>`Vola per almeno ${nf(n)} m`,ok:(n,f)=>f.d>=n},
+  monete:{nuovo:()=>Math.max(5,Math.round(4+(st.best||0)/40)),testo:n=>`Prendi ${n} monete in un volo`,ok:(n,f)=>f.monete>=n},
+  combo:{nuovo:()=>Math.min(5,2+Math.floor((st.flights||0)/6)),testo:n=>`Fai una combo ×${nf(1+(n-1)*.5,1)}`,ok:(n,f)=>f.comboMax>=n},
+  perfetto:{nuovo:()=>1,testo:()=>'Fai un lancio perfetto',ok:(n,f)=>f.perfetto},
+  rimbalzo:{nuovo:()=>1+((st.flights||0)>8?1:0),testo:n=>n>1?'Rimbalza due volte sull’erba':'Rimbalza sull’erba',ok:(n,f)=>f.rimb>=n},
+  corrente:{nuovo:()=>1,testo:()=>'Fatti portare su da una corrente calda',ok:(n,f)=>f.corrente},
+  livello:{nuovo:()=>Math.min(5,(st.livMax||1)+1),testo:n=>`Arriva al livello ${n}`,ok:(n,f)=>f.liv>=n,se:()=>(st.livMax||1)<5&&(st.best||0)>=(st.livMax||1)*800*.6}
+};
+const testoObi=o=>TIPI_OBI[o.id].testo(o.n);
+function riempiObi(escl){st.obi=(st.obi||[]).filter(o=>TIPI_OBI[o.id]);const usati=new Set([...st.obi.map(o=>o.id),...(escl||[])]),liberi=Object.keys(TIPI_OBI).filter(k=>!usati.has(k)&&(!TIPI_OBI[k].se||TIPI_OBI[k].se()));
+  while(st.obi.length<3&&liberi.length){const k=liberi.splice(Math.floor(Math.random()*liberi.length),1)[0];st.obi.push({id:k,n:TIPI_OBI[k].nuovo(),premio:tondo5(40+(st.best||0)*.12)})}}
+function controllaObi(f){const fatti=[];st.obi=(st.obi||[]).filter(o=>{if(TIPI_OBI[o.id].ok(o.n,f)){fatti.push(o);st.coins+=o.premio;return false}return true});riempiObi(fatti.map(o=>o.id));return fatti}
+function listaObi(el,fatti){el.innerHTML=[...(fatti||[]).map(o=>`<li class="fatto"><span>✓ ${testoObi(o)}</span><b>+${nf(o.premio)} <span class="coin"></span></b></li>`),...(st.obi||[]).map(o=>`<li><span>${testoObi(o)}</span><b>${nf(o.premio)} <span class="coin"></span></b></li>`)].join('')}
+function preparaBonus(p){let x=PERCORSO+16;while(x<BONUS_FINE){const d=x-PERCORSO,y=Math.max(3,p.y+14*Math.sin(d/110)-d*.018);coins.push({x,y,z:0,got:false,oro:true});x+=11+Math.random()*7}
+  x=PERCORSO+180;while(x<BONUS_FINE-60){const d=x-PERCORSO,y=Math.max(8,p.y+14*Math.sin(d/110)-d*.018+(Math.random()-.5)*10);insidie.push({tipo:'temporale',x,y,r:10+Math.random()*4});x+=200+Math.random()*120}}
+/* gli stormi: stessa posizione per il disegno e per gli urti */
+function stormi(t){const out=[],kA=Math.max(0,Math.floor((C.x-60)/230));
+  for(let k=kA;k<kA+4;k++){const n=k*7.31+3,bx=140+k*230+rnd(n)*90,by=Math.max(4,quotaUcc+(rnd(n+.2)-.35)*28),dir=rnd(n+.4)<.5?-1:1,vel=5+rnd(n+.6)*4,
+    quanti=3+Math.floor(rnd(n+.8)*5),zc=((rnd(n+.9)*160+t*vel*dir)%160+160)%160-80;
+    for(let i=0;i<quanti;i++){const fila=Math.ceil(i/2),lato=i%2?1:-1;out.push({x:bx+lato*fila*1.3,z:zc-dir*fila*1.4,y:by+Math.sin(t*1.3+i)*.3,k,i})}}
+  return out}
 
 function reset(){
-  S=stats();state='aim';boosting=false;dragging=false;power=0;aimYaw=0;flightT=0;pops=[];inX=inY=ptX=ptY=0;joy=null;
+  S=stats();state='aim';boosting=false;salendo=false;scendendo=false;colpiti=new Set();pDir=1;combo=0;comboT=-9;volo={monete:0,comboMax:0,perfetto:false,rimb:0,corrente:false};dragging=false;power=0;aimYaw=0;flightT=0;pops=[];inX=inY=ptX=ptY=0;joy=null;['#btLancia','#btSali','#btScendi','#boost'].forEach(q=>$(q).classList.remove('on'));
   plane={x:0,y:S.ramp+1.2,z:0,v:0,g:0,psi:0,fuel:S.fuel,ground:false,loot:0,boost:false};
   makeCoins();trail.length=0;$('#result').hidden=true;renderShop();
 }
@@ -273,9 +354,10 @@ function integ(p,dt,boost,pitchIn,turn){
 function aimEye(){const back=power*2.2;return{x:-back*Math.cos(aimYaw),y:S.ramp+1.2-power*.45,z:-back*Math.sin(aimYaw)}}
 
 function launch(){
-  if(power<.08){power=0;aimYaw=0;return}
-  const e=aimEye();Object.assign(plane,{x:e.x,y:e.y,z:e.z,v:S.v0*power,g:LAUNCH_G,psi:aimYaw});
-  state='fly';power=0;tara();livVolo=1;audioInit();renderShop();
+  power=Math.max(.3,power);aimYaw=0;const perf=power>=PERFETTO;volo.perfetto=perf;
+  const e=aimEye();Object.assign(plane,{x:e.x,y:e.y,z:e.z,v:S.v0*Math.min(1,power)*(perf?1.12:1),g:LAUNCH_G,psi:aimYaw,rimb:0});
+  if(perf){avvisa('Lancio perfetto! +12% di velocità');vibra(30);suonoMoneta(5)}
+  state='fly';power=0;livVolo=1;audioInit();renderShop();
 }
 
 function update(dt){
@@ -285,33 +367,43 @@ function update(dt){
     p.x+=p.v*Math.cos(p.psi)*dt;p.z+=p.v*Math.sin(p.psi)*dt;return;
   }
   const b=boosting&&p.fuel>0;if(b)p.fuel=Math.max(0,p.fuel-dt);p.boost=b;
-  integ(p,dt,b,inY,inX*.9*Math.min(1,p.v/8));
-  if(p.y<=0){p.y=0;p.g=0;p.ground=true;p.v*=.75;p.boost=false}
+  integ(p,dt,b,inY,0);
+  for(const o of insidie){if(Math.abs(o.x-p.x)>o.r+1)continue;
+    if(o.tipo==='temporale'&&Math.hypot(o.x-p.x,o.y-p.y)<o.r){p.v=Math.max(4,p.v-10*dt);p.g=Math.max(-1.2,p.g-1.6*dt);if(!o.preso){o.preso=true;suonoTuono();avvisa('Temporale! Mi spinge giù e mi rallenta')}}
+    if(o.tipo==='corrente'&&p.y>o.y&&p.y<o.y+o.h&&Math.abs(o.x-p.x)<o.r){p.g=Math.min(.6,p.g+1.1*dt);p.v+=1.5*dt;volo.corrente=true;if(!o.preso){o.preso=true;avvisa('Corrente calda: mi porta su!')}}}
+  if(alette())for(const u of stormi(tempo)){if(Math.abs(u.x-p.x)>1.6||Math.abs(u.y-p.y)>1.6||Math.abs(u.z-p.z)>1.8)continue;const key=u.k+'-'+u.i;if(colpiti.has(key))continue;
+    colpiti.add(key);p.v*=.78;p.g-=.12;combo=0;pops.push({x:u.x,y:u.y+1,z:0,t:0,txt:'Botta!'});suonoBotta();vibra(60)}
+  if(p.y<=0){if((p.rimb||0)<2&&p.v>10&&p.g>-.6){p.rimb=(p.rimb||0)+1;volo.rimb=p.rimb;p.y=.05;p.g=Math.min(.38,-p.g*.6+.14);p.v*=.74;pops.push({x:p.x,y:1.5,z:0,t:0,txt:'Rimbalzo!'});suonoBotta();vibra(20)}
+    else{p.y=0;p.g=0;p.ground=true;p.v*=.75;p.boost=false}}
   for(const c of coins){
-    if(c.got||Math.abs(c.x-p.x)>2.2)continue;
-    if(Math.hypot(c.x-p.x,c.y-p.y,c.z-p.z)<2.2){c.got=true;const v=Math.round(5*S.mult);p.loot+=v;pops.push({x:c.x,y:c.y,z:c.z,t:0,txt:'+'+v})}
+    if(c.got||Math.abs(c.x-p.x)>2.8)continue;
+    if(Math.hypot(c.x-p.x,c.y-p.y)<2.8){c.got=true;combo=flightT-comboT<1.4?Math.min(5,combo+1):1;comboT=flightT;volo.comboMax=Math.max(volo.comboMax,combo);volo.monete++;
+      const v=Math.round((c.oro?15:5)*S.mult*(1+(combo-1)*.5));p.loot+=v;pops.push({x:c.x,y:c.y,z:c.z,t:0,txt:'+'+v});suonoMoneta(combo)}
   }
-  const ln=livelloDi(p.x);if(ln>livVolo){livVolo=ln;const v=Math.round(25*ln*S.mult);p.loot+=v;annunciaLivello(ln,v)}
-  if(flightT>400)land();
+  const ln=livelloDi(p.x);if(ln>livVolo){livVolo=ln;const v=Math.round(25*ln*S.mult);p.loot+=v;if(S.fuel>0)p.fuel=Math.min(S.fuel,p.fuel+S.fuel/4);annunciaLivello(ln,v)}
+  if(p.x>=PERCORSO&&!p.bonus){p.bonus=true;const v=Math.round(400*S.mult);p.loot+=v;p.fuel=S.fuel;annunciaLivello(6,v);preparaBonus(p)}
+  if(p.x>=BONUS_FINE){p.arrivato=true;p.x=BONUS_FINE;const v=Math.round(1000*S.mult);p.loot+=v;annunciaLivello(7,v);land();return}
+  if(flightT>3000)land();
 }
 
 function land(){
   if(state!=='fly')return;state='done';boosting=false;$('#boost').classList.remove('on');
   const d=Math.max(0,plane.x),dc=Math.floor(d*S.mult),tot=dc+plane.loot,rec=d>st.best;
+  const fatti=controllaObi({...volo,d,liv:plane.bonus?5:livelloDi(d)});if(fatti.length){suonoLivello();vibra(40)}
   const prima=st.flights;st.coins+=tot;st.flights++;st.livMax=Math.max(st.livMax||1,livelloDi(d));$('#rSblocco').hidden=!(prima<3&&st.flights>=3);if(rec)st.best=d;save();
-  $('#rDist').textContent=nf(d,1)+' m';$('#rLiv').textContent=livelloDi(d)+' · '+LIVELLI[livelloDi(d)-1];$('#rRec').hidden=!rec;
+  $('#rTitle').textContent=plane.arrivato?'Ho sorvolato l’Etna!':plane.bonus?'Sono arrivato all’Etna!':'Sono atterrato!';$('#rDist').textContent=nf(d,1)+' m';$('#rLiv').textContent=plane.arrivato?'Bonus completato!':plane.bonus?'Livello bonus':livelloDi(d)+' · '+LIVELLI[livelloDi(d)-1];st.arrivi=(st.arrivi||0)+(plane.bonus?1:0);$('#rRec').hidden=!rec;
   $('#rDistLbl').textContent=S.mult>1?`Metri che ho volato × ${nf(S.mult,2)}`:'Metri che ho volato';
   $('#rDistC').textContent=nf(dc);$('#rLoot').textContent=nf(plane.loot);$('#rTot').textContent='+'+nf(tot);
-  $('#result').hidden=false;renderShop();manda({tipo:'aereo-fine',metri:+d.toFixed(1),monete:tot,record:rec});$('#again').focus({preventScroll:true});
+  listaObi($('#rObi'),fatti);$('#result').hidden=false;renderShop();manda({tipo:'aereo-fine',metri:+d.toFixed(1),monete:tot,record:rec});$('#again').focus({preventScroll:true});
 }
 
 /* camera in terza persona: mi segue da dietro e da sopra */
-let bank=0;const trail=[];let sparks=[];
+let bank=0;const trail=[];let sparks=[],quotaUcc=12;
 /* 5 livelli: con tutti i potenziamenti al massimo e un volo ben guidato arrivo a circa 3.860 m, quindi il percorso è di 4.000 m in 5 tratti da 800 */
 const PERCORSO=4000,TRATTO=PERCORSO/5,LIVELLI=['La stradina','I filari','La saia','Le colline','Verso l’Etna'];
 const livelloDi=d=>Math.min(5,Math.floor(Math.max(0,d)/TRATTO)+1);
 let livVolo=1,lvT=null;
-function annunciaLivello(n,bonus){const el=$('#lvup');el.innerHTML=`Livello ${n}<small>${LIVELLI[n-1]} · +${nf(bonus)} monete</small>`;el.classList.add('on');clearTimeout(lvT);lvT=setTimeout(()=>el.classList.remove('on'),2200);suonoLivello()}
+function annunciaLivello(n,bonus){const el=$('#lvup');el.innerHTML=n===6?`Livello bonus!<small>Sopra l’Etna fino a 5.500 m · +${nf(bonus)} monete${S.fuel>0?' · razzo pieno':''}</small>`:n===7?`Ho sorvolato l’Etna!<small>Fine del livello bonus · +${nf(bonus)} monete</small>`:`Livello ${n}<small>${LIVELLI[n-1]} · +${nf(bonus)} monete${S.fuel>0?' · razzo ricaricato di un quarto':''}</small>`;el.classList.add('on');clearTimeout(lvT);lvT=setTimeout(()=>el.classList.remove('on'),2200);suonoLivello()}
 (function(){const tr=$('#progTrack');let h='';for(let i=1;i<5;i++)h+=`<i class="tick" style="bottom:${i*20}%"></i>`;for(let i=1;i<=5;i++)h+=`<i class="lv" id="lv${i}" style="bottom:${i*20-10}%">${i}</i>`;tr.insertAdjacentHTML('beforeend',h)})();
 function pose(){
   if(state==='aim'){const e=aimEye();return{x:e.x,y:e.y,z:e.z,psi:aimYaw,g:LAUNCH_G*(.4+.6*power),roll:0}}
@@ -390,6 +482,13 @@ function drawPlane(P,t,boost){
   if(AL){sup([[-1.0,0,.01],[-1.13,0,.33],[-1.19,0,.33],[-1.19,0,.01]],FIX,false);
   const cr=.16,rx=-cr*Math.cos(dr),rr=cr*Math.sin(dr);
     sup([[-1.19,0,.33],[-1.19,0,.01],[-1.19+rx,rr,.02],[-1.19+rx,rr,.3]],MOB,true);}
+  {const hub=[NOSE[0]+.05,0,.015],vola2=state==='fly'&&!plane.ground,giri=state==='aim'?3:vola2?(plane.boost?60:24+plane.v*.8):Math.max(0,plane.v*2),a=t*giri,L=.3,
+    hc=cw(P,hub),eq=(ang)=>cw(P,[hub[0],Math.cos(ang)*L,hub[2]+Math.sin(ang)*L]);
+    faces.push({d:hc.f-.01,draw:()=>{
+      if(giri>15){// disco sfocato quando gira forte
+        ctx.fillStyle='rgba(120,80,40,.16)';const pts=[];for(let i=0;i<16;i++)pts.push(eq(i/16*6.283));if(pathCam(pts))ctx.fill()}
+      for(const k of [0,Math.PI]){const e=eq(a+k);segC(hc,e,.07,giri>15?'rgba(110,70,35,.75)':'#7a4a22');segC(hc,e,.03,'rgba(255,220,160,.5)')}
+      if(hc.f>NEAR){const c=pr(hc),r=Math.max(2*dpr,.06*F/hc.f);ctx.fillStyle='#ffd43b';ctx.strokeStyle=K.edge;ctx.lineWidth=1.4*dpr;ctx.beginPath();ctx.arc(c.x,c.y,r,0,7);ctx.fill();ctx.stroke()}}})}
   faces.sort((a,b)=>b.d-a.d).forEach(f=>f.draw());
   if(!top)return;
   // la scritta sulle ali, in giallo limone
@@ -506,8 +605,26 @@ function draw(t){
   const k0=Math.floor((C.x-300)/150);
   for(let k=k0;k<k0+20;k++)for(let i=0;i<2;i++){const n=k*3+i,x=k*150+rnd(n)*150,z=(rnd(n+.3)-.5)*1100,y=55+rnd(n+.6)*220,sz=10+rnd(n+.9)*18,q=toCam(x,y,z);
     if(q.f<4||q.f>1800)continue;objs.push({f:q.f,d:()=>{const c=pr(q),r=sz*F/q.f;if(Math.abs(c.x)>D+r*3)return;ctx.globalAlpha=Math.min(1,q.f/40)*(dk?.25:.9);ctx.fillStyle=dk?'#a8b8e6':'#fff';ctx.beginPath();ctx.arc(c.x-r*.9,c.y+r*.15,r*.7,0,7);ctx.arc(c.x,c.y-r*.2,r,0,7);ctx.arc(c.x+r*.95,c.y+r*.1,r*.75,0,7);ctx.rect(c.x-r*.9,c.y,r*1.85,r*.8);ctx.fill();ctx.globalAlpha=1}})}
+  // stormi di uccelli che attraversano la stradina, ognuno alla sua quota
+  {const bc=dk?'#d6deef':'#2a3242';for(const u of stormi(t)){const q=toCam(u.x,u.y,u.z);if(q.f<1.5||q.f>420)continue;const hit=colpiti.has(u.k+'-'+u.i);
+    objs.push({f:q.f,d:()=>{const c=pr(q),sp=Math.max(2*dpr,1.5*F/q.f),fl=Math.sin(t*11+u.i*1.7+u.k)*(hit?2:1);if(Math.abs(c.x)>D)return;
+      ctx.strokeStyle=hit?'#c0392b':bc;ctx.lineWidth=Math.max(1.2*dpr,sp*.16);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+      ctx.moveTo(c.x-sp,c.y-fl*sp*.45);ctx.quadraticCurveTo(c.x-sp*.45,c.y-sp*.35-fl*sp*.15,c.x,c.y);ctx.quadraticCurveTo(c.x+sp*.45,c.y-sp*.35-fl*sp*.15,c.x+sp,c.y-fl*sp*.45);ctx.stroke()}})}}
+  // temporali (nuvole scure con pioggia e lampi) e correnti calde (colonne luccicanti)
+  for(const o of insidie){if(o.x<C.x-30||o.x>C.x+700)continue;
+    if(o.tipo==='temporale'){const q=toCam(o.x,o.y,0);if(q.f<1)continue;objs.push({f:q.f,d:()=>{const c=pr(q),R_=o.r*F/q.f;if(R_<1.5||Math.abs(c.x)>D+R_*2)return;
+      ctx.strokeStyle=dk?'rgba(170,190,230,.5)':'rgba(70,90,130,.55)';ctx.lineWidth=Math.max(1,R_*.03);ctx.beginPath();
+      for(let i=0;i<18;i++){const rx=(rnd(o.x+i)-.5)*R_*1.7,ry=((t*1.6+rnd(o.x+i*3))%1)*R_*1.5;ctx.moveTo(c.x+rx,c.y+R_*.3+ry);ctx.lineTo(c.x+rx-R_*.04,c.y+R_*.3+ry+R_*.18)}ctx.stroke();
+      ctx.fillStyle=dk?'rgba(48,54,76,.94)':'rgba(84,92,110,.94)';ctx.beginPath();
+      [[-.55,.1,.6],[0,-.15,.75],[.55,.05,.62],[-.2,.25,.55],[.3,.28,.5]].forEach(([a,b,r])=>{ctx.moveTo(c.x+a*R_+r*R_,c.y+b*R_);ctx.arc(c.x+a*R_,c.y+b*R_,r*R_,0,7)});ctx.fill();
+      ctx.fillStyle=dk?'rgba(90,98,124,.9)':'rgba(120,128,146,.9)';ctx.beginPath();ctx.arc(c.x-.15*R_,c.y-.32*R_,.42*R_,0,7);ctx.fill();
+      if(Math.sin(t*2.3+o.x)>.985){ctx.strokeStyle='#fff6a0';ctx.lineWidth=Math.max(2,R_*.05);ctx.beginPath();ctx.moveTo(c.x,c.y+R_*.4);ctx.lineTo(c.x-R_*.12,c.y+R_*.75);ctx.lineTo(c.x+R_*.05,c.y+R_*.8);ctx.lineTo(c.x-R_*.1,c.y+R_*1.2);ctx.stroke()}}})}
+    else{const q=toCam(o.x,o.y+o.h/2,0);if(q.f<1)continue;objs.push({f:q.f,d:()=>{
+      poly([[o.x,o.y,-o.r],[o.x,o.y,o.r],[o.x,o.y+o.h,o.r],[o.x,o.y+o.h,-o.r]],dk?'rgba(255,170,90,.10)':'rgba(255,180,90,.16)');
+      for(let i=0;i<14;i++){const wy=o.y+((t*.22*o.h+rnd(o.x+i)*o.h)%o.h),wz=Math.sin(t*2+i)*o.r*.6,qq=toCam(o.x,wy,wz);if(qq.f<1)continue;const cc=pr(qq),rr=Math.max(1.2*dpr,.35*F/qq.f);
+        ctx.fillStyle='rgba(255,196,120,.7)';ctx.beginPath();ctx.arc(cc.x,cc.y,rr,0,7);ctx.fill()}}})}}
   for(const c of coins){if(c.got||c.x<C.x-5||c.x>C.x+500)continue;const q=toCam(c.x,c.y,c.z);if(q.f<NEAR*2)continue;
-    objs.push({f:q.f,d:()=>{const s=pr(q),r=.9*F/q.f;if(r<1||Math.abs(s.x)>D)return;drawCoin(s.x,s.y,r,t,c.x)}})}
+    objs.push({f:q.f,d:()=>{const s=pr(q),r=(c.oro?1.2:.9)*F/q.f;if(r<1||Math.abs(s.x)>D)return;if(c.oro){const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,r*2.2);g.addColorStop(0,'rgba(255,240,150,.7)');g.addColorStop(1,'rgba(255,240,150,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y,r*2.2,0,7);ctx.fill()}drawCoin(s.x,s.y,r,t,c.x)}})}
   const P=pose();
   if(C.x<120){const R=S.ramp,Lr=Math.max(4,R*1.4),wood=dk?'#6b4523':'#8a5a2e';
     const qr=toCam(-Lr/2,R/2,0);
@@ -536,30 +653,34 @@ function draw(t){
   const v=state==='fly'?p.v:0,sp=Math.min(1,Math.max(0,(v-18)/35)+(p.boost&&state==='fly'?.4:0));
   if(sp>0){ctx.strokeStyle=dk?'rgba(255,255,255,.25)':'rgba(255,255,255,.55)';ctx.lineWidth=2*dpr;ctx.beginPath();
     for(let i=0;i<26;i++){const a=rnd(i+Math.floor(t*20)*31)*6.283,r1=(.55+rnd(i*7+Math.floor(t*20))*.3)*D*.5,r2=r1+sp*90*dpr;ctx.moveTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);ctx.lineTo(cx+Math.cos(a)*r2,cy+Math.sin(a)*r2)}ctx.stroke()}
-  if(state==='aim'&&dragging){const bh=Math.min(H*.45,200*dpr),bx=W-34*dpr,by=cy-bh/2;ctx.fillStyle='rgba(19,33,61,.55)';ctx.beginPath();ctx.roundRect(bx,by,16*dpr,bh,8*dpr);ctx.fill();
-    ctx.fillStyle=power>.85?'#ff5a3c':'#ffc21a';ctx.beginPath();ctx.roundRect(bx,by+bh*(1-power),16*dpr,bh*power,8*dpr);ctx.fill()}
+  if(state==='aim'&&dragging){const bh=Math.min(H*.5,240*dpr),bw=26*dpr,bx=W-bw-18*dpr,by=cy-bh/2;ctx.fillStyle='rgba(19,33,61,.6)';ctx.beginPath();ctx.roundRect(bx,by,bw,bh,10*dpr);ctx.fill();
+    ctx.fillStyle='rgba(76,217,100,.85)';ctx.fillRect(bx,by,bw,bh*(1-PERFETTO));
+    ctx.fillStyle=power>=PERFETTO?'#4cd964':'#ffc21a';ctx.beginPath();ctx.roundRect(bx+4*dpr,by+bh*(1-power),bw-8*dpr,bh*power,7*dpr);ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2*dpr;ctx.beginPath();ctx.moveTo(bx-4*dpr,by+bh*(1-PERFETTO));ctx.lineTo(bx+bw+4*dpr,by+bh*(1-PERFETTO));ctx.stroke()}
 }
 
 function hud(){
   const p=plane,fl=state!=='aim';
   $('#hDist').textContent=nf(fl?Math.max(0,p.x):0,1)+' m';
-  $('#hAlt').textContent=nf(fl?p.y:S.ramp,1)+' m';
-  $('#hSpd').textContent=nf(fl?p.v*3.6:0)+' km/h';
-  $('#hLoot').textContent=nf(p.loot);
+  $('#hLoot').textContent=nf(p.loot);{const on=state==='fly'&&combo>=2&&flightT-comboT<1.4;$('#comboBox').hidden=!on;if(on)$('#hCombo').textContent='×'+nf(1+(combo-1)*.5,1)}
   $('#fuelBox').style.display=S.fuel>0?'':'none';
   if(S.fuel>0)$('#fuel').style.width=(p.fuel/S.fuel*100)+'%';
-  $('#boost').hidden=!(state==='fly'&&!p.ground&&p.fuel>0);
+  const vola=state==='fly'&&!p.ground;
+  $('#btLancia').hidden=state!=='aim';
+  $('#btLancia').textContent=dragging?(power>=PERFETTO?'Perfetto: lascia ora!':`Elastico al ${Math.round(power*100)}% · lascia nella zona verde`):'Tieni premuto per tendere la fionda';
+  $('#colAlette').hidden=!(vola&&alette());
+  $('#boost').hidden=!(vola&&p.fuel>0);
   $('#prog').hidden=state!=='fly';
-  if(state==='fly'){const d=Math.max(0,p.x),k=Math.min(1,d/PERCORSO),lvn=livelloDi(d);
+  if(state==='fly'){const d=Math.max(0,p.x),inB=d>=PERCORSO,k=inB?Math.min(1,(d-PERCORSO)/(BONUS_FINE-PERCORSO)):Math.min(1,d/PERCORSO),lvn=inB?0:livelloDi(d);
+    $('#progTop').textContent=inB?'5.500 m':'4.000 m';$('#progTop').style.background=inB?'#ffc21a':'';$('#progFill').style.background=inB?'linear-gradient(0deg,#ffb020,#fff2a8)':'';
     $('#progFill').style.height=(k*100)+'%';$('#progMe').style.bottom=(k*100)+'%';$('#progMe').style.background='rgb('+colore().top+')';
     for(let i=1;i<=5;i++)$('#lv'+i).classList.toggle('on',i===lvn);
     const rk=st.best/PERCORSO;$('#progRec').hidden=!(st.best>0&&rk<=1);$('#progRec').style.bottom=(rk*100)+'%'}
   let h='';
-  if(state==='aim')h=dragging?(power<.08?'Tirami ancora un po’ giù…':`Elastico teso al ${Math.round(power*100)}%: lasciami andare!`):'Trascinami giù per tendere l’elastico, a destra o sinistra per prendere la mira';
-  else if(state==='fly'&&!p.ground&&flightT<3.5&&!alette())h=(giroOn()&&giro.ok?'Inclina il telefono a destra e sinistra per virare.':coarse?'Trascina il dito a destra e sinistra per virare.':'Muovi il mouse a destra e sinistra per virare.')+' Per salire e scendere servono le alette: Pieghe affilate al livello 3.';
-  else if(state==='fly'&&!p.ground&&flightT<3.5)h=giroOn()&&giro.ok?'Inclina il telefono: a destra e sinistra viro, verso di te salgo, in avanti scendo':coarse?'Trascina il dito: su e giù salgo e scendo, destra e sinistra viro':'Muovi il mouse: puntatore in alto salgo, in basso scendo, a destra e sinistra viro';
+  if(state==='aim'&&!dragging){const o=(st.obi||[])[0];h=st.flights>=1&&o?`Obiettivo: ${testoObi(o)} · +${nf(o.premio)} monete`:'Tieni premuto: la fionda sale e scende. Lascia nella zona verde per un lancio perfetto.'}
+  else if(state==='fly'&&!p.ground&&flightT<3.5)h=alette()?'Tieni premuto Sali (o lo schermo) per salire, Scendi per scendere; lascia e plano da solo.':'Per ora plano da solo. Con Pieghe affilate al livello 3 avrai il pulsante Sali.';
   else if(state==='fly'&&p.ground)h='Tocco terra, sto scivolando sull’erba…';
-  $('#hint').textContent=h;
+  $('#hint').textContent=h;{const hb=document.querySelector('.topbar');$('#hint').style.top=((hb?hb.offsetTop+hb.offsetHeight:60)+10)+'px'}
 }
 
 /* suoni: vento e aria che scorre, fischio in velocità, rombo del razzo, fruscio dell'erba */
@@ -572,31 +693,53 @@ function creaSuoni(){
   const comp=AC.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;comp.connect(AC.destination);
   const master=AC.createGain();master.gain.value=1;master.connect(comp);
   const voce=(buf,tipo,f,q)=>{const s=AC.createBufferSource();s.buffer=buf;s.loop=true;const fl=AC.createBiquadFilter();fl.type=tipo;fl.frequency.value=f;fl.Q.value=q;const g=AC.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(master);s.start();return{f:fl,g}};
-  AU={master,vento:voce(bianco,'bandpass',500,.8),soffio:voce(bianco,'bandpass',1300,2),corpo:voce(marrone,'lowpass',420,.7),fischio:voce(bianco,'bandpass',2200,6),razzo:voce(bianco,'lowpass',380,1),erba:voce(bianco,'highpass',3000,.5)};
+  AU={bianco,master,vento:voce(bianco,'bandpass',500,.8),soffio:voce(bianco,'bandpass',1300,2),corpo:voce(marrone,'lowpass',420,.7),fischio:voce(bianco,'bandpass',2200,6),razzo:voce(bianco,'lowpass',380,1),erba:voce(bianco,'highpass',3000,.5)};
 }
+function vibra(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+function suonoMoneta(c){if(!AC||!AU||st.muto)return;const t0=AC.currentTime,f=880*Math.pow(2,(Math.min(5,c)-1)*2/12),o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(f,t0);o.frequency.setValueAtTime(f*1.5,t0+.06);
+  g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(.22,t0+.01);g.gain.exponentialRampToValueAtTime(.001,t0+.22);o.connect(g);g.connect(AU.master);o.start(t0);o.stop(t0+.25)}
+function suonoTuono(){if(!AC||!AU||st.muto)return;const t0=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=AU.bianco;f.type='lowpass';f.frequency.value=220;
+  g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(1.6,t0+.06);g.gain.exponentialRampToValueAtTime(.001,t0+1.8);s.connect(f);f.connect(g);g.connect(AU.master);s.start(t0);s.stop(t0+1.9)}
+function suonoBotta(){if(!AC||!AU||st.muto)return;const t0=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.setValueAtTime(220,t0);o.frequency.exponentialRampToValueAtTime(70,t0+.18);
+  g.gain.setValueAtTime(.5,t0);g.gain.exponentialRampToValueAtTime(.001,t0+.25);o.connect(g);g.connect(AU.master);o.start(t0);o.stop(t0+.3)}
 function suonoLivello(){if(!AC||!AU||st.muto)return;const t0=AC.currentTime;[660,880,1320].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0,t0+i*.09);g.gain.linearRampToValueAtTime(.18,t0+i*.09+.02);g.gain.exponentialRampToValueAtTime(.001,t0+i*.09+.35);o.connect(g);g.connect(AU.master);o.start(t0+i*.09);o.stop(t0+i*.09+.4)})}
 function audioUpd(t){if(!AC||!AU)return;const now=AC.currentTime,set=(nodo,v,tc)=>nodo.setTargetAtTime(v,now,tc||.12);
   const vola=!st.muto&&state==='fly',p=plane,v=vola?p.v:0,inAria=vola&&!p.ground,raff=.75+.18*Math.sin(t*.7)+.1*Math.sin(t*1.9+1);
   // il vento: sempre udibile in volo, più forte e più acuto quanto più vado veloce, a raffiche
   const raff2=.7+.3*Math.sin(t*1.3+2)*Math.sin(t*.45);
-  set(AU.vento.g.gain,inAria?Math.min(3,(.9+v/40*1.6)*raff):0);set(AU.vento.f.frequency,380+v*16+60*Math.sin(t*.9));
-  set(AU.soffio.g.gain,inAria?Math.min(1.4,(.25+v/50*.8+Math.abs(inX)*.3)*raff2):0);set(AU.soffio.f.frequency,1000+v*22+Math.abs(bank)*300);
-  set(AU.corpo.g.gain,inAria?Math.min(.9,.3+v/60*.5):0);
+  set(AU.vento.g.gain,inAria?Math.min(1,(.3+v/40*.55)*raff):0);set(AU.vento.f.frequency,380+v*16+60*Math.sin(t*.9));
+  set(AU.soffio.g.gain,inAria?Math.min(.45,(.08+v/50*.26)*raff2):0);set(AU.soffio.f.frequency,1000+v*22+Math.abs(bank)*300);
+  set(AU.corpo.g.gain,inAria?Math.min(.3,.1+v/60*.17):0);
   set(AU.fischio.g.gain,inAria?Math.min(.06,Math.max(0,(v-22)/40)*.06):0);set(AU.fischio.f.frequency,1500+v*30+Math.abs(bank)*400);
   set(AU.razzo.g.gain,vola&&p.boost?.55:0,.05);set(AU.razzo.f.frequency,300+90*Math.sin(t*23));
   set(AU.erba.g.gain,vola&&p.ground&&p.v>.5?Math.min(.12,p.v*.02):0,.06)}
 document.addEventListener('visibilitychange',()=>{try{if(!AC)return;document.hidden?AC.suspend():(!st.muto&&AC.resume())}catch(e){}});
 $('#btSuono').addEventListener('click',()=>{st.muto=!st.muto;save();if(st.muto){try{AC&&AC.suspend()}catch(e){}}else audioInit();renderCtrl()});
+const DE=document.documentElement,fsSi=!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
+const inFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+if(!fsSi)$('#btFull').hidden=true;
+$('#btFull').addEventListener('click',()=>{try{
+  if(inFs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}
+  else{const r=(DE.requestFullscreen||DE.webkitRequestFullscreen).call(DE,{navigationUI:'hide'});if(r&&r.then)r.then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>avvisa('Qui il browser non permette lo schermo intero.'))}
+}catch(e){avvisa('Qui il browser non permette lo schermo intero.')}});
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{renderCtrl();resize()}));
+let avT=null;function avvisa(t){const el=$('#lvup');el.innerHTML=`<small>${t}</small>`;el.classList.add('on');clearTimeout(avT);avT=setTimeout(()=>el.classList.remove('on'),2200)}
 function renderColori(){
   const ok=st.flights>=3,cur=colore().id,manca=3-st.flights;
   $('#colNota').textContent=ok?'Scegli il colore delle mie foglie: lo vedi dal prossimo lancio.':`Si sblocca dopo il terzo lancio: ${manca===1?'manca ancora un lancio':`mancano ancora ${manca} lanci`}.`;
   $('#swatches').innerHTML=COLORI.map(c=>`<button class="sw" data-col="${c.id}" aria-pressed="${ok&&c.id===cur}" ${ok?'':'disabled'}><i style="background:linear-gradient(135deg,rgb(${c.top}) 0 55%,rgb(${c.under}) 55%)"></i>${c.nome}</button>`).join('');
 }
 $('#swatches').addEventListener('click',e=>{const b=e.target.closest('button[data-col]');if(!b||st.flights<3)return;st.colore=b.dataset.col;save();renderColori()});
-function renderCtrl(){$('#ctrl').classList.toggle('tel',coarse);$('#btSuono').setAttribute('aria-pressed',String(!st.muto));$('#btSuono').textContent=st.muto?'Suoni spenti':'Suoni accesi';$('#btGiro').setAttribute('aria-pressed',String(giroOn()));$('#btGiro').textContent=giroOn()?'Giroscopio acceso':'Giroscopio spento';$('#btInv').setAttribute('aria-pressed',String(!!st.inv));$('#btTara').disabled=!giroOn()}
-$('#btGiro').addEventListener('click',()=>{st.giro=!giroOn();save();if(giroOn())chiediGiro();renderCtrl()});
-$('#btInv').addEventListener('click',()=>{st.inv=!st.inv;save();renderCtrl()});
-$('#btTara').addEventListener('click',()=>{chiediGiro();tara()});
+function renderCtrl(){
+  const b=$('#btSuono');b.setAttribute('aria-pressed',String(!st.muto));b.setAttribute('aria-label',st.muto?'Suoni spenti: tocca per accenderli':'Suoni accesi: tocca per spegnerli');
+  $('#icOnde').style.display=st.muto?'none':'';$('#icMuto').style.display=st.muto?'':'none';
+  const f=$('#btFull'),on=inFs();f.setAttribute('aria-pressed',String(on));f.setAttribute('aria-label',on?'Esci dallo schermo intero':'Schermo intero');
+  $('#icFull').setAttribute('d',on?'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5':'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5')}
+function compraRapido(){const poss=UP.filter(u=>lv(u.id)<u.max&&st.coins>=cost(u,lv(u.id)));if(!poss.length)return null;
+  // prima le alette, poi il più economico
+  return (lv('ali')<3&&poss.find(u=>u.id==='ali'))||poss.sort((a,b)=>cost(a,lv(a.id))-cost(b,lv(b.id)))[0]}
+function renderBuy(){const b=$('#rBuy'),u=state==='done'?compraRapido():null;b.hidden=!u;if(u)b.innerHTML=`Potenzia ${u.name} · <span class="coin"></span> ${nf(cost(u,lv(u.id)))}`;b.dataset.id=u?u.id:''}
+$('#rBuy').addEventListener('click',()=>{const u=UP.find(x=>x.id===$('#rBuy').dataset.id);if(!u)return;const l=lv(u.id),c=cost(u,l);if(l>=u.max||st.coins<c)return;st.coins-=c;st.lv[u.id]=l+1;save();S=stats();suonoMoneta(4);avvisa(`${u.name}: livello ${l+1}`);renderShop()});
 function renderWallet(){$('#livW').textContent=(st.livMax||1)+' di 5';$('#coins').textContent=nf(st.coins);$('#best').textContent=nf(st.best,1)+' m';$('#flights').textContent=nf(st.flights)}
 function renderShop(){
   const fly=state==='fly';
@@ -606,7 +749,7 @@ function renderShop(){
     return `<article class="up"><div class="ic">${ICON[u.id]}</div><div><h3>${u.name}</h3><p>${u.desc}</p></div>
     <div><div class="pips" aria-label="Livello ${l} di ${u.max}">${pips}</div><p class="val">${u.fmt(l)}${mx?'':` → <b>${u.fmt(l+1)}</b>`}</p></div>
     <button data-id="${u.id}" ${can?'':'disabled'}>${mx?'Più di così non posso':`Potenziami <span class="coin"></span>${nf(c)}`}</button></article>`}).join('');
-  renderWallet();renderColori();renderCtrl();
+  renderWallet();renderColori();renderCtrl();renderBuy();listaObi($('#mObi'));
 }
 $('#shop').addEventListener('click',e=>{
   const b=e.target.closest('button[data-id]');if(!b||state==='fly')return;
@@ -616,63 +759,77 @@ $('#shop').addEventListener('click',e=>{
   if(state==='aim')reset();else{S=stats();renderShop()}
 });
 
-$('#howto').textContent=coarse
- ?'Come mi guidi: trascinami giù per tendere l’elastico (verso destra o sinistra per mirare) e stacca il dito. In volo inclina il telefono: a destra e sinistra viro, verso di te salgo, in avanti scendo. Se preferisci, trascina il dito sullo schermo. Tieni premuto Razzo per spingermi. Se l’aereo tira da una parte, tocca Rimetti dritto. Da Pieghe affilate al livello 3, inclinando il telefono verso di te le mie alette di dietro puntano verso terra e salgo; in avanti puntano verso il cielo e scendo.'
- :'Come mi guidi: trascinami giù per tendere l’elastico (verso destra o sinistra per mirare) e rilascia. In volo muovi il mouse, oppure usa le frecce o WASD: su e giù salgo e scendo, destra e sinistra viro. Tieni premuto il tasto del mouse o la barra spaziatrice per il razzo. Invio per rilanciarmi. Le mie alette di dietro (da Pieghe affilate al livello 3) le muovi col mouse: puntatore verso l’alto e puntano verso terra, così salgo; puntatore verso il basso e puntano verso il cielo, così scendo.';
-
 let rTimer=null;
 $('#reset').addEventListener('click',e=>{
   const b=e.currentTarget;
   if(!rTimer){b.textContent='Sicuro? Perdo tutto. Clicca di nuovo';rTimer=setTimeout(()=>{b.textContent='Rifammi da capo';rTimer=null},3500);return}
   clearTimeout(rTimer);rTimer=null;b.textContent='Rifammi da capo';
-  st={coins:0,best:0,flights:0,lv:{},giro:st.giro,inv:st.inv,muto:st.muto};save();reset();
+  st={coins:0,best:0,flights:0,lv:{},muto:st.muto};save();reset();
 });
 $('#again').addEventListener('click',reset);
 
-const bb=$('#boost');
-const bOn=e=>{e.preventDefault();boosting=true;bb.classList.add('on');try{bb.setPointerCapture(e.pointerId)}catch(_){}};
-const bOff=()=>{boosting=false;bb.classList.remove('on')};
-bb.addEventListener('pointerdown',bOn);bb.addEventListener('pointerup',bOff);bb.addEventListener('pointercancel',bOff);bb.addEventListener('lostpointercapture',bOff);
-
-function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*dpr,y:(e.clientY-r.top)*dpr}}
-const cl=v=>Math.max(-1,Math.min(1,v)),dz=v=>Math.abs(v)<.08?0:v;
-cv.addEventListener('pointerdown',e=>{
-  chiediGiro();audioInit();const q=pos(e);try{cv.setPointerCapture(e.pointerId)}catch(_){}
-  if(state==='aim'){dragging=true;dragStart=q;power=0;aimYaw=0}
-  else if(state==='fly'){if(e.pointerType==='mouse')boosting=true;else joy=q}
-});
-cv.addEventListener('pointermove',e=>{
-  const q=pos(e);
-  if(state==='aim'&&dragging){power=Math.max(0,Math.min(1,(q.y-dragStart.y)/(150*dpr)));aimYaw=Math.max(-.45,Math.min(.45,-(q.x-dragStart.x)/(220*dpr)*.45));return}
-  if(state!=='fly')return;
-  if(e.pointerType==='mouse'){ptX=dz(cl((q.x-cx)/(W*.38)));ptY=dz(cl(-(q.y-cy)/(H*.38)))}
-  else if(joy){ptX=dz(cl((q.x-joy.x)/(70*dpr)));ptY=dz(cl(-(q.y-joy.y)/(70*dpr)))}
-});
-const up=e=>{if(dragging){dragging=false;launch()}if(e.pointerType==='mouse')boosting=false;else{joy=null;ptX=ptY=0}};
-cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
-cv.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&!dragging){ptX=ptY=0;boosting=false}});
+/* comandi: tutto si fa tenendo premuto, uguale col dito, col mouse e con la tastiera */
+function premi(){audioInit();if(menuAperto)return;
+  if(state==='aim'){dragging=true;pDir=1;power=Math.max(power,.05);$('#btLancia').classList.add('on')}
+  else if(state==='fly'){salendo=true;$('#btSali').classList.add('on')}}
+function lascia(){if(dragging){dragging=false;$('#btLancia').classList.remove('on');launch()}salendo=false;$('#btSali').classList.remove('on')}
+function tieni(el,giu,su){
+  el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(_){}giu()});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,su));
+  el.addEventListener('keydown',e=>{if((e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();e.stopPropagation();giu()}});
+  el.addEventListener('keyup',e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopPropagation();su()}});
+}
+tieni(cv,premi,lascia);tieni($('#btLancia'),premi,lascia);tieni($('#btSali'),premi,lascia);
+function giu(){audioInit();if(state==='fly'&&!menuAperto){scendendo=true;$('#btScendi').classList.add('on')}}
+function suGiu(){scendendo=false;$('#btScendi').classList.remove('on')}
+tieni($('#btScendi'),giu,suGiu);
+tieni($('#boost'),()=>{audioInit();boosting=true;$('#boost').classList.add('on')},()=>{boosting=false;$('#boost').classList.remove('on')});
+$('#stage').addEventListener('contextmenu',e=>{if(!e.target.closest('.mpanel'))e.preventDefault()});
+function apriMenu(){menuAperto=true;lascia();suGiu();boosting=false;$('#boost').classList.remove('on');$('#menu').hidden=false;renderShop();$('#btChiudi').focus({preventScroll:true})}
+function chiudiMenu(){menuAperto=false;$('#menu').hidden=true;last=performance.now();$('#btMenu').focus({preventScroll:true})}
+$('#btMenu').addEventListener('click',apriMenu);$('#btChiudi').addEventListener('click',chiudiMenu);$('#rMenu').addEventListener('click',apriMenu);
+$('#menu').addEventListener('click',e=>{if(e.target===e.currentTarget)chiudiMenu()});
+const tastiRazzo=['Space','KeyR','ShiftLeft','ShiftRight'],tastiSu=['ArrowUp','KeyW'],tastiGiu=['ArrowDown','KeyS'];
+function razzoOn(){boosting=true;$('#boost').classList.add('on')}function razzoOff(){boosting=false;$('#boost').classList.remove('on')}
 addEventListener('keydown',e=>{
-  if(e.target.closest&&e.target.closest('button,input,textarea'))return;
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].includes(e.code)&&state==='fly'){keys.add(e.code);e.preventDefault()}
-  if(e.code==='Space'&&state==='fly'){boosting=true;e.preventDefault()}
-  if((e.code==='Enter'||e.code==='Space')&&state==='done'){reset();e.preventDefault()}
+  if(e.code==='Escape'){menuAperto?chiudiMenu():apriMenu();e.preventDefault();return}
+  if(menuAperto||(e.target.closest&&e.target.closest('button,input,textarea')))return;
+  const k=e.code;if([...tastiRazzo,...tastiSu,...tastiGiu,'Enter'].includes(k))e.preventDefault();if(e.repeat)return;
+  if(state==='done'){if(k==='Space'||k==='Enter')reset();return}
+  if(state==='aim'){if(k==='Space'||tastiSu.includes(k))premi();return}
+  if(tastiRazzo.includes(k))razzoOn();
+  if(tastiSu.includes(k))premi();
+  if(tastiGiu.includes(k))giu();
 });
-addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='Space')boosting=false});
+addEventListener('keyup',e=>{const k=e.code;
+  if(k==='Space'&&dragging)lascia();
+  if(tastiRazzo.includes(k))razzoOff();
+  if(tastiSu.includes(k))lascia();
+  if(tastiGiu.includes(k))suGiu();
+});
 
 let last=performance.now(),acc=0;
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  const kx=(keys.has('ArrowRight')||keys.has('KeyD'))-(keys.has('ArrowLeft')||keys.has('KeyA')),ky=(keys.has('ArrowUp')||keys.has('KeyW'))-(keys.has('ArrowDown')||keys.has('KeyS'));
-  const gi=giroIn(),tx=kx||ky?kx:gi?gi[0]:ptX,ty=alette()?Math.max(-1,Math.min(1,(kx||ky?ky:gi?gi[1]:ptY))):0;inX+=(tx-inX)*Math.min(1,dt*6);inY+=(ty-inY)*Math.min(1,dt*6);
-  if(state==='fly'){acc+=dt*Math.min(2.5,1+flightT/30);let k=0;while(acc>=STEP&&state==='fly'&&k<40){update(STEP);acc-=STEP;k++}}
+  tempo=now/1000;
+  if(state==='aim'&&dragging&&!menuAperto){power+=pDir*dt/1.05;if(power>=1){power=1;pDir=-1}if(power<=.45){power=.45;pDir=1}}
+  let ty=0;
+  // stabilità di base: anche senza alette l'aereo non va in stallo e plana dritto
+  if(state==='fly'&&!plane.ground&&!alette())ty=Math.max(-.6,Math.min(.3,(-.05-plane.g)*3))*.6;
+  if(state==='fly'&&!plane.ground&&alette()){const p=plane;
+    // tenendo premuto salgo, ma se vado troppo piano mi raddrizzo da solo; lasciando torno alla planata migliore
+    ty=scendendo&&!salendo?(p.g>-.7?-.75:0):salendo?(p.v<8?Math.max(0,(p.v-5)/3)*.9:.9):Math.max(-.6,Math.min(.3,(-.05-p.g)*3));}
+  inX=0;inY+=(ty-inY)*Math.min(1,dt*6);
+  if(state==='fly'&&!menuAperto){acc+=dt*Math.min(3.5,1+flightT/20);let k=0;while(acc>=STEP&&state==='fly'&&k<40){update(STEP);acc-=STEP;k++}}
   else acc=0;
   for(const q of pops)q.t+=dt*1.2;pops=pops.filter(q=>q.t<1);
-  if(state==='fly'&&!plane.ground){trail.push([plane.x,plane.y,plane.z]);if(trail.length>140)trail.shift()}
+  if(state==='fly'&&!plane.ground&&!menuAperto){trail.push([plane.x,plane.y,plane.z]);if(trail.length>140)trail.shift()}
   if(state==='fly'&&plane.boost){const P=pose();for(let i=0;i<4;i++){const w=toWorld(P,-1.1-Math.random()*1.4,(Math.random()-.5)*.5,(Math.random()-.5)*.5-.03);sparks.push({x:w[0],y:w[1],z:w[2],t:0,v:Math.random()})}}
   for(const k of sparks)k.t+=dt*2.2;sparks=sparks.filter(k=>k.t<1);if(state!=='fly')sparks.length=0;
+  quotaUcc+=((state==='fly'?Math.max(8,plane.y):12)-quotaUcc)*Math.min(1,dt*.4);
   camera(dt);draw(now/1000);hud();audioUpd(now/1000);requestAnimationFrame(frame);
 }
-reset();camera(1);
+riempiObi();save();reset();camera(1);
 requestAnimationFrame(frame);
 }
 </script>

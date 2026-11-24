@@ -46,15 +46,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" href="_ds/broadsheet-df622a89-8321-4fb9-940b-ea77d59c800c/styles.css">
   <script src="_ds/broadsheet-df622a89-8321-4fb9-940b-ea77d59c800c/_ds_bundle.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+  <link rel="stylesheet" href="gioco/ph/style.css?v=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="gioco/dati-fondo.js"></script>
-  <script src="gioco/regole.js"></script>
+  <script src="gioco/regole.js?v=3"></script>
   <script src="gioco/modelli.js"></script>
   <script src="gioco/consegna.js"></script>
-  <script src="gioco/motore.js?v=108"></script>
+  <script src="gioco/motore.js?v=117"></script>
   <script src="gioco/ambiente.js"></script>
   <script src="gioco/suoni.js"></script>
   <script src="gioco/potatura3d.js?v=90"></script>
@@ -285,7 +285,7 @@
       <div style="pointer-events:auto;display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%">
     
     <sc-if value="{{ hudChiuso }}" hint-placeholder-val="{{ false }}">
-      <button onClick="{{ toggliHud }}" style="min-height:46px;max-width:100%;border:3px solid rgba(255,255,255,0.9);border-radius:999px;background:var(--color-bg);color:#ffffff;box-shadow:var(--shadow-md);padding:0 14px;display:flex;align-items:center;gap:8px;font-size:15px;cursor:pointer;white-space:nowrap"><i class="ph-duotone ph-caret-down" style="font-size:18px;color:oklch(0.9 0.15 98)"></i><span style="font-family:var(--font-heading);font-weight:600">{{ hudTitolo }}</span><span>· ore {{ hudOra }}</span></button>
+      <button onClick="{{ toggliHud }}" aria-label="Apri il riquadro del lavoro: {{ hudTitolo }}" title="{{ hudTitolo }}" style="min-height:44px;border:3px solid rgba(255,255,255,0.9);border-radius:999px;background:var(--color-bg);color:#ffffff;box-shadow:var(--shadow-md);padding:0 12px 0 8px;display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums"><i class="ph-duotone ph-caret-down" aria-hidden="true" style="font-size:16px;color:oklch(0.9 0.15 98)"></i><span>{{ hudOra }}</span><span aria-hidden="true" style="display:inline-block;width:38px;height:8px;background:rgba(0,0,0,0.3);border-radius:999px;overflow:hidden"><span style="display:block;height:100%;width:{{ hudPerc }}%;background:oklch(0.88 0.17 95)"></span></span></button>
     </sc-if>
     <sc-if value="{{ hudAperto }}" hint-placeholder-val="{{ true }}">
     <div style="width:340px;max-width:100%;position:relative;background:var(--color-bg);box-shadow:var(--shadow-md);border:3px solid rgba(255,255,255,0.9);border-radius:22px;padding:14px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px">
@@ -319,22 +319,22 @@
     </div></div>
     </div>
     <div style="position:absolute;left:calc({{ barraLeft }} + env(safe-area-inset-left));bottom:calc({{ barraLeft }} + env(safe-area-inset-bottom));right:{{ barraDestra }};display:flex;justify-content:flex-start;pointer-events:none">
-      <div style="pointer-events:auto;width:min(620px,100%);background:var(--color-bg);box-shadow:var(--shadow-lg);border:3px solid rgba(255,255,255,0.9);border-radius:24px;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px">
-        <span style="font-size:14px;line-height:1.3;padding:0 4px;text-wrap:pretty">{{ prompt }}</span>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;min-width:0">
-          <button onPointerDown="{{ azioneGiuEv }}" onPointerUp="{{ azioneSuEv }}" onPointerLeave="{{ azioneSuEv }}" onPointerCancel="{{ azioneSuEv }}" style="flex:1 1 100%;min-width:0;position:relative;overflow:hidden;min-height:52px;border:0;border-radius:999px;box-shadow:0 5px 0 rgba(0,0,0,0.25);background:{{ azioneBg }};color:{{ azioneFg }};cursor:pointer;touch-action:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;font-family:var(--font-heading);font-weight:600;font-size:18px">
-            <span style="position:absolute;left:0;bottom:0;height:4px;width:{{ holdPerc }}%;background:#ffffff;opacity:0.85;pointer-events:none"></span>
+      <div style="pointer-events:auto;display:flex;flex-direction:column;align-items:flex-start;gap:5px;max-width:min(440px,100%);min-width:0">
+        <span style="max-width:100%;box-sizing:border-box;font-size:12px;line-height:1.3;color:#ffffff;background:rgba(20,40,24,0.62);padding:3px 10px;border-radius:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty">{{ prompt }}</span>
+        <div style="display:flex;align-items:center;gap:6px;max-width:100%;min-width:0">
+          <button onPointerDown="{{ azioneGiuEv }}" onPointerUp="{{ azioneSuEv }}" onPointerLeave="{{ azioneSuEv }}" onPointerCancel="{{ azioneSuEv }}" style="flex:0 1 auto;min-width:0;position:relative;overflow:hidden;height:44px;border:2px solid rgba(255,255,255,0.85);border-radius:999px;box-shadow:0 3px 0 rgba(0,0,0,0.25);background:{{ azioneBg }};color:{{ azioneFg }};cursor:pointer;touch-action:none;display:flex;align-items:center;gap:8px;padding:0 14px;font-family:var(--font-heading);font-weight:600;font-size:16px">
+            <span style="position:absolute;left:0;bottom:0;height:3px;width:{{ holdPerc }}%;background:#ffffff;opacity:0.85;pointer-events:none"></span>
             <span style="position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ azioneLabel }}</span>
-            <span style="position:relative;font-family:var(--font-body);font-weight:400;font-size:13px;white-space:nowrap">{{ tastoE }}</span>
+            <span style="position:relative;font-family:var(--font-body);font-weight:400;font-size:12px;white-space:nowrap;opacity:0.85">{{ tastoE }}</span>
           </button>
-          <button class="btn btn-secondary" onClick="{{ tratta }}" disabled="{{ nonTratta }}" title="{{ trattaInfo }}" style="flex:1 1 0;min-width:84px;min-height:48px;color:#ffffff;border-color:rgba(255,255,255,0.55);justify-content:center;gap:6px;padding:0 8px;font-size:16px;white-space:nowrap"><span>Tratta</span><span style="font-size:12px;font-weight:400">{{ tastoT }}</span></button>
+          <button class="btn btn-secondary" onClick="{{ tratta }}" disabled="{{ nonTratta }}" title="{{ trattaInfo }}" aria-label="Tratta" style="flex:0 0 auto;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#ffffff;background:var(--color-bg);border:2px solid rgba(255,255,255,0.85);box-shadow:0 3px 0 rgba(0,0,0,0.22);justify-content:center;font-size:22px"><i class="ph-duotone ph-spray-bottle"></i></button>
           <sc-if value="{{ haTrattore }}" hint-placeholder-val="{{ false }}">
-            <button class="btn btn-secondary" onClick="{{ toggliTrattore }}" title="{{ trattoreInfo }}" style="flex:1 1 0;min-width:84px;min-height:48px;color:#ffffff;border-color:rgba(255,255,255,0.55);justify-content:center;gap:6px;padding:0 8px;font-size:16px;white-space:nowrap;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis">{{ trattoreBtn }}</span><span style="font-size:12px;font-weight:400">{{ tastoQ }}</span></button>
+            <button class="btn btn-secondary" onClick="{{ toggliTrattore }}" title="{{ trattoreLabel }} {{ tastoQ }}" aria-label="{{ trattoreLabel }}" style="flex:0 0 auto;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#ffffff;background:var(--color-bg);border:2px solid rgba(255,255,255,0.85);box-shadow:0 3px 0 rgba(0,0,0,0.22);justify-content:center;font-size:22px"><i class="ph-duotone ph-tractor"></i></button>
           </sc-if>
           <sc-if value="{{ haMoto }}" hint-placeholder-val="{{ false }}">
-            <button class="btn btn-secondary" onClick="{{ toggliMoto }}" style="flex:1 1 0;min-width:84px;min-height:48px;color:#ffffff;border-color:rgba(255,255,255,0.55);justify-content:center;gap:6px;padding:0 8px;font-size:16px;white-space:nowrap;overflow:hidden"><span style="overflow:hidden;text-overflow:ellipsis">{{ motoBtn }}</span><span style="font-size:12px;font-weight:400">{{ tastoM }}</span></button>
+            <button class="btn btn-secondary" onClick="{{ toggliMoto }}" title="{{ motoBtn }} {{ tastoM }}" aria-label="{{ motoBtn }}" style="flex:0 0 auto;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#ffffff;background:var(--color-bg);border:2px solid rgba(255,255,255,0.85);box-shadow:0 3px 0 rgba(0,0,0,0.22);justify-content:center;font-size:22px"><i class="ph-duotone ph-truck"></i></button>
           </sc-if>
-          <button class="btn btn-secondary" onClick="{{ toggliPausa }}" style="flex:1 1 0;min-width:84px;min-height:48px;color:#ffffff;border-color:rgba(255,255,255,0.55);justify-content:center;gap:6px;padding:0 8px;font-size:16px;white-space:nowrap"><span>Pausa</span><span style="font-size:12px;font-weight:400">{{ tastoEsc }}</span></button>
+          <button class="btn btn-secondary" onClick="{{ toggliPausa }}" title="Pausa {{ tastoEsc }}" aria-label="Pausa" style="flex:0 0 auto;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#ffffff;background:var(--color-bg);border:2px solid rgba(255,255,255,0.85);box-shadow:0 3px 0 rgba(0,0,0,0.22);justify-content:center;font-size:22px"><i class="ph-duotone ph-pause"></i></button>
         </div>
       </div>
     </div>
@@ -808,13 +808,13 @@
 
   <sc-if value="{{ isAereo }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;z-index:36;background:#e4f3ff">
-      <iframe src="aereo/index.html?da=limoneto&v=13" title="L'aereo di foglie di limone" allow="accelerometer; gyroscope; autoplay; fullscreen; screen-wake-lock" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block"></iframe>
+      <iframe src="aereo/index.html?da=limoneto&v=14" title="L'aereo di foglie di limone" allow="accelerometer; gyroscope; autoplay; fullscreen; screen-wake-lock" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block"></iframe>
     </div>
   </sc-if>
 
   <sc-if value="{{ isBancarella }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;z-index:35;background:rgba(32,30,29,0.6);display:flex;align-items:center;justify-content:center;padding:16px">
-      <div style="position:relative;width:min(620px,100%);max-height:100%;overflow-y:auto;background:var(--color-bg);color:var(--color-text);box-shadow:var(--shadow-lg);border-radius:var(--radius-md);padding:28px 30px;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--space-3)">
+      <div style="position:relative;width:min(900px,100%);max-height:100%;overflow-y:auto;background:var(--color-bg);color:var(--color-text);box-shadow:var(--shadow-lg);border-radius:var(--radius-md);padding:28px 30px;box-sizing:border-box;display:flex;flex-direction:column;gap:var(--space-3)">
         <button class="btn btn-ghost" onClick="{{ chiudiBancarella }}" aria-label="Chiudi" style="position:absolute;top:10px;right:10px;width:44px;height:44px;padding:0;font-size:24px"><i class="ph-duotone ph-x"></i></button>
         <span style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-700);font-weight:700;padding-right:44px">La bancarella sulla saia</span>
         <h2 style="margin:0;font-family:var(--font-heading);font-weight:600;font-size:34px;line-height:1.1;text-wrap:pretty">A che gioco giochiamo?</h2>
@@ -832,6 +832,13 @@
             <p style="margin:0;font-size:17px;line-height:1.4;text-wrap:pretty">Lancialo con la fionda dalla rampa, guidalo in volo e potenzialo con le monete.</p>
             <span style="font-size:15px;color:var(--color-text)">{{ bancAereoRec }} · {{ bancAereoPremio }}</span>
             <button class="btn btn-primary" onClick="{{ giocaAereo }}" style="margin-top:auto;white-space:nowrap;font-size:19px;min-height:52px"><i class="ph-duotone ph-paper-plane-tilt" style="font-size:22px"></i><span>Lancia l'aereo</span></button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;border:2px solid var(--color-divider);border-radius:var(--radius-md);padding:16px">
+            <i class="ph-duotone ph-flag-checkered" aria-hidden="true" style="font-size:36px;color:oklch(0.5 0.18 35)"></i>
+            <h3 style="margin:0;font-family:var(--font-heading);font-weight:600;font-size:24px;line-height:1.15">Etna Cross</h3>
+            <p style="margin:0;font-size:17px;line-height:1.4;text-wrap:pretty">Guida il camion sulla pista dell'Etna e prendi i limoni con i numeri: sono dobloni limone.</p>
+            <span style="font-size:15px;color:var(--color-text)">{{ bancEtnaRec }} · {{ bancEtnaPremio }}</span>
+            <button class="btn btn-primary" onClick="{{ giocaEtnaBtn }}" style="margin-top:auto;white-space:nowrap;font-size:19px;min-height:52px"><i class="ph-duotone ph-flag-checkered" style="font-size:22px"></i><span>Corri a Etna Cross</span></button>
           </div>
         </div>
       </div>
@@ -870,7 +877,7 @@
           <span style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-2-700);font-weight:700">Etna Cross</span>
           <span style="font-family:var(--font-heading);font-weight:700;font-size:clamp(40px,9vw,64px);line-height:1;font-variant-numeric:tabular-nums;color:var(--color-accent-700)">{{ etnaMoltTxt }}</span>
           <p style="margin:0;font-size:19px;line-height:1.4;text-wrap:pretty">{{ etnaEsitoTxt }}</p>
-          <button class="btn btn-primary" onClick="{{ etnaFine }}" style="white-space:nowrap;align-self:flex-start;font-size:19px;min-height:52px;padding:0 26px">Torna al lavoro</button>
+          <button class="btn btn-primary" onClick="{{ etnaFine }}" style="white-space:nowrap;align-self:flex-start;font-size:19px;min-height:52px;padding:0 26px">Torna al limoneto</button>
         </div>
       </sc-if>
     </div>
@@ -971,7 +978,7 @@ class Component extends DCLogic {
       {id:'quiz',ic:'ph-student',t:'Amico dell\'ispettore',x:'Hai risposto bene a tutte e tre le domande.',c:'Rispondi giusto alle domande dell\'ispettore.',ok:S=>(S.quizPerfetti||0)>0},
       {id:'tesoro',ic:'ph-coin',t:'Il tesoro di Limo',x:'Limo ha scavato e trovato qualcosa di antico.',c:'Quando Limo scava, vai a vedere.',ok:S=>!!(S.tesori&&Object.keys(S.tesori).length)},
       {id:'elegante',ic:'ph-dog',t:'Limo elegante',x:'Hai regalato a Limo il suo primo accessorio.',c:'Compra un collare o un cappello per Limo nello Shop.',ok:S=>!!(S.limoOwn&&Object.keys(S.limoOwn).length)},
-      {id:'trattore',ic:'ph-tractor',t:'Il trattore',x:'Con tutti gli attrezzi, lavori quasi al doppio della velocità.',c:'Compralo nello Shop.',ok:S=>!!S.attrezzi.trattore},
+      {id:'trattore',ic:'ph-tractor',t:'Il trattore',x:'Vai quasi al doppio; con l\'attrezzo giusto lavori anche più in fretta.',c:'Compralo nello Shop.',ok:S=>!!S.attrezzi.trattore},
       {id:'tre',ic:'ph-star',t:'Tre stelle',x:'Lavoro finito, mese giusto e nessun errore.',c:'Prendi tre stelle in un lavoro.',ok:(S,s)=>s&&s.stelleN===3},
       {id:'maestro',ic:'ph-crown',t:'Maestro del limoneto',x:'Tre stelle in tutti e quattro i lavori.',c:'Tre stelle in ogni lavoro.',ok:S=>['raccolta','erba','irrigazione','potatura'].every(t=>(S.stelle||{})[t]===3)},
       {id:'cento',ic:'ph-tree-evergreen',t:'Cento alberi nuovi',x:'Il limoneto è cresciuto fino in fondo.',c:'Sblocca tutte le 100 piante nuove.',ok:S=>(S.nuove||0)>=100}]; }
@@ -994,7 +1001,7 @@ class Component extends DCLogic {
     this.S=this.utente?this.carica():this.nuovo(); this.rec=this.caricaRec();
     this.m=new window.LimonetoMotore(this.hostRef.current,{ onVicino:v=>{ this.setState({vicino:v}); this.attrezzoIrr(v); }, onErba:p=>{ window.Suoni&&window.Suoni.play('erba',90); this.onErba(p); }, onCancello:()=>this.alCancello() });
     if(this.S.erba) this.m.setErba(this.S.erba);
-    this.m.livelloPozzo(this.S.pozzo/1000); this.m.setPozzo&&this.m.setPozzo(this.pozzoLav()); this.m.setCamion(!!this.S.attrezzi.camionGelso); this.m.setGenere(this.S.genere||'contadino'); this.m.setCaneAcc&&this.m.setCaneAcc(this.S.limoAcc); this.aggiornaN(false);
+    this.m.livelloPozzo(this.S.pozzo/1000); this.m.setPozzo&&this.m.setPozzo(this.pozzoLav()); this.m.setCamion(true); this.m.setGenere(this.S.genere||'contadino'); this.m.setCaneAcc&&this.m.setCaneAcc(this.S.limoAcc); this.aggiornaN(false);
     this.N.forEach(n=>this.calcolaFrutti(n,9)); this.N.forEach(n=>this.sync(n));
     if(this.utente) this.applicaProfilo();
     this.setState({pronto:true, schermata:this.utente?'titolo':'login'}); this.leggiClassifica();
@@ -1002,7 +1009,7 @@ class Component extends DCLogic {
   // ---- accesso adottanti
   alberoGioco(a){ const N=this.N0; a=parseInt(a,10)||0; if(!a) return null; return N.includes(a)?a:N[(a-1)%N.length]; }
   applicaProfilo(){
-    const u=this.utente, S=this.S=this.carica(), m=this.m; m.setCamion(!!S.attrezzi.camionGelso); m.setGenere(S.genere||'contadino'); m.setCaneAcc&&m.setCaneAcc(S.limoAcc);
+    const u=this.utente, S=this.S=this.carica(), m=this.m; m.setCamion(true); if(S.attrezzi&&!S.trAttr){ S.trAttr=true; if(S.attrezzi.trattore) ['trTrincia','trSpandi','trBotte','trCarrello','trPiattaforma'].forEach(k=>S.attrezzi[k]=true); this.persist(); } if(S.attrezzi&&S.attrezzi.camionGelso&&!S.camionRimborsato){ S.camionRimborsato=true; S.soldi+=1000; this.persist(); setTimeout(()=>this.toast('Il camion futuristico di Gelso ora c\'è per tutti: ti ridiamo i 1000 dobloni che avevi speso.'),1500); } this.aggiornaParcheggio(); m.setGenere(S.genere||'contadino'); m.setCaneAcc&&m.setCaneAcc(S.limoAcc);
     S.nome=u.nome||u.u;
     if(!S.bonusFormula){ const f=(u.formula||'').toLowerCase(); let msg='';
       msg='Benvenuto! Parti con 1000 dobloni limone: gli attrezzi li compri nello Shop. Ogni 300 punti arrivano 30 nuove piante da coltivare.';
@@ -1065,19 +1072,27 @@ class Component extends DCLogic {
   fmtD(v){ const r=Math.round(v); return r+(Math.abs(r)===1?' doblone':' dobloni'); }
   fmtOra(o){ const h=Math.floor(o), m=Math.floor((o-h)*60); return h+':'+String(m).padStart(2,'0'); }
   inTrattore(){ return !!(this.S&&this.S.attrezzi.trattore&&this.ses&&this.ses.trattore); }
+  attT(k){ return this.inTrattore()&&!!this.S.attrezzi[k]&&this.S.trAgg===this.ATT3D[k]; }
+  get ATT3D(){ return {trTrincia:'trincia',trSpandi:'spandi',trBotte:'botte',trCarrello:'carrello',trPiattaforma:'piattaforma'}; }
+  idDa3D(k){ return Object.keys(this.ATT3D).find(i=>this.ATT3D[i]===k); }
+  nomeAtt(k){ const it=(this.R||window.REGOLE).BOTTEGA.find(b=>b.id===this.idDa3D(k)); return it?it.nome:k; }
+  aggiornaParcheggio(){ if(!this.m||!this.m.setParcheggio||!this.S) return; const S=this.S, own=Object.keys(this.ATT3D).filter(i=>S.attrezzi[i]).map(i=>this.ATT3D[i]); if(S.trAgg&&own.indexOf(S.trAgg)<0) S.trAgg=null; this.m.setParcheggio(own,S.trAgg||null); }
+  aggancia(k,via){ const S=this.S, s=this.ses; if(!s||!this.inTrattore()) return; if(S.trAgg==='carrello'&&s.carico>6*18) return this.toast('Svuota prima il carrello nel camion.');
+    S.trAgg=via?null:k; this.persist(); this.applicaTrattore(); window.Suoni&&window.Suoni.play('clic'); this.toast(via?`Hai sganciato: ${this.nomeAtt(k)}.`:`Hai agganciato: ${this.nomeAtt(k)}.`); this.r(); }
+  attDi(t){ return {concime:'trSpandi',erba:'trTrincia',irrigazione:'trBotte',raccolta:'trCarrello',potatura:'trPiattaforma'}[t]; }
   suMoto(){ return !!(this.S&&this.S.attrezzi.carriola&&this.ses&&this.ses.moto!==false); }
   strumentoDi(t){ if(t==='giro') return null; return t==='raccolta'&&this.suMoto()?'motocarriola':this.R.MISSIONI[t].strumento; }
   toggliMoto(){ const s=this.ses; if(!s||!s.attiva||s.tipo!=='raccolta'||!this.S.attrezzi.carriola||this.state.overlay) return;
     if(s.guida) return this.toast('Stai guidando il camion: scendi prima.'); if(this.inTrattore()) return this.toast('Scendi prima dal trattore.');
     if(this.suMoto()&&s.carico>6*18) return this.toast('Svuota prima la motocarriola nel camion.');
     s.moto=!this.suMoto(); this.m.setStrumento(this.strumentoDi(s.tipo)); this.toast(s.moto?'Hai preso la motocarriola.':'Hai lasciato la motocarriola: ora porti la cesta.'); this.r(); }
-  haScala(){ return !!(this.S.attrezzi.scala||this.inTrattore()); }
-  capacita(){ return (this.inTrattore()?30:(this.suMoto()?15:6))*18; }
-  raggioErba(){ return this.inTrattore()?2.3:(this.S.attrezzi.decesp?1.7:1.0); }
+  haScala(){ return !!(this.S.attrezzi.scala||this.attT('trPiattaforma')); }
+  capacita(){ return (this.attT('trCarrello')?30:(this.suMoto()?15:6))*18; }
+  raggioErba(){ return this.attT('trTrincia')?2.3:(this.S.attrezzi.decesp?1.7:1.0); }
   applicaTrattore(){ const s=this.ses; if(!s||!this.m) return; const on=this.inTrattore(), t=s.tipo;
-    this.m.setTrattore(on,{concime:'spandi',erba:'trincia',irrigazione:'botte',raccolta:'carrello',potatura:'piattaforma'}[t]);
+    this.m.setTrattore(on,this.S.trAgg||null); this.aggiornaParcheggio();
     this.m.setStrumento(on?null:this.strumentoDi(t)); this.m.setTaglio(t==='erba',this.raggioErba()); }
-  toggliTrattore(){ const s=this.ses; if(!s||!s.attiva||!this.S.attrezzi.trattore||this.state.overlay) return; if(s.guida) return this.toast('Stai guidando il camion: scendi prima.'); s.trattore=!s.trattore; this.applicaTrattore(); this.toast(s.trattore?'Sei salito sul trattore.':'Sei sceso dal trattore: ora lavori a mano.'); this.r(); }
+  toggliTrattore(){ const s=this.ses; if(!s||!s.attiva||!this.S.attrezzi.trattore||this.state.overlay) return; if(s.guida) return this.toast('Stai guidando il camion: scendi prima.'); s.trattore=!s.trattore; this.applicaTrattore(); const ak=this.attDi(s.tipo), ai=ak&&(this.R||window.REGOLE).BOTTEGA.find(b=>b.id===ak); this.toast(s.trattore?(ai&&!this.S.attrezzi[ak]?`Sei sul trattore, ma ti manca: ${ai.nome} (nello Shop a ${ai.prezzo} dobloni).`:(ai&&!this.attT(ak)?`Sei sul trattore. Per questo lavoro aggancia: ${ai.nome}. Lo trovi accanto allo Shop.`:'Sei salito sul trattore.')):'Sei sceso dal trattore: ora lavori a mano.'); this.r(); }
   durata(){ return Math.max(2,Math.min(15,this.props.durataGiornata??6)); }
   aiuti(){ return this.props.aiuti??true; }
   calcolaFrutti(n,mese){
@@ -1282,17 +1297,18 @@ class Component extends DCLogic {
     if(!v){ if(t==='erba') this.toast('Il decespugliatore è acceso: cammina sull\'erba alta.'); return; }
     if(v.tipo==='limo'){ this.tesoro(); this.r(); return; }
     if(v.tipo==='saia'){ this.apriBancarella(); return; }
+    if(v.tipo==='aggancia'||v.tipo==='sgancia'){ this.aggancia(v.n,v.tipo==='sgancia'); return; }
     if(v.tipo==='shop'){ this._shopCapanno=true; this.m.setPausa(true); window.Suoni&&window.Suoni.play('clic'); this.setState({overlay:'bottega'}); return; }
     if(v.tipo==='pianta'){ const n=v.n, p=S.piante[n];
       if(s.giro){ window.Suoni&&window.Suoni.play&&window.Suoni.play('clic'); return this.toast(`Pianta ${n} · salute ${p.salute} su 100${p.malato?' · è malata, curala in un lavoro di potatura':''}. Oggi è solo un giro: i lavori li fai da Gioca.`); }
       if(t==='concime'){ if(s.fatti[n]) return this.toast(`La pianta ${n} è già concimata.`); if(S.concime<1) return this.toast('Concime finito: compralo nello Shop (menu Pausa).');
-        this.hold={tipo:'concime',dur:this.inTrattore()?0.45:(S.attrezzi.spandiconcime?0.7:1.4),p:0,n}; this.m.anima('spargi'); }
+        this.hold={tipo:'concime',dur:this.attT('trSpandi')?0.45:(S.attrezzi.spandiconcime?0.7:1.4),p:0,n}; this.m.anima('spargi'); }
       if(t==='irrigazione'){ if(s.fatti[n]) return this.toast(s.secca&&s.fase===1?`Alla pianta ${n} hai già chiuso l'acqua.`:`La pianta ${n} è già finita: conca, concime e acqua.`);
         if(s.secca&&s.fase===1){ this.hold={tipo:'chiudi',dur:0.5,p:0,n}; this.m.anima('tratta'); }
         else { const c=this.irr(n);
-          if(c.f===0){ this.hold={tipo:'zappa',dur:this.inTrattore()?0.5:1.1,p:0,n}; this.m.anima('pompa'); }
+          if(c.f===0){ this.hold={tipo:'zappa',dur:this.attT('trBotte')?0.5:1.1,p:0,n}; this.m.anima('pompa'); }
           else if(c.f===1){ this.doseN=n; this.hold=null; this.m.setPausa(true); this.setState({overlay:'dose'}); return; }
-          else if(c.f===2){ if(S.pozzo<this.bisognoAcqua()*Math.max(0.2,1.05-c.liv)) return this.toast(this.pozzoLav()<3?'Il pozzo è da sistemare: vai al pozzo e riparalo.':'Il pozzo è quasi vuoto: vai al pozzo e pompa.'); this.hold={tipo:'riempi',dur:this.inTrattore()?1.3:2.4,p:0,base:c.liv,n}; this.m.anima('annaffia'); } } }
+          else if(c.f===2){ if(S.pozzo<this.bisognoAcqua()*Math.max(0.2,1.05-c.liv)) return this.toast(this.pozzoLav()<3?'Il pozzo è da sistemare: vai al pozzo e riparalo.':'Il pozzo è quasi vuoto: vai al pozzo e pompa.'); this.hold={tipo:'riempi',dur:this.attT('trBotte')?1.3:2.4,p:0,base:c.liv,n}; this.m.anima('annaffia'); } } }
       if(t==='potatura'){ if(s.fatti[n]) return this.toast(`La pianta ${n} è già potata.`); this.apriPotatura(n); }
       if(t==='raccolta'){ if(p.maturi<=0) return this.toast(`Sulla pianta ${n} non ci sono limoni maturi.`); this.apriRaccolta(n); }
       if(t==='erba') this.toast(`Pianta ${n}: salute ${p.salute} su 100.`);
@@ -1365,16 +1381,16 @@ class Component extends DCLogic {
   }
   caricaCamion(){ const s=this.ses; if(!s) return; window.Suoni&&window.Suoni.play('cassa'); const kg=s.carico; s.camionKg+=kg; s.camionV+=s.caricoV; s.carico=0; s.caricoV=0; this.m.camionCarico(1);
     this.toast(`${kg} kg caricati sul camion (${s.camionKg} kg in tutto). Sali e portalo al cancello, o torna a raccogliere.`); this.r(); }
-  alCancello(){ const s=this.ses; if(!s||!s.attiva||!s.guida||!(s.camionKg>0)) return; s.guida=false; s.inVendita=true; const futur=!!this.S.attrezzi.camionGelso; this.m.camionVia(); const v=this.vendi();
+  alCancello(){ const s=this.ses; if(!s||!s.attiva||!s.guida||!(s.camionKg>0)) return; s.guida=false; s.inVendita=true; const futur=true; this.m.camionVia(); const v=this.vendi();
     clearTimeout(this._vt);
     if(futur&&window.ConsegnaCamion){ this.hold=null; this.m.anima(null); this.m.setPausa(true); this.setState({consegna:{...v,vis:0}}); return; }
-    this.mostraVenduti(v,()=>this.etnaApri(v.inc)); }
+    this.mostraVenduti(v,()=>this.etnaApri(0)); }
   mostraVenduti(v,dopo){ this.setState({venduti:v}); this._vt=setTimeout(()=>{ this.setState({venduti:null}); if(dopo) return dopo(); if(this.m&&this.ses&&this.ses.attiva) this.m.camionTorna(); },2800); }
   avviaConsegna(){ const c=this.state.consegna, el=this.consegnaRef.current; if(!c||!el||this._cons) return;
     this._cons=window.ConsegnaCamion(el,{kg:c.kg,inc:c.inc,onFine:()=>this.fineConsegna()});
     const t0=Date.now(); clearInterval(this._consIv); this._consIv=setInterval(()=>{ const k=Math.min(1,Math.max(0,(Date.now()-t0-1000)/2600)), cc=this.state.consegna; if(!cc) return clearInterval(this._consIv); this.setState({consegna:{...cc,vis:+(cc.inc*(1-Math.pow(1-k,3))).toFixed(2)}}); if(k>=1) clearInterval(this._consIv); },60); }
   fineConsegna(){ const c=this.state.consegna; if(this._cons){ this._cons.stop(); this._cons=null; } clearInterval(this._consIv); if(!c) return;
-    this.setState({consegna:null}); if(c.inc>0) window.Suoni&&window.Suoni.play('fine'); this.mostraVenduti(c,()=>this.etnaApri(c.inc)); }
+    this.setState({consegna:null}); if(c.inc>0) window.Suoni&&window.Suoni.play('fine'); this.mostraVenduti(c,()=>this.etnaApri(0)); }
   etnaApri(inc){ const s=this.ses; if(!s) return; if(!(inc>0)){ s.inVendita=false; if(this.m){ this.m.setPausa(false); if(s.attiva) this.m.camionTorna(); } this.controlla(); return; } if(this.m) this.m.setPausa(true); this.setState({overlay:'etna',etna:{inc,fase:'offerta',input:'',err:'',ultimo:null}}); }
   etnaLeggi(c){ c=String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(c.startsWith('ETNA')) c=c.slice(4); if(c.length!==7) return null;
     const k=parseInt(c.slice(0,2),36), sig=c.slice(2,5), cc=c.slice(5); if(!(k>0)||k>300) return null; const t=k+':'+sig+':limoneto-etna'; let h=7; for(let i=0;i<t.length;i++) h=(h*31+t.charCodeAt(i))>>>0;
@@ -1384,7 +1400,11 @@ class Component extends DCLogic {
     if(S.codiciEtna[r.id]) return this.setState({etna:{...e,err:'Questo codice l\'hai già usato. Ogni codice vale una volta sola.'}});
     S.codiciEtna[r.id]=Date.now(); const bonus=Math.round(e.inc*(r.m-1)*100)/100, s=this.ses; S.soldi+=bonus; if(s){ s.incasso+=bonus; } this.punti('etna','Bonus Etna Cross',Math.round(bonus));
     window.Suoni&&window.Suoni.play('monete'); setTimeout(()=>window.Suoni&&window.Suoni.play('fine'),400); this.persist(); this.setState({etna:{...e,fase:'esito',m:r.m,bonus,err:''}}); }
-  etnaChiudi(){ const e=this.state.etna; if(!e) return; if(e.fase!=='gioco') return; if(e.ultimo&&this.etnaLeggi(e.ultimo)) return this.etnaUsa(e.ultimo); this.setState({etna:{...e,fase:'esito',m:1,bonus:0}}); }
+  giocaEtna(){ if(!this.ses||!this.ses.attiva) return; this.hold=null; this.m.anima(null); this.m.setPausa(true); window.Suoni&&window.Suoni.stopAll&&window.Suoni.stopAll(); this.setState({overlay:'etna',etna:{inc:0,fase:'gioco',input:'',err:'',ultimo:null,banc:true}}); }
+  etnaChiudi(){ const e=this.state.etna; if(!e) return; if(e.fase!=='gioco') return;
+    const r=e.ultimo?this.etnaLeggi(e.ultimo):null, m=r?r.m:1, dob=Math.max(0,Math.min(300,Math.round((m-1)*100))), s=this.ses, S=this.S;
+    let gia=false; if(dob>0){ if(s&&s.etnaPremiata) gia=true; else { if(s) s.etnaPremiata=true; S.soldi+=dob; this.punti('etna','Etna Cross',dob*3); window.Suoni&&window.Suoni.play('monete'); setTimeout(()=>window.Suoni&&window.Suoni.play('fine'),400); this.persist(); } }
+    this.setState({etna:{...e,fase:'esito',m,dob,gia,bonus:0}}); }
   fmtT(x){ x=Math.max(0,+x||0); const m=Math.floor(x/60), s=x-m*60; return m+':'+(s<10?'0':'')+s.toFixed(1); }
   secT(t){ if(typeof t==='number') return t; const m=String(t||'').match(/^(\d+):(\d+(?:[.,]\d+)?)$/); return m?(+m[1])*60+parseFloat(m[2].replace(',','.')):1e9; }
   etnaTempo(d){ const tot=+d.totale; if(!(tot>0)) return; const S=this.S, U=this.utente, nome=S.nome||'Contadino', punti=Math.round((+d.molt||1)*100);
@@ -1408,7 +1428,7 @@ class Component extends DCLogic {
     const dob=z+(d.arrivato?20:0), pt=z*5+st*30; s.saiaPremiata=true; if(dob>0){ S.soldi+=dob; window.Suoni&&window.Suoni.play('monete'); } if(pt>0) this.punti('saia','Regata nella saia',pt);
     S.saiaRecord=d.arrivato&&(!(S.saiaRecord>0)||+d.tempo<S.saiaRecord)?+d.tempo:S.saiaRecord; this.persist();
     this.toast(`Regata: ${z} zagare · +${dob} dobloni limone e ${pt} punti!`); }
-  etnaFine(){ this.setState({etna:null,overlay:null}); const s=this.ses; if(s) s.inVendita=false; if(this.m){ this.m.setPausa(false); if(s&&s.attiva) this.m.camionTorna(); } this.controlla(); }
+  etnaFine(){ this.setState({etna:null,overlay:null}); const s=this.ses, vend=!!(s&&s.inVendita); if(s) s.inVendita=false; if(this.m){ this.m.setPausa(false); if(vend&&s.attiva) this.m.camionTorna(); } this.controlla(); }
   vendi(){
     const s=this.ses, S=this.S; if(!s) return {kg:0,inc:0}; const inc=+(s.camionV*s.prezzo).toFixed(2), kg=s.camionKg;
     S.soldi+=inc; s.incasso+=inc; s.venduto+=kg; s.camionKg=0; s.camionV=0; if(inc>0) window.Suoni&&window.Suoni.play('monete');
@@ -1432,7 +1452,7 @@ class Component extends DCLogic {
       erba:[{t:'Taglia l\'erba',x:'Cammina sull\'erba alta.'}],
       irrigazione:[{t:'1 · Zappa la conca',x:`Vai a un albero col cerchio blu e ${tieni}: scavi la conca intorno al tronco, dove andranno concime e acqua.`},{t:'2 · Guarda le foglie',x:`${tasto.charAt(0).toUpperCase()+tasto.slice(1)} e scegli il concime: foglie gialle vogliono la dose piena, verdi mezza dose, verde scuro niente.`},{t:'3 · Riempi la conca',x:`${tieni.charAt(0).toUpperCase()+tieni.slice(1)} e lascia quando l'acqua arriva nella fascia verde. Se trabocca, sprechi acqua.`},{t:'Scorte',x:'Il concime lo compri nello Shop. Se il pozzo è basso, vai al pozzo e pompa.'}],
       secca:[{t:'Chiudi l\'acqua',x:`Vai da ogni albero e ${tieni}.`}],
-      trattore:[{t:'Il trattore',x:`Vai velocissimo! ${t?'Col pulsante in alto':'Con Q'} scendi.`}],
+      trattore:[{t:'Il trattore',x:`Vai velocissimo! Gli attrezzi comprati sono accanto allo Shop: avvicinati e agganci quello del lavoro. ${t?'Col pulsante in alto':'Con Q'} scendi.`}],
       cocc:[{t:'Albero malato',x:`Vai vicino e ${t?'tocca Tratta':'premi T'} per curarlo.`}]
     };
     return T[key]||[];
@@ -1562,15 +1582,16 @@ class Component extends DCLogic {
     const on=ov!=='pausa'; this.hold=null; this.m.anima(null); this.m.setPausa(on); this.setState({overlay:on?'pausa':null}); }
   chiudiOverlay(){ if(this._shopCapanno&&this.state.overlay==='bottega'){ this._shopCapanno=false; if(this.m) this.m.setPausa(false); return this.setState({overlay:null}); } this._shopCapanno=false; const g=this.state.schermata==='gioco'; this.setState({overlay:g?'pausa':null}); }
   compra(it){ if(it.tipo==='limo') return this.indossa(it); const S=this.S; if(S.soldi<it.prezzo) return this.toast('Non hai abbastanza soldi.');
-    if(it.tipo==='attrezzo'){ if(S.attrezzi[it.id]) return; S.attrezzi[it.id]=true; if(this.ses&&this.ses.attiva){ if(it.id==='trattore') this.ses.trattore=true; this.applicaTrattore(); } }
+    if(it.tipo==='attrezzo'){ if(S.attrezzi[it.id]) return; if(it.richiede&&!S.attrezzi[it.richiede]) return this.toast('Prima compra il trattore da frutteto.'); S.attrezzi[it.id]=true; if(this.ses&&this.ses.attiva){ if(it.id==='trattore') this.ses.trattore=true; this.applicaTrattore(); } }
     if(it.id==='camionGelso') this.m.setCamion(true); if(it.id==='fertirrigazione'){ S.attrezzi.fertirrigazione=true; this.fertirriga(); this.N.forEach(n=>this.sync(n)); } if(it.id==='concime') S.concime+=5; if(it.id==='olio') S.olio+=4;
-    S.soldi-=it.prezzo; if(this.ses) this.ses.speso+=it.prezzo; window.Suoni&&window.Suoni.play('monete'); this.persist(); this.toast(it.id==='fertirrigazione'?(this.fertOk()?'Impianto montato: da ora acqua e concime arrivano da soli a ogni pianta.':'Impianto comprato: partirà quando avrai sistemato il pozzo.'):`Comprato: ${it.nome}.`); this.r(); }
+    S.soldi-=it.prezzo; if(this.ses) this.ses.speso+=it.prezzo; window.Suoni&&window.Suoni.play('monete'); this.persist(); this.aggiornaParcheggio(); this.toast(it.richiede?`Comprato: ${it.nome}. È accanto allo Shop: avvicinati col trattore per agganciarlo.`:it.id==='fertirrigazione'?(this.fertOk()?'Impianto montato: da ora acqua e concime arrivano da soli a ogni pianta.':'Impianto comprato: partirà quando avrai sistemato il pozzo.'):`Comprato: ${it.nome}.`); this.r(); }
   vendiAttrezzo(it){ const S=this.S, s=this.ses; if(!it||it.tipo!=='attrezzo'||!S.attrezzi[it.id]) return;
     if(s&&s.attiva){ if(it.id==='trattore'&&this.inTrattore()) return this.toast('Scendi prima dal trattore.'); if(it.id==='camionGelso'&&s.guida) return this.toast('Scendi prima dal camion.');
       if(it.id==='carriola'&&this.suMoto()&&s.carico>6*18) return this.toast('Svuota prima la motocarriola nel camion.'); }
     const r=Math.floor(it.prezzo/2); S.attrezzi[it.id]=false; S.soldi+=r; if(s) s.speso-=r;
     if(it.id==='camionGelso') this.m.setCamion(false);
-    if(s&&s.attiva){ if(it.id==='trattore') s.trattore=false; this.applicaTrattore(); }
+    if(this.ATT3D[it.id]&&S.trAgg===this.ATT3D[it.id]) S.trAgg=null;
+    if(s&&s.attiva){ if(it.id==='trattore') s.trattore=false; this.applicaTrattore(); } this.aggiornaParcheggio();
     this.persist(); this.toast(`Venduto: ${it.nome} · +${r} dobloni.`); this.r(); }
   ricomincia(){ if(!this.state.confermaReset){ this.setState({confermaReset:true}); setTimeout(()=>this.setState({confermaReset:false}),4000); return; }
     this.S=this.nuovo(); this.aggiornaN(false); this.m.setCamion(false); if(this.utente){ this.S.nome=this.utente.nome||this.utente.u; this.S.bonusFormula=null; } this.m.setErba(this.m.getErba().map(()=>0.8)); this.N.forEach(n=>this.calcolaFrutti(n,9)); this.N.forEach(n=>this.sync(n)); this.m.livelloPozzo(0); this.m.setPozzo&&this.m.setPozzo(0); this.m.setNuove(0,false); this.persist(); if(this.utente) this.applicaProfilo(); this.setState({confermaReset:false}); this.toast('Partita nuova: il fondo è come il primo giorno.'); }
@@ -1587,15 +1608,15 @@ class Component extends DCLogic {
     const base={ potHostRef:this.potHostRef, haMerav:!!st.merav, corgiM:st.merav?this.corgiEl():null, meravTesto1:this.meravTesti()[0], meravTesto2:this.meravTesti()[1], meravTesto3:this.meravTesti()[2], meravConta:S&&S.meraviglie>1?`ne hai trovati ${S.meraviglie}`:'il primo!', chiudiMerav:()=>this.chiudiMerav(), riascoltaMerav:()=>this.parlaMerav(), toggliMusica:()=>this.toggliMusica(), musicaLabel:this.musicaOn()?'Musica: accesa':'Musica: spenta', hostRef:this.hostRef, knobRef:this.knobRef, joyRef:this.joyRef, caricamento:!st.pronto, touch:st.touch,
       isLogin:sc==='login'&&!ov, isTitolo:sc==='titolo'&&!ov, isMissioni:sc==='missioni'&&!ov, isVideo:ov==='video'&&!!st.video, saltaVideo:()=>this.fineVideo(), isGenere:sc==='genere'&&!ov, isVideoIntro:!!st.videoIntro, videoSrc:(/\.dc\.html/.test(decodeURIComponent(location.pathname))?'app-gioco/tutorial.html':'tutorial.html')+'?gioco=1', chiudiVideo:()=>this.chiudiVideo(), videoCaricato:()=>{ if(window.speechSynthesis) speechSynthesis.cancel(); if(window.Ambiente) window.Ambiente.stop(); }, sceltaUomo:()=>this.scegliGenere('contadino'), sceltaDonna:()=>this.scegliGenere('contadina'), isPeriodo:sc==='periodo'&&!ov, isEventi:sc==='eventi', isGioco:sc==='gioco', isFine:sc==='fine',
       isPausa:ov==='pausa', isSecca:ov==='secca', isBottega:ov==='bottega', isQuaderno:ov==='quaderno', isClassifica:ov==='classifica', isPotatura:ov==='potatura'&&!!this.pot, isRaccolta:ov==='raccolta'&&!!this.rac,
-      haToast:!!st.toast, toast:st.toast||'', haVenduti:!!st.venduti&&!st.consegna, isEtna:ov==='etna'&&!!st.etna, isSaia:ov==='saia', isAereo:ov==='aereo', isBancarella:ov==='bancarella', giocaRegata:()=>this.apriSaia('saia'), giocaAereo:()=>this.apriSaia('aereo'), chiudiBancarella:()=>this.chiudiBancarella(),
+      haToast:!!st.toast, toast:st.toast||'', haVenduti:!!st.venduti&&!st.consegna, isEtna:ov==='etna'&&!!st.etna, isSaia:ov==='saia', isAereo:ov==='aereo', isBancarella:ov==='bancarella', giocaRegata:()=>this.apriSaia('saia'), giocaAereo:()=>this.apriSaia('aereo'), giocaEtnaBtn:()=>this.giocaEtna(), bancEtnaRec:S&&S.etnaRecord>0?`Il tuo record: ${this.fmtT(S.etnaRecord)}`:'Ancora nessun record', bancEtnaPremio:this.ses&&this.ses.etnaPremiata?'Premio di oggi già preso':'Premio: fino a 300 dobloni', chiudiBancarella:()=>this.chiudiBancarella(),
       bancRegataRec:S&&S.saiaRecord>0?`Il tuo record: ${String(S.saiaRecord).replace('.',',')} s`:'Ancora nessun record', bancAereoRec:S&&S.aereoRecord>0?`Il tuo record: ${this.fmtM(S.aereoRecord)}`:'Ancora nessun record',
       bancRegataPremio:this.ses&&this.ses.saiaPremiata?'Premio di oggi già preso':'Premio: dobloni limone e punti', bancAereoPremio:this.ses&&this.ses.aereoPremiato?'Premio di oggi già preso':'Premio: dobloni limone e punti',etnaOfferta:!!st.etna&&st.etna.fase==='offerta', etnaInGioco:!!st.etna&&st.etna.fase==='gioco', etnaEsito:!!st.etna&&st.etna.fase==='esito',
       etnaTesto:st.etna?`Guida il camion sulla pista dell'Etna e prendi i limoni con la scritta ×. I ${this.fmtE(st.etna.inc)} di questa consegna si moltiplicano fino a quattro volte.`:'',
-      etnaSrc:'etna-cross/index.html?da=limoneto&avvio=guida', etnaGioca:()=>{ window.Suoni&&window.Suoni.stopAll&&window.Suoni.stopAll(); this.setState(s=>({etna:{...s.etna,fase:'gioco',ultimo:null}})); }, etnaNo:()=>this.etnaFine(), etnaFine:()=>this.etnaFine(), etnaChiudi:()=>this.etnaChiudi(),
+      etnaSrc:'etna-cross/index.html?da=limoneto&avvio=guida&v=2', etnaGioca:()=>{ window.Suoni&&window.Suoni.stopAll&&window.Suoni.stopAll(); this.setState(s=>({etna:{...s.etna,fase:'gioco',ultimo:null}})); }, etnaNo:()=>this.etnaFine(), etnaFine:()=>this.etnaFine(), etnaChiudi:()=>this.etnaChiudi(),
       etnaChiudiLabel:st.etna&&st.etna.ultimo?'Torna al Limoneto e incassa':'Torna al Limoneto',
       etnaInput:st.etna?st.etna.input:'', onEtnaInput:e=>{ const v=String(e.target.value||'').toUpperCase().replace(/[^A-Z0-9-]/g,'').slice(0,14); this.setState(s=>({etna:{...s.etna,input:v,err:''}})); }, onEtnaKey:e=>{ if(e.key==='Enter') this.etnaUsa(this.state.etna&&this.state.etna.input); }, etnaUsa:()=>this.etnaUsa(this.state.etna&&this.state.etna.input),
       haEtnaErr:!!(st.etna&&st.etna.err), etnaErr:st.etna?st.etna.err:'',
-      etnaMoltTxt:st.etna&&st.etna.fase==='esito'?`×${(st.etna.m||1).toFixed(2).replace('.',',')}`:'', etnaEsitoTxt:st.etna&&st.etna.fase==='esito'?(st.etna.bonus>0?`Gelso ti paga di più: +${this.fmtE(st.etna.bonus)} in cassa.`:'Nessun limone × preso questa volta. Ci riprovi alla prossima consegna.'):'', isConsegna:!!st.consegna, consegnaRef:this.consegnaRef, saltaConsegna:()=>this.fineConsegna(), consegnaKg:st.consegna?`${st.consegna.kg} kg di limoni`:'', consegnaInc:st.consegna?`+${this.fmtE(st.consegna.vis||0)}`:'', vendutiTxt:st.venduti?`${st.venduti.kg} kg a Gelso · +${this.fmtE(st.venduti.inc)}`:'', nomeInput:st.nomeInput,
+      etnaMoltTxt:st.etna&&st.etna.fase==='esito'?`+${st.etna.dob||0} dobloni`:'', etnaEsitoTxt:st.etna&&st.etna.fase==='esito'?(!(st.etna.dob>0)?'Nessun limone preso questa volta: riprova dalla bancarella.':st.etna.gia?`Hai preso limoni per ${st.etna.dob} dobloni, ma il premio di Etna Cross si prende una volta al giorno.`:`I limoni presi sulla pista valgono ${st.etna.dob} dobloni limone: sono già in cassa.`):'', isConsegna:!!st.consegna, consegnaRef:this.consegnaRef, saltaConsegna:()=>this.fineConsegna(), consegnaKg:st.consegna?`${st.consegna.kg} kg di limoni`:'', consegnaInc:st.consegna?`+${this.fmtE(st.consegna.vis||0)}`:'', vendutiTxt:st.venduti?`${st.venduti.kg} kg a Gelso · +${this.fmtE(st.venduti.inc)}`:'', nomeInput:st.nomeInput,
       loginU:st.loginU, loginP:st.loginP, loginErr:st.loginErr, haLoginErr:!!st.loginErr, loginBusy:st.loginBusy, entraLabel:st.loginBusy?'Controllo…':'Entra',
       onLoginU:e=>this.setState({loginU:e.target.value,loginErr:''}), onLoginP:e=>this.setState({loginP:e.target.value,loginErr:''}), onLoginKey:e=>{ if(e.key==='Enter') this.accedi(); },
       accedi:()=>this.accedi(), esci:()=>this.esci(), alberoSito:(this.utente&&this.utente.albero)||'—', formula:(this.utente&&this.utente.formula)||'Vicino di casa',
@@ -1606,7 +1627,7 @@ class Component extends DCLogic {
       abbandona:()=>{ if(this.ses){ this.ses.chiusa=true; this.ses.attiva=false; } clearInterval(this._iv); this.torna(); },
       chiudiSecca:()=>this.chiudiSecca(), tutAvanti:()=>this.tutAvanti(), tutSalta:()=>this.tutSalta(), rivediTut:()=>this.rivediTut(), toggliTrattore:()=>this.toggliTrattore(), toggliMoto:()=>this.toggliMoto(), tratta:()=>this.tratta(), azioneGiuEv:e=>this.azioneGiuEv(e), azioneSuEv:()=>this.azioneSuEv(),
       joyGiu:e=>this.joyGiu(e), joyMuovi:e=>this.joyMuovi(e), joySu:()=>this.joySu(),
-      chiudiPotatura:()=>this.chiudiPotatura(), saltaEventi:()=>this.dopoEventi(), toggliHud:()=>this.setState(s=>({hudChiuso:!s.hudChiuso})), hudChiuso:!!st.hudChiuso, hudAperto:!st.hudChiuso, helpTop:st.hudChiuso?'64px':'190px', chiudiRaccolta:()=>this.chiudiRaccolta(), esciFine:()=>this.esciFine() };
+      chiudiPotatura:()=>this.chiudiPotatura(), saltaEventi:()=>this.dopoEventi(), toggliHud:()=>this.setState(s=>({hudChiuso:s.hudChiuso===false})), hudChiuso:st.hudChiuso!==false, hudAperto:st.hudChiuso===false, helpTop:st.hudChiuso!==false?'58px':'190px', chiudiRaccolta:()=>this.chiudiRaccolta(), esciFine:()=>this.esciFine() };
     if(ok&&st.tut){ const steps=this.tutSteps(st.tut.key), stp=steps[st.tut.i]||{}, last=st.tut.i+1>=steps.length&&(this.tutQ||[]).length<=1;
       Object.assign(base,{haTut:true,corgi:this.corgiEl(),tutKicker:steps.length>1?`Come si fa · ${st.tut.i+1} di ${steps.length}`:'Come si fa',tutTitolo:stp.t||'',tutTesto:stp.x||'',
         tutBottone:last?'Ho capito, al lavoro':'Avanti',tutTasto:st.touch?'':(last?'Invio':'Invio per andare avanti'),
@@ -1687,8 +1708,10 @@ class Component extends DCLogic {
       if(s.guida){ pr=s.camionKg>0?`Alla guida del camion · ${s.camionKg} kg a bordo · portalo fino al cancello in fondo alla stradina`:'Alla guida del camion · cassone vuoto'; lab='Scendi'; attivo=true; }
       else if(!v&&t==='giro'){ pr='Passeggia dove vuoi: la bancarella dei minigiochi è sulla saia, lo Shop nel capanno, il camion di Gelso sulla stradina.'; lab='—'; }
       else if(!v){ pr={concime:'Cammina fino a una pianta con l\'anello blu.',potatura:'Avvicinati a una pianta con l\'anello blu per potarla.',raccolta:'Vai alle piante con l\'anello blu: hanno limoni maturi.',erba:'Cammina sull\'erba alta: il decespugliatore la taglia.',irrigazione:s.secca&&s.fase===1?'Vai a ogni pianta e chiudi il gocciolatore.':'Per ogni pianta: zappa la conca, dai il concime giusto, riempi d\'acqua. Il pozzo è vicino alle piante 12 e 13.'}[t]; lab=t==='erba'?'Taglio':'—'; }
-      else if(v.tipo==='saia'){ pr=`La bancarella dei minigiochi · ${tasto} per scegliere: regata o aereo di foglie`; lab='Gioca'; attivo=true; }
+      else if(v.tipo==='saia'){ pr=`La bancarella dei minigiochi · ${tasto} per scegliere: regata, aereo o Etna Cross`; lab='Gioca'; attivo=true; }
       else if(v.tipo==='shop'){ pr=`Capanno degli attrezzi · ${tasto} per entrare nello Shop`; lab='Shop'; attivo=true; }
+      else if(v.tipo==='aggancia'){ pr=`${this.nomeAtt(v.n)} · ${tasto} per agganciarlo al trattore`; lab='Aggancia'; attivo=true; }
+      else if(v.tipo==='sgancia'){ pr=`Qui si lascia: ${this.nomeAtt(v.n)} · ${tasto} per sganciarlo`; lab='Sgancia'; attivo=true; }
       else if(v.tipo==='limo'){ pr=`Limo ha scavato una buca · ${tasto} per vedere cosa ha trovato`; lab='Guarda'; attivo=true; }
       else if(v.tipo==='pianta'){ const n=v.n, p=S.piante[n], f=!!s.fatti[n];
         if(t==='concime'){ pr=f?`Pianta ${n}: già concimata`:`Pianta ${n} · ${tieni} per spargere il concime`; lab='Concima'; attivo=!f; }
@@ -1756,8 +1779,8 @@ class Component extends DCLogic {
     base.bottega=R.BOTTEGA.map(it=>{ if(it.tipo==='limo'){ const ow=!!(S.limoOwn&&S.limoOwn[it.id]), wr=ow&&(S.limoAcc||{})[it.slot]===it.val;
         return {icona:it.slot==='cappello'?'ph-baseball-cap':'ph-dog',bg:wr?'transparent':'#ffffff',fg:wr?'#ffffff':'oklch(0.47 0.14 148)',nome:it.nome,nota:it.nota+(wr?' · Limo lo indossa':''),label:ow?(wr?'Toglilo':'Faglielo indossare'):`Compra · ${it.prezzo} dobloni`,cls:wr?'btn-secondary':'btn-primary',disabled:!ow&&S.soldi<it.prezzo,onClick:()=>this.compra(it),haVendi:false,vendiLabel:'',onVendi:null}; }
       const own=it.tipo==='attrezzo'&&S.attrezzi[it.id];
-      const icona={concime:'ph-package',olio:'ph-drop',troncarami:'ph-scissors',scala:'ph-ladder',spandiconcime:'ph-grains',decesp:'ph-plant',carriola:'ph-truck',pompa:'ph-pipe',trattore:'ph-tractor',camionGelso:'ph-truck-trailer'}[it.id]||'ph-package';
-      return {icona,bg:own?'transparent':'#ffffff',fg:own?'#ffffff':'oklch(0.47 0.14 148)',nome:it.nome,nota:it.nota+(it.id==='concime'?` · ne hai ${this.fmtDosi(S.concime)} dosi`:it.id==='olio'?` · ne hai ${S.olio} dosi`:''),label:own?'Ce l\'hai':`Compra · ${it.prezzo} dobloni`,cls:own?'btn-secondary':'btn-primary',disabled:own||S.soldi<it.prezzo,onClick:()=>this.compra(it),haVendi:!!own,vendiLabel:`Vendi · ${Math.floor(it.prezzo/2)} dobloni`,onVendi:()=>this.vendiAttrezzo(it)}; });
+      const icona={concime:'ph-package',olio:'ph-drop',troncarami:'ph-scissors',scala:'ph-ladder',spandiconcime:'ph-grains',decesp:'ph-plant',carriola:'ph-truck',pompa:'ph-pipe',trattore:'ph-tractor',trTrincia:'ph-plant',trSpandi:'ph-grains',trBotte:'ph-drop',trCarrello:'ph-shopping-cart',trPiattaforma:'ph-arrow-fat-up'}[it.id]||'ph-package', serve=!own&&it.richiede&&!S.attrezzi[it.richiede];
+      return {icona,bg:own?'transparent':'#ffffff',fg:own?'#ffffff':'oklch(0.47 0.14 148)',nome:it.nome,nota:it.nota+(it.id==='concime'?` · ne hai ${this.fmtDosi(S.concime)} dosi`:it.id==='olio'?` · ne hai ${S.olio} dosi`:''),label:own?'Ce l\'hai':serve?`Serve il trattore · ${it.prezzo} dobloni`:`Compra · ${it.prezzo} dobloni`,cls:own?'btn-secondary':'btn-primary',disabled:own||serve||S.soldi<it.prezzo,onClick:()=>this.compra(it),haVendi:!!own,vendiLabel:`Vendi · ${Math.floor(it.prezzo/2)} dobloni`,onVendi:()=>this.vendiAttrezzo(it)}; });
     base.quaderno=S.quaderno.slice().reverse().map(q=>({...q,label:q.firmato?'Firmato':'Firma',onClick:()=>this.firma(q.id)}));
     base.quadernoVuoto=!S.quaderno.length;
     const fl=st.filtro||'tutte', etn=fl==='etnacross', lista=(()=>{ let L=(this.recRemoti||[]).filter(r=>etn?r.missione==='etnacross':(r.missione!=='etnacross'&&(fl==='tutte'||r.missione===fl)));

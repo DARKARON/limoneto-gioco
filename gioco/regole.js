@@ -90,8 +90,12 @@ const BOTTEGA=[
   {id:'decesp',nome:'Decespugliatore professionale',nota:'Taglia una striscia larga il doppio',prezzo:120,tipo:'attrezzo'},
   {id:'carriola',nome:'Motocarriola',nota:'Porti 15 cassette invece di 6',prezzo:90,tipo:'attrezzo'},
   {id:'fertirrigazione',nome:'Impianto di fertirrigazione',nota:'Gocciolatori a ogni pianta: acqua e concime arrivano da soli, non serve più concimare e irrigare. Funziona col pozzo sistemato.',prezzo:2000,tipo:'attrezzo'},
-  {id:'trattore',nome:'Trattore da frutteto con tutti gli attrezzi',nota:'Trinciaerba, spandiconcime, botte, carrello da 30 cassette e piattaforma per arrivare in alto. Vai quasi al doppio della velocità. Il gasolio costa 6 dobloni a giornata.',prezzo:450,tipo:'attrezzo'},
-  {id:'camionGelso',nome:'Camion Gelso futuristico',nota:'Il nuovo mezzo elettrico con cingoli e sospensioni adattive: prende il posto del vecchio camion',prezzo:1000,tipo:'attrezzo'},
+  {id:'trattore',nome:'Trattore da frutteto',nota:'Vai quasi al doppio della velocità. Gli attrezzi si comprano a parte: li trovi accanto allo Shop e li agganci col trattore. Il gasolio costa 6 dobloni a giornata.',prezzo:1000,tipo:'attrezzo'},
+  {id:'trTrincia',nome:'Trinciaerba per il trattore',nota:'Tagli l\'erba con una striscia larghissima',prezzo:500,tipo:'attrezzo',richiede:'trattore'},
+  {id:'trSpandi',nome:'Spandiconcime per il trattore',nota:'Concimi tre volte più in fretta',prezzo:500,tipo:'attrezzo',richiede:'trattore'},
+  {id:'trBotte',nome:'Botte per il trattore',nota:'Zappi e riempi le conche quasi al doppio',prezzo:500,tipo:'attrezzo',richiede:'trattore'},
+  {id:'trCarrello',nome:'Carrello per il trattore',nota:'Porti 30 cassette alla volta',prezzo:500,tipo:'attrezzo',richiede:'trattore'},
+  {id:'trPiattaforma',nome:'Piattaforma per il trattore',nota:'Arrivi ai rami e ai limoni in alto senza scala',prezzo:500,tipo:'attrezzo',richiede:'trattore'},
 ];
 function rnd(){ return Math.random(); }
 // imprevisti del giorno, in base al mese (0-11) e alla missione

@@ -403,12 +403,12 @@ function CircuitoEtna(opts){
     if(TRASM)TRASM.position.y=TRASM.userData.y0+(CORN[2].dy+CORN[3].dy)/2;
   }
 
-  // ---------- moltiplicatori del prezzo dei limoni ----------
+  // ---------- limoni-dobloni: ogni limone preso vale dobloni limone (fino a 300 in una gara) ----------
   const MOLT_MAX=4,PICK=[];let molt=1;
   const fmtX=v=>v.toFixed(2).replace('.',',');
   const geoLim=(()=>{const g=new THREE.SphereGeometry(0.5,22,14),p=g.attributes.position,v=V3();for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);const t=Math.abs(v.y)/0.5,e=1+0.4*Math.pow(t,6);p.setXYZ(i,v.x*0.78,v.y*1.2*e,v.z*0.78);}g.computeVertexNormals();g.rotateZ(Math.PI/2);return g;})();
   // valori dei limoni bonus: in un giro valgono +1,55 in tutto, quindi ×4 in due giri solo prendendoli quasi tutti
-  const TIER=[{v:0.05,c:0xF2D22E,r:0xF2D22E,lab:'×1,05'},{v:0.15,c:0xF4C21A,r:0xEC6A1C,lab:'×1,15'},{v:0.3,c:0xFFD84A,r:0xFFFFFF,lab:'×1,3'}];
+  const TIER=[{v:0.05,c:0xF2D22E,r:0xF2D22E,lab:'+5'},{v:0.15,c:0xF4C21A,r:0xEC6A1C,lab:'+15'},{v:0.3,c:0xFFD84A,r:0xFFFFFF,lab:'+30'}];
   function etichettaX(t,bg){return tex(160,64,(x,w,h)=>{x.fillStyle=bg;x.beginPath();x.moveTo(12,4);x.lineTo(w-12,4);x.quadraticCurveTo(w-2,4,w-2,14);x.lineTo(w-2,h-14);x.quadraticCurveTo(w-2,h-4,w-12,h-4);x.lineTo(12,h-4);x.quadraticCurveTo(2,h-4,2,h-14);x.lineTo(2,14);x.quadraticCurveTo(2,4,12,4);x.fill();
     x.font='italic 800 40px "Barlow Condensed","Arial Narrow",Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillStyle='#1b1716';x.fillText(t,w/2,h/2+2);});}
   {const tiers=[0,0,1,0,2,0,1,0,0,1,2,0,1];const kicks=FEAT.filter(f=>f.type==='kick'||f.type==='table').map(f=>f.i);let ki=0;
@@ -426,7 +426,7 @@ function CircuitoEtna(opts){
       if(auto||finita)return;const dx=car.x-p.x,dz=car.z-p.z;if(dx*dx+dz*dz<2.4*2.4&&Math.abs(p.g.position.y-(car.y+B.h+1.2))<p.tol){
         p.attivo=false;p.g.visible=false;p.t=0;const prima=molt;suono('limone',p.v>=0.3?2:p.v>=0.15?1:0);molt=Math.min(MOLT_MAX,+(molt+p.v).toFixed(2));
         for(let k=0;k<24;k++){const a=rnd()*6.283,u=rnd()*2-1;emitB(p.x,p.g.position.y,p.z,Math.cos(a)*4*(1-u*u)+car.vx*0.3,u*4+2,Math.sin(a)*4*(1-u*u)+car.vz*0.3,0.06+rnd()*0.07,[0.95,0.8,0.15]);}
-        say(molt>prima?'Prezzo limoni ×'+fmtX(molt):'Moltiplicatore al massimo ×'+fmtX(molt),1.4);}});}
+        say(molt>prima?'+'+Math.round((molt-prima)*100)+' dobloni · '+Math.round((molt-1)*100)+' in tutto':'Dobloni al massimo: '+Math.round((molt-1)*100),1.4);}});}
 
   // ---------- particelle: polvere ----------
   const DN=1300,dPos=new Float32Array(DN*3),dA=new Float32Array(DN),dS=new Float32Array(DN),dC=new Float32Array(DN*3),dV=new Float32Array(DN*3),dL=new Float32Array(DN),dM=new Float32Array(DN),dS0=new Float32Array(DN);
@@ -791,7 +791,7 @@ function CircuitoEtna(opts){
     if(msgT>0){msgT-=dt;if(msgT<=0)msg='';}
     hudT-=dt;if(hudT<=0){hudT=0.12;if(T.userData.cruscotto)T.userData.cruscotto(car.vF*3.6);const off=Ds(car.x,car.z)>HW+0.8;
       onHud({kmh:Math.round(Math.abs(car.vF)*3.6),lap:lap?lap+' di '+GIRI:'—',time:finita?fmt(totale):lapStart===null?'0:00.0':fmt(time-lapStart),last:fmt(lastLap),best:fmt(best),
-        msg:msg||(!auto&&off&&Math.abs(car.vF)>3?'Fuori pista':''),cam:cine?'Cinematica':CAMS[camMode],cine,auto,shot:cine&&shot?SHOTNAME[shot.type]:'',molt,moltTxt:'×'+fmtX(molt),giri:GIRI,finita,totale:finita?fmt(totale):'',tempi:tempi.map(fmt),pista:PISTA,pistaNome:TH.nome});}
+        msg:msg||(!auto&&off&&Math.abs(car.vF)>3?'Fuori pista':''),cam:cine?'Cinematica':CAMS[camMode],cine,auto,shot:cine&&shot?SHOTNAME[shot.type]:'',molt,moltTxt:Math.round((molt-1)*100)+' dobloni',giri:GIRI,finita,totale:finita?fmt(totale):'',tempi:tempi.map(fmt),pista:PISTA,pistaNome:TH.nome});}
     if(!draw)return;
     // post
     const sc=rtH/(2*Math.tan(camera.fov*Math.PI/360));dMat.uniforms.scale.value=sc;bMat.uniforms.scale.value=sc;
