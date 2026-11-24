@@ -54,7 +54,7 @@
   <script src="gioco/regole.js?v=3"></script>
   <script src="gioco/modelli.js"></script>
   <script src="gioco/consegna.js"></script>
-  <script src="gioco/motore.js?v=117"></script>
+  <script src="gioco/motore.js?v=119"></script>
   <script src="gioco/ambiente.js"></script>
   <script src="gioco/suoni.js"></script>
   <script src="gioco/potatura3d.js?v=90"></script>
@@ -1224,7 +1224,7 @@ class Component extends DCLogic {
   tick(){
     this.suoniLoop();
     const s=this.ses, S=this.S; if(!s||!s.attiva||this.state.overlay||this.state.tut) return;
-    if(s.giro){ this.r(); return; }
+    if(s.giro){ if((this._tg=(this._tg||0)+1)%5===0) this.r(); return; }
     s.ora+=0.1*8/(this.durata()*60); this.m.setOra(s.ora);
     const h=this.hold;
     if(h){
@@ -1239,7 +1239,8 @@ class Component extends DCLogic {
         else { this.m.setPausa(true); this.setState({overlay:'allerta'}); clearInterval(this._alIv); this._alIv=setInterval(()=>this.tickAllerta(),100); return; } } }
     if((this._tk=(this._tk||0)+1)%10===0) this.guidaLimo();
     if(s.ora>=15){ this.toast('Il sole cala: la giornata è finita.'); this.fine(false); return; }
-    this.r();
+    // l'interfaccia si ridisegna 10 volte al secondo solo mentre tieni premuto o c'è un'allerta; altrimenti 2-3 volte al secondo (il gioco 3D resta fluido)
+    if(this.hold||(s.al&&s.al.via&&!s.al.fatto)||(this._tr=(this._tr||0)+1)%4===0) this.r();
   }
   iniziaAllerta(){ const s=this.ses, al=s.al, S=this.S; al.via=true; this.hold=null; this.m.anima(null); window.Suoni&&window.Suoni.play('allarme'); S.visti=S.visti||{}; S.visti[al.tipo]=true;
     if(al.tipo==='scirocco'){ al.t=40; this.toast('Soffia lo scirocco! Corri al pozzo prima che le foglie si secchino.'); this.r(); return; }
@@ -1776,16 +1777,16 @@ class Component extends DCLogic {
         return {x:l.x,y:l.y,rx:ac?19:(verd?36:34),ry:ac?15:(verd?27:25),fill:ac?'url(#limA)':(l.tipo==='meraviglia'?'url(#limG)':(verd?'url(#limV)':'url(#limG)')),glow:l.tipo==='meraviglia'&&!pr?0.55:0,d:l.tipo==='meraviglia'?'M-26 18 C-34 8 -36 -8 -30 -20 C-27 -30 -20 -30 -19 -20 L-17 -6 C-18 -26 -14 -40 -6 -42 C0 -42 -2 -30 -4 -8 C-2 -30 4 -46 12 -44 C18 -42 12 -26 8 -6 C14 -24 24 -34 30 -30 C36 -26 26 -12 20 2 C28 -6 38 -6 38 0 C38 8 28 14 22 22 C10 30 -16 30 -26 18 Z':'M-34 0 C-34 -16 -18 -25 0 -25 C14 -25 26 -19 32 -8 L39 -4 L33 2 C30 16 16 25 0 25 C-18 25 -34 16 -34 0 Z',stroke:l.alto&&!this.haScala()?'#ffffff':'transparent',tr:`translate(${l.x.toFixed(0)} ${l.y.toFixed(0)}) rotate(${(l.rot||0).toFixed(0)}) scale(${ac?0.55:(l.tipo==='meraviglia'?1.25:(verd?1.05:1))})`,sc:pr?(er?0.9:0.35):1,
           spot:l.tipo==='grandinato'?1:0,s1x:l.x-10,s1y:l.y-6,s2x:l.x+9,s2y:l.y+7,op:pr?0:1,tx:pr?(er?0:870-l.x):0,ty:pr?(er?160:690-l.y):0,pe:pr?'none':'auto',onClick:()=>this.cogli(l.id)}; });
     }
-    base.bottega=R.BOTTEGA.map(it=>{ if(it.tipo==='limo'){ const ow=!!(S.limoOwn&&S.limoOwn[it.id]), wr=ow&&(S.limoAcc||{})[it.slot]===it.val;
+    base.bottega=ov!=='bottega'?[]:R.BOTTEGA.map(it=>{ if(it.tipo==='limo'){ const ow=!!(S.limoOwn&&S.limoOwn[it.id]), wr=ow&&(S.limoAcc||{})[it.slot]===it.val;
         return {icona:it.slot==='cappello'?'ph-baseball-cap':'ph-dog',bg:wr?'transparent':'#ffffff',fg:wr?'#ffffff':'oklch(0.47 0.14 148)',nome:it.nome,nota:it.nota+(wr?' · Limo lo indossa':''),label:ow?(wr?'Toglilo':'Faglielo indossare'):`Compra · ${it.prezzo} dobloni`,cls:wr?'btn-secondary':'btn-primary',disabled:!ow&&S.soldi<it.prezzo,onClick:()=>this.compra(it),haVendi:false,vendiLabel:'',onVendi:null}; }
       const own=it.tipo==='attrezzo'&&S.attrezzi[it.id];
       const icona={concime:'ph-package',olio:'ph-drop',troncarami:'ph-scissors',scala:'ph-ladder',spandiconcime:'ph-grains',decesp:'ph-plant',carriola:'ph-truck',pompa:'ph-pipe',trattore:'ph-tractor',trTrincia:'ph-plant',trSpandi:'ph-grains',trBotte:'ph-drop',trCarrello:'ph-shopping-cart',trPiattaforma:'ph-arrow-fat-up'}[it.id]||'ph-package', serve=!own&&it.richiede&&!S.attrezzi[it.richiede];
       return {icona,bg:own?'transparent':'#ffffff',fg:own?'#ffffff':'oklch(0.47 0.14 148)',nome:it.nome,nota:it.nota+(it.id==='concime'?` · ne hai ${this.fmtDosi(S.concime)} dosi`:it.id==='olio'?` · ne hai ${S.olio} dosi`:''),label:own?'Ce l\'hai':serve?`Serve il trattore · ${it.prezzo} dobloni`:`Compra · ${it.prezzo} dobloni`,cls:own?'btn-secondary':'btn-primary',disabled:own||serve||S.soldi<it.prezzo,onClick:()=>this.compra(it),haVendi:!!own,vendiLabel:`Vendi · ${Math.floor(it.prezzo/2)} dobloni`,onVendi:()=>this.vendiAttrezzo(it)}; });
-    base.quaderno=S.quaderno.slice().reverse().map(q=>({...q,label:q.firmato?'Firmato':'Firma',onClick:()=>this.firma(q.id)}));
+    base.quaderno=ov!=='quaderno'?[]:S.quaderno.slice().reverse().map(q=>({...q,label:q.firmato?'Firmato':'Firma',onClick:()=>this.firma(q.id)}));
     base.quadernoVuoto=!S.quaderno.length;
     const fl=st.filtro||'tutte', etn=fl==='etnacross', lista=(()=>{ let L=(this.recRemoti||[]).filter(r=>etn?r.missione==='etnacross':(r.missione!=='etnacross'&&(fl==='tutte'||r.missione===fl)));
       if(etn){ const vis={}; L=L.slice().sort((a,b)=>this.secT(a.tempo)-this.secT(b.tempo)).filter(r=>{ const k=r.nome+'|'+(r.albero||''); if(vis[k]) return false; vis[k]=1; return true; }); } return L.slice(0,10); })();
-    base.classifica=lista.map((r,i)=>({pos:i+1,nome:r.albero?`${r.nome} · albero n. ${r.albero}`:r.nome,missione:nomiM[r.missione]||r.missione,mese:R.MESI[r.mese]||'',tempo:typeof r.tempo==='number'?`${Math.floor(r.tempo/60)}:${String(r.tempo%60).padStart(2,'0')}`:(r.tempo||'–'),punti:r.punti}));
+    base.classifica=ov!=='classifica'?[]:lista.map((r,i)=>({pos:i+1,nome:r.albero?`${r.nome} · albero n. ${r.albero}`:r.nome,missione:nomiM[r.missione]||r.missione,mese:R.MESI[r.mese]||'',tempo:typeof r.tempo==='number'?`${Math.floor(r.tempo/60)}:${String(r.tempo%60).padStart(2,'0')}`:(r.tempo||'–'),punti:r.punti}));
     base.classificaVuota=!lista.length; base.classColPunti=etn?'Prezzo':'Punti'; if(etn) base.classifica.forEach(x=>{ x.punti='×'+(x.punti/100).toFixed(2).replace('.',','); });
     base.filtri=[['tutte','Tutte'],['concime','Concimare'],['potatura','Potare'],['raccolta','Raccogliere'],['erba','Erba'],['irrigazione','Irrigare'],['etnacross','Etna Cross · tempi']].map(([id,nm])=>({nome:nm,bg:fl===id?'var(--color-accent)':'transparent',fg:fl===id?'var(--color-bg)':'var(--color-text)',onClick:()=>this.setState({filtro:id})}));
     return base;
